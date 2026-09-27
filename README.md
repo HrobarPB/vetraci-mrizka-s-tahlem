@@ -80,7 +80,7 @@ Hotová STL jsou ve složce [`stl/`](stl). Jsou už natočená do tiskové poloh
 | Rukojeť | `rukojet.stl` | 1 | otvorem nahoru |
 | Vodítko tyčky na zeď | `voditko.stl` | 0–2 | volitelné, když se tyčka moc houpe |
 | Spojka tyčí | `spojka.stl` | 0–1 | volitelné, pro spojení dvou tyček |
-| Otočný klíč zámku | `klic.stl` | **4** | naplocho na rovné ploše profilu D, bez podpěr; 4 perimetry, výplň 50 % |
+| Otočný klíč zámku | `klic.stl` | **4** | nastojato na rovné straně příčky, hlavou nahoru, bez podpěr; 4 perimetry, výplň 100 % |
 
 **Materiál:** PETG (do interiéru) nebo ASA (na přímé slunce, originál je
 také z ASA). PLA nedoporučuji, protože pružná západka z PLA časem povolí
@@ -138,16 +138,26 @@ Příklad: mřížka má spodek ve 240 cm a rukojeť má být ve 170 cm, tedy ty
    dně nahoru a dolů. Lamely se musí otáčet všechny současně a západka musí
    cvakat ve třech polohách.
 7. **Klíče zámků** (bez lepidla a bez šroubů): každý klíč zasuňte zepředu do
-   otvoru v líci krytu s rukojetí **svisle** (příčka projde svislou štěrbinou
-   v krytu) a pak ho otočte rukojetí **vodorovně**. Příčka je teď za krytem
-   napříč štěrbiny, takže klíč z krytu nevypadne.
+   otvoru v líci krytu se zářezem **svisle** (příčka projde svislou štěrbinou
+   v krytu, hlava zapadne do zápustného lůžka) a pak ho otočte zářezem
+   **vodorovně**. Příčka je teď za krytem napříč štěrbiny, takže klíč
+   z krytu nevypadne.
 
 ## Zámek krytu (jak funguje)
 
 ![řez zámkem v zamčené poloze](obrazky/zamek_rez.png)
 
-*Řez osou zámku: vlevo rukojeť klíče na líci krytu, kulatý dřík skrz kryt,
+*Řez osou zámku: vlevo zápustná hlava klíče v líci krytu, kulatý dřík skrz kryt,
 vpravo půlkulatá příčka za pružnými pásky montážní desky, úplně vpravo zeď.*
+
+![otáčení klíče](obrazky/zamek_otaceni.png)
+
+*Nahoře zepředu: hlavy klíčů (Ø 17 mm) jsou zapuštěné a zarovnané s lícem
+krytu a otáčejí se v kuželovém lůžku; zářez svisle = zamčeno, vodorovně =
+odemčeno. Vpravo klíč v tiskové poloze. Dole pohled od zdi do montážní
+desky: příčka se otáčí v dutině montážní desky za krytem, v krytu je jen
+kulatý dřík. Svislou štěrbinu pro první zasunutí klíče hlava zakryje
+v každé poloze.*
 
 Zámek je udělaný jako současné vačkové zámky na čtvrt otáčky (např. u
 rozvaděčů): příčka po **šroubovitém náběhu** postupně přitáhne kryt, na konci
@@ -155,9 +165,12 @@ zapadne do **aretace** a **doraz** nedovolí přetočení. Všechny tvary, kter�
 se o sebe opírají, jsou **zaoblené (půlkulaté)**: nemají ostré hrany, které
 by soustředily napětí a vyrývaly se do plastu.
 
-- **Klíč** má profil „D“: kulatý dřík Ø 8 mm a půlkulatou příčku Ø 5 mm se
-  zaoblenými konci. Rovná plocha dole slouží k tisku naplocho, takže tah jde
-  podél vrstev a klíč se neutrhne.
+- **Klíč:** zápustná kulatá hlava Ø 17 mm se zkosením 45° sedí v kuželovém
+  lůžku v líci krytu, zarovnaná s lícem, a sama se vystředí. Kulatý dřík
+  Ø 8 mm a **půlkulatá příčka** (Ø 8 mm, rovnou stranou ke zdi, zaoblené
+  konce). Tiskne se nastojato na rovné straně příčky, hlavou nahoru, bez
+  podpěr. Průřez dříku Ø 8 mm unese v tahu i napříč vrstvami řádově přes
+  1000 N, zámek přitom nese jen desítky N.
 - **Náběh:** za vodorovnou štěrbinou v montážní desce jsou dva pružné pásky
   (1,5 mm, tištěné naplocho) se šroubovitým náběhem se sklonem asi 7°.
   Příčka po něm najíždí, pásky se prohnou až o 0,65 mm a kryt se přitáhne.
@@ -168,7 +181,8 @@ by soustředily napětí a vyrývaly se do plastu.
 - **Dorazy:** klíč se točí jen jedním směrem a jen o čtvrt otáčky.
 - **Pojistka proti vypadnutí:** štěrbina v krytu je svislá, v desce
   vodorovná.
-- **Ovládání prsty:** rukojeť **svisle = zamčeno**, **vodorovně = odemčeno**.
+- **Ovládání:** mincí nebo plochým šroubovákem; zářez **svisle = zamčeno**,
+  **vodorovně = odemčeno**.
 
 Když jde zámek moc ztuha, zmenšete `klic_predpeti` (např. 0,2) nebo
 `pruzina_tl`; když kryt drží volně, zvětšete `klic_predpeti` na 0,4.
@@ -193,9 +207,9 @@ jde do hmoždinky 72 mm (Fischer předepisuje aspoň 70 mm).
    drží, takže při nasazování nespadne. (U montážní desky s tištěnou síťkou
    tento krok odpadá.)
 6. **Nasaďte přední kryt** na montážní desku. Všechny 4 klíče musí mít
-   rukojeť **vodorovně** (odemčeno), aby příčky prošly štěrbinami v desce.
-   Kryt přitlačte k desce a každý klíč otočte prsty o **čtvrt otáčky**, až
-   je rukojeť **svisle** a zámek cvakne.
+   zářez **vodorovně** (odemčeno), aby příčky prošly štěrbinami v desce.
+   Kryt přitlačte k desce a každý klíč otočte mincí nebo šroubovákem
+   o **čtvrt otáčky**, až je zářez **svisle** a zámek cvakne.
 7. **Táhlo:** stáhněte lištu úplně dolů (zavřeno). Zespodu zasuňte tyčku
    otvorem ve dně až na doraz do lišty (18 mm). Klíčem 1,5 mm utáhněte
    červík **malým otvorem v líci rámu vlevo dole**.
@@ -228,7 +242,7 @@ se po okraji vysunout. Hned za ní je **pevný rošt** v montážní desce, kter
 ji podepře a nepustí dovnitř ptáky. Před ní je 1,5 mm volného místa
 k lamelám.
 
-**Výměna nebo vyčištění síťky:** otočte 4 klíče rukojetí vodorovně
+**Výměna nebo vyčištění síťky:** mincí otočte 4 klíče zářezem vodorovně
 a přední kryt i s tyčkou sundejte. Montážní deska zůstane na zdi a síťka je
 hned přístupná.
 

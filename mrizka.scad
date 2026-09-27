@@ -175,9 +175,10 @@ function s_pos(k) = pocet_poloh < 2 ? 0 : -s_max + k*zdvih/(pocet_poloh-1);
 screw_pos = [for (zz = [vrut_od_okraje, H - vrut_od_okraje]) for (xx = [W/2 - roztec_sroubu/2, W/2 + roztec_sroubu/2]) [xx, zz]];
 klic_pos  = [for (zz = [tb/2, H - tb/2]) for (xx = [W/2 - roztec_klicu/2, W/2 + roztec_klicu/2]) [xx, zz]];
 // Otočný zámek na čtvrt otáčky se šroubovitým náběhem a půlkruhovou aretací:
-//  - klíč má profil "D": kulatý dřík a půlkulatá příčka se zaoblenými konci, rovná plocha
-//    dole slouží k tisku naplocho (tah jde podél vrstev, žádné ostré hrany, které by
-//    se do plastu vyrývaly),
+//  - klíč: zápustná kulatá hlava v kuželovém lůžku v líci krytu (zarovnaná s lícem, otáčí
+//    se v krytu, zakryje štěrbinu), kulatý dřík a půlkulatá příčka se zaoblenými konci
+//    (rovnou stranou ke zdi); tiskne se nastojato příčkou dolů, hlava má zkosení 45°,
+//    takže nic nepotřebuje podpěry; opěrné plochy jsou zaoblené a nevyrývají se do plastu,
 //  - v montážní desce jsou za štěrbinou dva pružné pásky se šroubovitým náběhem (sklon ~7°):
 //    příčka po něm najíždí a kryt postupně přitahuje, pásky drží stálý přítlak,
 //  - na konci náběhu je půlkruhové lůžko přesně podle příčky (aretace) a za ním doraz,
@@ -185,11 +186,11 @@ klic_pos  = [for (zz = [tb/2, H - tb/2]) for (xx = [W/2 - roztec_klicu/2, W/2 + 
 //  - štěrbina v krytu je svislá, v desce vodorovná: klíč se zasune zepředu rukojetí svisle,
 //    otočí se vodorovně a z krytu už nevypadne.
 kl_r      = 4;                           // poloměr dříku (profil D)
-kl_flat   = 2;                           // rovná plocha profilu D pod osou (na ní se tiskne)
-kl_lr     = 2.5;                         // poloměr půlkulaté příčky
+kl_lr     = 4;                           // poloměr půlkulaté příčky (rovná strana ke zdi)
 kl_ll     = 8;                           // polovina délky příčky
 kl_vule   = 0.3;                         // vůle průchodů
-kl_rw     = 22;  kl_rh = 12;             // rukojeť: šířka, výška před lícem
+kl_hlava  = 17;                          // zápustná hlava v líci krytu (zakryje štěrbinu v každé poloze)
+kl_hv     = 1;                           // válcová část hlavy, dál kužel 45° do dříku
 kl_boss   = 2*(kl_ll + kl_vule) + 5;     // průměr sloupku v krytu
 pr_mezera = 0.9;                         // mezera před pásky (pásky se prohnou ke krytu)
 pr_x      = 12;                          // polovina délky pásků
@@ -203,12 +204,14 @@ h_pk      = h_det + ar_hl;               // vrchol náběhu
 h_stop    = 2;                           // výška dorazů
 y_pruz    = D + pr_mezera + pruzina_tl;  // zadní plocha pásků
 y_pricka  = y_pruz + kl_mezera;          // přední (opěrná) plocha příčky
-kl_osa_l  = y_pricka + kl_lr;            // osa půlkulaté příčky
+y_lug     = y_pricka + kl_lr;            // rovná (zadní) strana příčky
 
 assert(sd >= 4 && sd <= 10, "Montážní deska musí mít 4-10 mm (vrut 5x80 musí jít aspoň 70 mm do hmoždinky 8x65).");
 assert(tb/2 - pr_dutina >= 1.5, "Zámek v montážní desce je moc blízko okraje.");
+assert(kl_hlava/2 <= tb/2 - 1.5, "Hlava klíče se nevejde do okraje krytu.");
+assert(2*(kl_ll + kl_vule) < kl_hlava, "Hlava klíče musí zakrýt štěrbinu pro příčku.");
 assert(abs(roztec_sroubu - roztec_klicu)/2 >= pr_x + hlava_sroubu/2 + 1, "Vruty do zdi a zámky jsou moc blízko u sebe.");
-assert(kl_osa_l + kl_lr <= D + sd - 0.3, "Příčka klíče se nevejde do montážní desky - zvětšete tl_desky.");
+assert(y_lug <= D + sd - 0.3, "Příčka klíče se nevejde do montážní desky - zvětšete tl_desky.");
 assert(h_pk - kl_mezera <= pr_mezera - 0.1, "Náběh je vyšší, než kolik se pásky mohou prohnout.");
 assert(tistena_tl >= 0.4, "Tištěná síťka musí mít aspoň 0,4 mm (dva průjezdy).");
 assert(y_rod - prumer_tycky/2 - y_bar0 >= 5, "Červík M3x5 by vyčníval z lišty a drhl o čelo rámu - posuňte y_rod dozadu.");
@@ -376,9 +379,13 @@ module ram_telo() {
             translate([xs - eps, D - st, tb - st - eps]) cube([st + 2*eps, st + 1, cav_h + 2*st + 2*eps]);
         // otvory pro otočné klíče: zápustné lůžko hlavy v líci a svislá štěrbina pro křídlo
         // průchod klíče: kruh pro otáčení dříku + svislá štěrbina pro příčku (pojistka proti vypadnutí)
-        for (q = klic_pos) translate([q[0], 0, q[1]]) rotate([-90, 0, 0]) translate([0, 0, -1]) linear_extrude(D + 2) {
-            circle(r = kl_r + kl_vule);
-            rotate(90) offset(r = kl_vule) klic_silueta();
+        for (q = klic_pos) translate([q[0], 0, q[1]]) rotate([-90, 0, 0]) {
+            translate([0, 0, -1]) cylinder(d = kl_hlava + 0.4, h = 1 + kl_hv);                   // zápustné lůžko hlavy
+            translate([0, 0, kl_hv - eps]) cylinder(d1 = kl_hlava, d2 = 2*kl_r, h = kl_hlava/2 - kl_r);   // kužel přesně podle hlavy (určuje osovou polohu klíče)
+            translate([0, 0, -1]) linear_extrude(D + 2) {
+                circle(r = kl_r + kl_vule);
+                rotate(90) offset(r = kl_vule) klic_silueta();                                // svislá štěrbina pro zasunutí
+            }
         }
         // průchod tyčky dnem rámu
         translate([x_barc, y_rod, -1]) rotate([0, 0, 90]) teardrop_z(prumer_tycky/2 + 0.5, st + 2);
@@ -530,29 +537,28 @@ module spojka() {
 
 // obrys klíče při pohledu podél osy (příčka vodorovně = odemčeno), rovná plocha dole
 module klic_silueta() {
+    circle(r = kl_r);
+    hull() for (sx = [-1, 1]) translate([sx*(kl_ll - kl_lr), 0]) circle(r = kl_lr);
+}
+
+// půlkulatá příčka podél X: rovná strana v z = 0 (ke zdi), oblá strana ke hlavě (-Z)
+module pricka() {
     intersection() {
-        union() {
-            circle(r = kl_r);
-            hull() for (sx = [-1, 1]) translate([sx*(kl_ll - kl_lr), 0]) circle(r = kl_lr);
-        }
-        translate([-50, -kl_flat]) square([100, 100]);
+        hull() for (sx = [-1, 1]) translate([sx*(kl_ll - kl_lr), 0, 0]) sphere(r = kl_lr);
+        translate([-50, -50, -50]) cube([100, 100, 50]);
     }
 }
 
-// příčka klíče (půlkulatá, zaoblené konce), osa v z = 0, podél X
-module pricka() { hull() for (sx = [-1, 1]) translate([sx*(kl_ll - kl_lr), 0, 0]) sphere(r = kl_lr); }
-
-// otočný klíč: osa +Z, líc krytu v z = 0, rovná plocha profilu D v y = -kl_flat; tiskne se na ní naplocho
+// otočný klíč: osa +Z, líc hlavy v z = 0 (zarovnaný s lícem krytu); zářez rovnoběžně s příčkou
 module klic() {
-    intersection() {
+    difference() {
         union() {
-            // rukojeť (motýlek) se zaoblenými rohy, dosedá na líc krytu
-            hull() for (xx = [-(kl_rw/2 - 3), kl_rw/2 - 3]) for (zz = [-(kl_rh - 3), -3])
-                translate([xx, -kl_flat, zz]) rotate([-90, 0, 0]) cylinder(r = 3, h = kl_flat + kl_r);
-            translate([0, 0, -1]) cylinder(r = kl_r, h = kl_osa_l + 1);                   // dřík
-            translate([0, 0, kl_osa_l]) pricka();                                         // půlkulatá příčka
+            cylinder(d = kl_hlava, h = kl_hv);                                                   // hlava
+            translate([0, 0, kl_hv - eps]) cylinder(d1 = kl_hlava, d2 = 2*kl_r, h = kl_hlava/2 - kl_r);   // kužel 45°
+            cylinder(r = kl_r, h = y_lug);                                                     // dřík
+            translate([0, 0, y_lug]) pricka();                                                 // půlkulatá příčka
         }
-        translate([-50, -kl_flat, -50]) cube([100, 100, 200]);                           // profil D
+        translate([-6, -0.8, -1]) cube([12, 1.6, 1 + 2]);                                     // zářez na minci / šroubovák
     }
 }
 
@@ -566,14 +572,14 @@ module nabeh_zamku() {
             union() for (s = [0, 180]) rotate(s) {
                 for (k = [0:n-1]) sektor(25 + k*35/n, 35/n + 0.3, h_pk*(k + 1)/n);   // šroubovitý náběh 25°-60°
                 sektor(60, 62, h_pk);                                                  // vrchol
-                sektor(122, 18, h_stop, 6);                                            // doraz za aretací
-                sektor(-40, 14, h_stop, 6);                                            // doraz proti otáčení špatným směrem
+                sektor(126, 16, h_stop, 7);                                            // doraz za aretací
+                sektor(-46, 13, h_stop, 7);                                            // doraz proti otáčení špatným směrem
             }
             // jen na páscích (ne ve štěrbině)
             for (sy = [-1, 1]) translate([-pr_x, sy > 0 ? kl_lr + kl_vule : -pr_z, 0]) cube([2*pr_x, pr_z - kl_lr - kl_vule, h_stop + 1]);
         }
         // půlkruhová aretace: lůžko přesně podle příčky v zamčené poloze
-        translate([0, 0, kl_osa_l - y_pruz + klic_predpeti]) rotate(90) pricka();
+        translate([0, 0, y_lug - y_pruz + klic_predpeti]) rotate(90) pricka();
     }
 }
 
@@ -638,7 +644,7 @@ module k_tisku(co) {
     if (co == "rukojet")     rukojet();
     if (co == "voditko")     voditko();
     if (co == "spojka")      spojka();
-    if (co == "klic")        translate([0, 0, kl_flat]) rotate([90, 0, 0]) klic();      // naplocho, na rovné ploše profilu D
+    if (co == "klic")        translate([0, 0, y_lug]) rotate([180, 0, 0]) klic();       // nastojato, rovnou stranou příčky dolů
 }
 
 if (dil == "sestava")   sestava(phi_open);
@@ -683,7 +689,7 @@ if (dil == "hrebinek_detail") intersection() {   // hřebínek vytažený z kryt
 module zamek_rez() {
     q = klic_pos[0];
     module rez() projection(cut = true) multmatrix([[0,1,0,0],[0,0,1,0],[1,0,0,-q[0]],[0,0,0,1]]) children();
-    module okno() intersection() { children(); translate([-kl_rh - 4, q[1] - 12]) square([D + sd + kl_rh + 16, 24]); }
+    module okno() intersection() { children(); translate([-4, q[1] - 12]) square([D + sd + 16, 24]); }
     color("tan") vrstva(0) okno() translate([D + sd, -10]) square([12, 40]);
     color("dimgray") vrstva(1) okno() rez() ram();
     color("darkgray") vrstva(1) okno() rez() zadni_deska();
