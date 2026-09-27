@@ -139,6 +139,11 @@ Příklad: mřížka má spodek ve 240 cm a rukojeť má být ve 170 cm, tedy ty
 
 ## Zámek krytu (jak funguje)
 
+![řez zámkem v zamčené poloze](obrazky/zamek_rez.png)
+
+*Řez osou zámku: vlevo rukojeť klíče na líci krytu, dřík skrz kryt, vpravo
+příčka za pružinami montážní desky, úplně vpravo zeď.*
+
 Zámek je udělaný podle průmyslových rychlozámků na čtvrt otáčky (Camloc,
 Dzus): otočný klíč v odnímatelném krytu, pojistka proti vypadnutí
 a **pružina** v pevné části. Přítlak dělá pružina, ne tuhé přesahy, takže

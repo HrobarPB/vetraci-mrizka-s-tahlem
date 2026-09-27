@@ -18,7 +18,7 @@
 
 /* [Zobrazení] */
 // Co vykreslit (díly "..." jsou už natočené pro tisk)
-dil = "sestava"; // [sestava, rez, schema, mechanismus, rozlozeno, ram, zadni_deska, lamela, lista, pojistka, rukojet, voditko, spojka, klic, detail_uchyceni, vymena_sitky]
+dil = "sestava"; // [sestava, rez, schema, mechanismus, rozlozeno, ram, zadni_deska, lamela, lista, pojistka, rukojet, voditko, spojka, klic, detail_uchyceni, zamek_rez, vymena_sitky]
 // Poloha žaluzie: 0 = zavřeno, 1 = otevřeno
 otevreni = 1; // [0:0.05:1]
 // Na které straně (při pohledu zepředu na mřížku na zdi) je táhlo
@@ -632,6 +632,18 @@ if (dil == "vymena_sitky") strana() {   // montážní deska zůstává na zdi, 
     }
 }
 if (dil == "detail_uchyceni") detail_uchyceni();
+if (dil == "zamek_rez") zamek_rez();
+
+// řez osou zámku v zamčené poloze (2D): kryt, montážní deska s pružinami, klíč, zeď
+module zamek_rez() {
+    q = klic_pos[0];
+    module rez() projection(cut = true) multmatrix([[0,1,0,0],[0,0,1,0],[1,0,0,-q[0]],[0,0,0,1]]) children();
+    module okno() intersection() { children(); translate([-kl_rh - 4, q[1] - 12]) square([D + sd + kl_rh + 16, 24]); }
+    color("tan") vrstva(0) okno() translate([D + sd, -10]) square([12, 40]);
+    color("dimgray") vrstva(1) okno() rez() ram();
+    color("darkgray") vrstva(1) okno() rez() zadni_deska();
+    color("darkorange") vrstva(2) okno() rez() klic_na_miste(q, true);
+}
 
 // řez rámem v místě šroubu (2D): zeď, hmoždinka DuoPower 8x65, vrut 5x80
 module detail_uchyceni() {

@@ -46,6 +46,15 @@ IMG=(--colorscheme=Tomorrow --autocenter --viewall)
 "${OSC[@]}" -o obrazky/vymena_sitky.png --imgsize=1100,1000 --camera=0,0,0,70,0,-35,0 "${IMG[@]}" -D 'dil="vymena_sitky"' "${EXTRA[@]}" mrizka.scad >/dev/null 2>&1
 "${OSC[@]}" -o obrazky/lamela.png --imgsize=1200,500 --camera=0,0,0,55,0,25,0 "${IMG[@]}" -D 'dil="lamela"' "${EXTRA[@]}" mrizka.scad >/dev/null 2>&1
 
+"${OSC[@]}" -o obrazky/zamek_rez.png --imgsize=1600,560 --camera=0,0,0,0,0,0,0 --projection=ortho --viewall --autocenter --colorscheme=Tomorrow -D 'dil="zamek_rez"' -D 'ovladani="vpravo"' "${EXTRA[@]}" mrizka.scad >/dev/null 2>&1
+python3 - <<'PY'
+from PIL import Image, ImageChops
+for p in ["obrazky/detail_uchyceni.png", "obrazky/zamek_rez.png"]:
+    im = Image.open(p).convert("RGB")
+    bg = Image.new("RGB", im.size, im.getpixel((0, 0)))
+    x0, y0, x1, y1 = ImageChops.difference(im, bg).getbbox()
+    im.crop((max(x0 - 25, 0), max(y0 - 25, 0), min(x1 + 25, im.width), min(y1 + 25, im.height))).save(p)
+PY
 python3 - <<'PY'
 from PIL import Image, ImageChops
 p = "obrazky/detail_uchyceni.png"
