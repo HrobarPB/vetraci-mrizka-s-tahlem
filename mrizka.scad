@@ -104,10 +104,10 @@ hlava_sroubu = 10;
 /* [Přední kryt k montážní desce – 4 otočné zámky na čtvrt otáčky] */
 // Vodorovná rozteč zámků (2 nahoře, 2 dole) [mm]
 roztec_klicu = 50;
-// Prohnutí pružin v zamčené poloze [mm] = stálý přítlak krytu (menší = lehčí chod)
-klic_predpeti = 0.3;
-// Tloušťka pružných pásků zámku v montážní desce [mm] (tlustší = tužší)
-pruzina_tl = 1.5;
+// Přesah příčky v aretaci [mm] = stálý přítlak krytu (menší = lehčí chod, větší = pevnější)
+klic_predpeti = 0.1;
+// Tloušťka plného dna zámku v montážní desce [mm] (leží celou plochou na podložce)
+dno_zamku = 2.4;
 
 /* [Pojistné hřebínky] */
 // Výška výstupků západky na prstech hřebínku [mm]; větší = drží pevněji, jde ztuha zatlačit
@@ -179,8 +179,9 @@ klic_pos  = [for (zz = [tb/2, H - tb/2]) for (xx = [W/2 - roztec_klicu/2, W/2 + 
 //    se v krytu, zakryje štěrbinu), kulatý dřík a půlkulatá příčka se zaoblenými konci
 //    (rovnou stranou ke zdi); tiskne se nastojato příčkou dolů, hlava má zkosení 45°,
 //    takže nic nepotřebuje podpěry; opěrné plochy jsou zaoblené a nevyrývají se do plastu,
-//  - v montážní desce jsou za štěrbinou dva pružné pásky se šroubovitým náběhem (sklon ~7°):
-//    příčka po něm najíždí a kryt postupně přitahuje, pásky drží stálý přítlak,
+//  - v montážní desce je za štěrbinou plné dno pevně spojené se zbytkem desky (tiskne se
+//    celou plochou na podložce) a na něm šroubovitý náběh: příčka po něm najíždí a kryt
+//    postupně přitahuje,
 //  - na konci náběhu je půlkruhové lůžko přesně podle příčky (aretace) a za ním doraz,
 //    doraz je i na druhé straně, takže se klíč točí jen správným směrem a jen o 90°,
 //  - štěrbina v krytu je svislá, v desce vodorovná: klíč se zasune zepředu rukojetí svisle,
@@ -192,17 +193,15 @@ kl_vule   = 0.3;                         // vůle průchodů
 kl_hlava  = 17;                          // zápustná hlava v líci krytu (zakryje štěrbinu v každé poloze)
 kl_hv     = 1;                           // válcová část hlavy, dál kužel 45° do dříku
 kl_boss   = 2*(kl_ll + kl_vule) + 5;     // průměr sloupku v krytu
-pr_mezera = 0.9;                         // mezera před pásky (pásky se prohnou ke krytu)
-pr_x      = 12;                          // polovina délky pásků
-pr_z      = kl_ll + 0.4;                 // vnější hrana pásků (od osy)
-pr_sterb  = 0.8;                         // štěrbina oddělující pásek
-pr_dutina = pr_z + pr_sterb;             // polovina výšky dutiny za pásky
-kl_mezera = 0.1;                         // vůle příčky nad pásky v odemčené poloze
-ar_hl     = 0.35;                        // o kolik se pásky prohnou navíc, než příčka vyskočí z aretace
+pr_x      = 12;                          // polovina šířky oblasti zámku
+pr_z      = kl_ll + 0.4;                 // vnější hrana náběhu (od osy)
+pr_dutina = kl_ll + kl_vule + 0.3;       // poloměr kulaté kapsy, ve které se točí příčka (okolo je deska plná)
+kl_mezera = 0.1;                         // vůle příčky nad dnem v odemčené poloze
+ar_hl     = 0.15;                        // výška hrany aretace nad přítlakem (cvaknutí)
 h_det     = kl_mezera + klic_predpeti;   // výška náběhu pod příčkou v aretaci
 h_pk      = h_det + ar_hl;               // vrchol náběhu
 h_stop    = 2;                           // výška dorazů
-y_pruz    = D + pr_mezera + pruzina_tl;  // zadní plocha pásků
+y_pruz    = D + dno_zamku;               // zadní plocha dna zámku
 y_pricka  = y_pruz + kl_mezera;          // přední (opěrná) plocha příčky
 y_lug     = y_pricka + kl_lr;            // rovná (zadní) strana příčky
 
@@ -212,7 +211,6 @@ assert(kl_hlava/2 <= tb/2 - 1.5, "Hlava klíče se nevejde do okraje krytu.");
 assert(2*(kl_ll + kl_vule) < kl_hlava, "Hlava klíče musí zakrýt štěrbinu pro příčku.");
 assert(abs(roztec_sroubu - roztec_klicu)/2 >= pr_x + hlava_sroubu/2 + 1, "Vruty do zdi a zámky jsou moc blízko u sebe.");
 assert(y_lug <= D + sd - 0.3, "Příčka klíče se nevejde do montážní desky - zvětšete tl_desky.");
-assert(h_pk - kl_mezera <= pr_mezera - 0.1, "Náběh je vyšší, než kolik se pásky mohou prohnout.");
 assert(tistena_tl >= 0.4, "Tištěná síťka musí mít aspoň 0,4 mm (dva průjezdy).");
 assert(y_rod - prumer_tycky/2 - y_bar0 >= 5, "Červík M3x5 by vyčníval z lišty a drhl o čelo rámu - posuňte y_rod dozadu.");
 assert(bok_protejsi >= 2*st + 1, "Protější boční okraj musí mít aspoň 2 stěny + 1 mm.");
@@ -460,9 +458,7 @@ module zadni_deska() {
         // (lokálně: x = vodorovně, y = svisle dolů, z = od čela desky ke zdi)
         for (q = klic_pos) translate([q[0], D, q[1]]) rotate([-90, 0, 0]) {
             yp = y_pruz - D;
-            translate([-pr_x, -pr_dutina, yp]) cube([2*pr_x, 2*pr_dutina, sd]);                    // dutina za pásky, otevřená ke zdi
-            translate([-pr_x, -pr_dutina, -1]) cube([2*pr_x, 2*pr_dutina, 1 + pr_mezera]);         // mezera před pásky
-            for (s = [-1, 1]) translate([-pr_x, s > 0 ? pr_z : -pr_dutina, -1]) cube([2*pr_x, pr_sterb, sd + 2]);   // štěrbiny podél pásků
+            translate([0, 0, yp]) cylinder(r = pr_dutina, h = sd, $fn = 96);                      // kulatá kapsa pro příčku; dno je plné od čela desky, okolo plná deska
             translate([0, 0, -1]) linear_extrude(sd + 2) { circle(r = kl_r + kl_vule); offset(r = kl_vule) klic_silueta(); }   // vodorovná štěrbina
         }
     }
@@ -476,7 +472,7 @@ module zadni_deska() {
             for (k = [1:nz-1]) translate([0, D, H/2 - otv_h/2 + k*otv_h/nz - rost_zebro/2]) cube([W, sd, rost_zebro]);
         }
     }
-    // šroubovité náběhy, aretace a dorazy zámků na páscích
+    // šroubovité náběhy, aretace a dorazy zámků na dně
     for (q = klic_pos) translate([q[0], D, q[1]]) rotate([-90, 0, 0]) translate([0, 0, y_pruz - D - eps]) nabeh_zamku();
     // tištěná síťka: první vrstvy montážní desky, deska se tiskne touto stranou dolů
     if (sitka == "tistena") translate([x_cc - otv_w/2 - 0.5, D, H/2 - otv_h/2 - 0.5]) {   // vlákna zasahují 0,5 mm do rámu
@@ -562,7 +558,7 @@ module klic() {
     }
 }
 
-// náběh na páscích (lokálně: z = 0 zadní plocha pásků, úhel 0 = štěrbina, 90 = zamčeno)
+// náběh na dně zámku (lokálně: z = 0 zadní plocha dna, úhel 0 = štěrbina, 90 = zamčeno)
 module nabeh_zamku() {
     r0 = kl_r + kl_vule + 0.1;
     n  = 12;
@@ -575,7 +571,7 @@ module nabeh_zamku() {
                 sektor(126, 16, h_stop, 7);                                            // doraz za aretací
                 sektor(-46, 13, h_stop, 7);                                            // doraz proti otáčení špatným směrem
             }
-            // jen na páscích (ne ve štěrbině)
+            // jen na dně (ne ve štěrbině)
             for (sy = [-1, 1]) translate([-pr_x, sy > 0 ? kl_lr + kl_vule : -pr_z, 0]) cube([2*pr_x, pr_z - kl_lr - kl_vule, h_stop + 1]);
         }
         // půlkruhová aretace: lůžko přesně podle příčky v zamčené poloze

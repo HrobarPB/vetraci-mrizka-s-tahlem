@@ -148,14 +148,14 @@ Příklad: mřížka má spodek ve 240 cm a rukojeť má být ve 170 cm, tedy ty
 ![řez zámkem v zamčené poloze](obrazky/zamek_rez.png)
 
 *Řez osou zámku: vlevo zápustná hlava klíče v líci krytu, kulatý dřík skrz kryt,
-vpravo půlkulatá příčka za pružnými pásky montážní desky, úplně vpravo zeď.*
+vpravo půlkulatá příčka za plným dnem zámku v montážní desce, úplně vpravo zeď.*
 
 ![otáčení klíče](obrazky/zamek_otaceni.png)
 
 *Nahoře zepředu: hlavy klíčů (Ø 17 mm) jsou zapuštěné a zarovnané s lícem
 krytu a otáčejí se v kuželovém lůžku; zářez svisle = zamčeno, vodorovně =
 odemčeno. Vpravo klíč v tiskové poloze. Dole pohled od zdi do montážní
-desky: příčka se otáčí v dutině montážní desky za krytem, v krytu je jen
+desky: příčka se otáčí v kulaté kapse montážní desky za krytem, v krytu je jen
 kulatý dřík. Svislou štěrbinu pro první zasunutí klíče hlava zakryje
 v každé poloze.*
 
@@ -171,21 +171,24 @@ by soustředily napětí a vyrývaly se do plastu.
   konce). Tiskne se nastojato na rovné straně příčky, hlavou nahoru, bez
   podpěr. Průřez dříku Ø 8 mm unese v tahu i napříč vrstvami řádově přes
   1000 N, zámek přitom nese jen desítky N.
-- **Náběh:** za vodorovnou štěrbinou v montážní desce jsou dva pružné pásky
-  (1,5 mm, tištěné naplocho) se šroubovitým náběhem se sklonem asi 7°.
-  Příčka po něm najíždí, pásky se prohnou až o 0,65 mm a kryt se přitáhne.
+- **Náběh:** za vodorovnou štěrbinou v montážní desce je plné dno 2,4 mm,
+  pevně spojené se zbytkem desky a tištěné celou plochou na podložce, a na
+  něm šroubovitý náběh. Příčka se točí v kulaté kapse, okolo je deska plná
+  až k okraji. Příčka po náběhu najíždí a kryt se přitáhne.
 - **Aretace:** v zamčené poloze příčka zapadne do půlkruhového lůžka
-  vytvarovaného přesně podle ní a zámek **cvakne**. Pásky zůstanou
-  prohnuté o 0,3 mm, to je stálý přítlak krytu. Aby se zámek povolil, musí
-  příčka vyjet zpátky přes vrchol náběhu, takže se sám neotevře.
+  vytvarovaného přesně podle ní a zámek **cvakne**. Přesah 0,1 mm drží
+  kryt přitažený. Aby se zámek povolil, musí příčka vyjet zpátky přes
+  hranu aretace (0,15 mm), takže se sám neotevře.
 - **Dorazy:** klíč se točí jen jedním směrem a jen o čtvrt otáčky.
 - **Pojistka proti vypadnutí:** štěrbina v krytu je svislá, v desce
   vodorovná.
 - **Ovládání:** mincí nebo plochým šroubovákem; zářez **svisle = zamčeno**,
   **vodorovně = odemčeno**.
 
-Když jde zámek moc ztuha, zmenšete `klic_predpeti` (např. 0,2) nebo
-`pruzina_tl`; když kryt drží volně, zvětšete `klic_predpeti` na 0,4.
+Zámek je tuhý (nic v něm nepruží), proto rozhoduje přesnost tisku. Nejdřív
+vytiskněte jeden klíč a kousek desky se zámkem. Když jde zámek moc ztuha,
+zmenšete `klic_predpeti` na 0,05 nebo 0; když kryt drží volně, zvětšete ho
+na 0,15–0,2.
 
 ## Montáž na zeď (Fischer DuoPower 8 × 65 S)
 
@@ -276,7 +279,7 @@ novější). V panelu *Customizer* lze měnit hlavně:
 - `vrut_od_okraje`: vzdálenost vrutu od hrany desky (menší = dál od otvoru)
 - `tl_desky`, `roztec_sroubu`, `hlava_sroubu`: montážní deska a vruty do
   zdi (výchozí hodnoty pro Fischer DuoPower 8 × 65 S s vrutem 5 × 80)
-- `roztec_klicu`, `klic_predpeti`, `pruzina_tl`: zámky předního krytu
+- `roztec_klicu`, `klic_predpeti`, `dno_zamku`: zámky předního krytu
   (viz [Zámek krytu](#zámek-krytu-jak-funguje))
 - `bok_protejsi`: šířka bočního okraje bez mechanismu (výchozí 20 mm = souměrný kryt)
 - `hrebinek_zapadka`: výška výstupků západky pojistných hřebínků
