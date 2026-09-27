@@ -17,10 +17,13 @@ echo "OK - žádné kolize v celém rozsahu pohybu"
 
 echo "== STL"
 mkdir -p stl
-for d in ram zadni_deska lamela lista pojistka rukojet voditko spojka krytka ramecek_sitky sitka_tistena; do
+for d in ram zadni_deska lamela lista pojistka rukojet voditko spojka krytka; do
   echo "  $d"
   openscad -o "stl/$d.stl" -D "dil=\"$d\"" "${EXTRA[@]}" mrizka.scad 2>&1 | grep -E "ERROR|WARNING" || true
 done
+
+echo "  zadni_deska_se_sitkou"
+openscad -o "stl/zadni_deska_se_sitkou.stl" -D 'dil="zadni_deska"' -D 'sitka="tistena"' "${EXTRA[@]}" mrizka.scad 2>&1 | grep -E "ERROR|WARNING" || true
 
 # převod na binární STL (menší soubory), pokud je k dispozici numpy-stl
 python3 - <<'PY' 2>/dev/null && echo "  STL převedena na binární" || echo "  (binární převod přeskočen: pip install numpy-stl)"

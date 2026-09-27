@@ -18,7 +18,7 @@
 
 /* [Zobrazení] */
 // Co vykreslit (díly "..." jsou už natočené pro tisk)
-dil = "sestava"; // [sestava, rez, schema, mechanismus, rozlozeno, ram, zadni_deska, lamela, lista, pojistka, rukojet, voditko, spojka, krytka, ramecek_sitky, sitka_tistena, detail_uchyceni]
+dil = "sestava"; // [sestava, rez, schema, mechanismus, rozlozeno, ram, zadni_deska, lamela, lista, pojistka, rukojet, voditko, spojka, krytka, detail_uchyceni]
 // Poloha žaluzie: 0 = zavřeno, 1 = otevřeno
 otevreni = 1; // [0:0.05:1]
 // Na které straně (při pohledu zepředu na mřížku na zdi) je táhlo
@@ -59,16 +59,15 @@ limec_hloubka = 30;
 limec_stena = 2;
 
 /* [Síťka proti hmyzu] */
-// Síťka v límci za pevným roštem: kupovaná (ustřihnout na míru), tištěná, nebo žádná
+// Síťka sevřená mezi rámem a zadní deskou: kupovaná (ustřihnout na míru),
+// tištěná (vytiskne se jako první vrstvy zadní desky), nebo žádná
 sitka = "kupovana"; // [kupovana, tistena, zadna]
 // Rozteč pevného roštu v zadní desce [mm]
 rost_roztec = 22;
 // Šířka žeber roštu [mm]
 rost_zebro = 1.6;
-// Lem pro okraj síťky kolem průduchu [mm]
-sitka_lem = 3;
-// Mezera pro síťku mezi roštem a rámečkem [mm] (kupovaná síťka 0,3-0,4 mm)
-sitka_mezera = 0.4;
+// Hloubka lůžka pro kupovanou síťku v zadní straně rámu [mm]; o trochu méně než tloušťka síťky, aby ji sevřela
+sitka_tl = 0.25;
 // Tištěná síťka: rozteč vláken [mm] (otvor = rozteč - šířka vlákna)
 tistena_roztec = 1.7;
 tistena_vlakno = 0.5;
@@ -307,6 +306,8 @@ module ram() {
                 rotate([0, 90, 0]) cylinder(r = r_osa + 0.2, h = st + 2);
                 translate([0, D, 0]) rotate([0, 90, 0]) cylinder(r = r_osa + 0.2, h = st + 2);
             }
+        // lůžko pro kupovanou síťku na zadní straně rámečku průduchu
+        if (luzko_tl > 0) translate([x_cav0 - st - 0.5, D - luzko_tl, tb - st - 0.5]) cube([sit_w + 1, 1, sit_h + 1]);
         // lůžka pojistných hřebínků
         for (xs = [x_cav0 - st, x_cav1])
             translate([xs - eps, D - st, tb - st - eps]) cube([st + 2*eps, st + 1, cav_h + 2*st + 2*eps]);
@@ -342,7 +343,7 @@ module ram() {
 module pojistka(xs = 0) {
     tt = st - 0.2;
     translate([xs + 0.1, 0, 0]) {
-        translate([0, D - st + 0.1, tb - st + 0.1]) cube([tt, st - 0.15, cav_h + 2*st - 0.2]);
+        translate([0, D - st + 0.1, tb - st + 0.1]) cube([tt, st - 0.15 - luzko_tl, cav_h + 2*st - 0.2]);
         for (i = [0:N-1]) translate([0, y_ax + r_osa + 0.3, zl(i) - (r_osa + 0.05)])
             cube([tt, D - st + 0.2 - (y_ax + r_osa + 0.3), 2*r_osa + 0.1]);
     }
@@ -356,13 +357,12 @@ lim_w  = limec_sirka > 0 ? limec_sirka : cav_w + 2*limec_stena;
 lim_h  = limec_vyska > 0 ? limec_vyska : cav_h + 2*limec_stena;
 lim_iw = min(cav_w, lim_w - 2*limec_stena);   // světlost límce
 lim_ih = min(cav_h, lim_h - 2*limec_stena);
-otv_w  = lim_iw - 2*sitka_lem;                // otvor v zadní desce (s roštem)
-otv_h  = lim_ih - 2*sitka_lem;
-ram_t  = 2.5;                                 // tloušťka přítlačného rámečku
-ram_b  = sitka_lem + 3;                       // šířka rámečku
-y_sit  = D + st;                              // rovina síťky (zadní líc desky)
-y_zap  = y_sit + sitka_mezera + ram_t;        // západky rámečku v límci
-assert(sitka == "zadna" || limec, "Síťka se drží v límci - zapněte limec.");
+otv_w  = lim_iw;                              // otvor v zadní desce (s roštem)
+otv_h  = lim_ih;
+// síťka leží na zadní straně rámu přes celý rámeček průduchu a sevře ji zadní deska
+sit_w  = cav_w + 2*st;                        // plocha rámečku průduchu
+sit_h  = cav_h + 2*st;
+luzko_tl = sitka == "kupovana" ? sitka_tl : 0;
 
 module zadni_deska() {
     difference() {
@@ -393,38 +393,13 @@ module zadni_deska() {
             for (k = [1:nz-1]) translate([0, D, H/2 - otv_h/2 + k*otv_h/nz - rost_zebro/2]) cube([W, st, rost_zebro]);
         }
     }
-    // západky pro přítlačný rámeček síťky (na vnitřních stěnách límce)
-    if (limec && sitka != "zadna") for (m = [0, 1]) {
-        // svislé stěny (2 západky na stranu), vodorovné stěny (1 západka)
-        for (zc = [H/2 - lim_ih/4, H/2 + lim_ih/4])
-            translate([m == 0 ? W/2 - lim_iw/2 : W/2 + lim_iw/2, y_zap, zc]) mirror([m, 0, 0]) zapadka(20);
-        translate([W/2, y_zap, m == 0 ? H/2 - lim_ih/2 : H/2 + lim_ih/2]) mirror([0, 0, m]) rotate([0, -90, 0]) zapadka(24);
+    // tištěná síťka: první dvě vrstvy zadní desky (vlákna křížem), deska se tiskne touto stranou dolů
+    if (sitka == "tistena") translate([W/2 - otv_w/2 - 0.5, D, H/2 - otv_h/2 - 0.5]) {   // vlákna zasahují 0,5 mm do rámu
+        yz_plane(0, 0.2) for (x = [0.5 : tistena_roztec : otv_w + 0.5]) translate([x, 0]) square([tistena_vlakno, otv_h + 1]);
+        yz_plane(0.2, 0.2) for (z = [0.5 : tistena_roztec : otv_h + 0.5]) translate([0, z]) square([otv_w + 1, tistena_vlakno]);
     }
 }
 
-// trojúhelníková západka na stěně: stěna v rovině x = 0, výstupek do +X, délka podél Z
-module zapadka(len) {
-    translate([0, 0, -len/2]) linear_extrude(len) polygon([[-eps, 0], [0.6, 0.6], [-eps, 1.2]]);
-}
-
-// přítlačný rámeček síťky (v souřadnicích sestavy)
-module ramecek_sitky(tistena = false) {
-    rw = lim_iw - 0.5;  rh = lim_ih - 0.5;
-    translate([W/2 - rw/2, y_sit + sitka_mezera, H/2 - rh/2]) difference() {
-        cube([rw, ram_t, rh]);
-        translate([ram_b, -1, ram_b]) cube([rw - 2*ram_b, ram_t + 2, rh - 2*ram_b]);
-        // zářezy pro šroubovák k vypáčení
-        for (z = [rh/2 - 4]) for (x = [-1, rw - 2]) translate([x, ram_t - 1, z]) cube([3, 2, 8]);
-    }
-    // tištěná síťka: dvě vrstvy vláken křížem na straně k roštu
-    if (tistena) translate([0, 0.1, 0]) {   // přesah 0,1 mm do rámečku
-        vw = rw - 2*ram_b + 2;  vh = rh - 2*ram_b + 2;
-        translate([W/2 - vw/2, y_sit, H/2 - vh/2]) {
-            yz_plane(0, 0.2) for (x = [0 : tistena_roztec : vw]) translate([x, 0]) square([tistena_vlakno, vh]);
-            yz_plane(0.2, 0.2) for (z = [0 : tistena_roztec : vh]) translate([0, z]) square([vw, tistena_vlakno]);
-        }
-    }
-}
 // 2D (x, z) vytažený podél +Y o h od y0
 module yz_plane(y0, h) translate([0, y0 + h, 0]) rotate([90, 0, 0]) linear_extrude(h) children();
 
@@ -514,9 +489,8 @@ module sestava(phi, explode = 0, rez = false, tyc = true) strana() {
     s = s_of(phi);
     color("white") orez(rez) ram();
     color("gainsboro") translate([0, 3*explode, 0]) orez(rez) zadni_deska();
-    if (sitka != "zadna") color(sitka == "tistena" ? "slategray" : "lightsteelblue") translate([0, 4.5*explode, 0]) orez(rez) ramecek_sitky(sitka == "tistena");
-    if (sitka == "kupovana") color("dimgray", 0.6) translate([0, 3.8*explode, 0]) orez(rez)
-        translate([W/2 - (lim_iw - 1)/2, y_sit + 0.05, H/2 - (lim_ih - 1)/2]) cube([lim_iw - 1, 0.3, lim_ih - 1]);
+    if (sitka == "kupovana") color("dimgray", 0.7) translate([0, 2.5*explode, 0]) orez(rez)
+        translate([x_cav0 - st, D - luzko_tl, tb - st]) cube([sit_w - 0.5, luzko_tl, sit_h - 0.5]);
     color("lightsteelblue") translate([0, 2*explode, 0]) orez(rez) for (xs = [x_cav0 - st, x_cav1]) pojistka(xs);
     color("lightgray") translate([0, explode, 0]) orez(rez) for (i = [0:N-1]) lamela_na_miste(i, phi);
     color("darkorange") translate([explode*0.4, 0, 0]) orez(rez) lista(s);
@@ -535,8 +509,6 @@ module k_tisku(co) {
     if (co == "voditko")     voditko();
     if (co == "spojka")      spojka();
     if (co == "krytka")      krytka();
-    if (co == "ramecek_sitky") translate([0, 0, -(y_sit + sitka_mezera)]) rotate([90, 0, 0]) ramecek_sitky(false);   // stranou k roštu dolů
-    if (co == "sitka_tistena") translate([0, 0, -(y_sit + 0.1)]) rotate([90, 0, 0]) ramecek_sitky(true);         // síťkou dolů
 }
 
 if (dil == "sestava")   sestava(phi_open);
@@ -619,5 +591,4 @@ module schema(phi) {
     color("black") vrstva(6) for (i = [0:N-1]) translate([y_ax, zl(i)]) circle(r = 0.8);
 }
 if (dil == "ram" || dil == "zadni_deska" || dil == "lamela" || dil == "lista" || dil == "pojistka"
-    || dil == "rukojet" || dil == "voditko" || dil == "spojka" || dil == "krytka"
-    || dil == "ramecek_sitky" || dil == "sitka_tistena") k_tisku(dil);
+    || dil == "rukojet" || dil == "voditko" || dil == "spojka" || dil == "krytka") k_tisku(dil);
