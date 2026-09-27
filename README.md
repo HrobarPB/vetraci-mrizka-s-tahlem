@@ -4,6 +4,8 @@ Plastová větrací mřížka **180 × 250 mm** s nastavitelnou žaluzií, podob
 typu *Dalap GP 180×250 s mechanicky ovládanou žaluzií*. Rozdíl je v ovládání:
 místo páčky na mřížce **visí ze spodku rámu tyčka s rukojetí**, takže
 mřížku ve výšce ovládne i menší člověk ze země.
+Tyčka je při pohledu zepředu **vlevo**. Na pravou stranu ji přepne parametr
+`ovladani = "vpravo"`.
 
 - **zatlačit tyčku nahoru → otevřeno**
 - **stáhnout tyčku dolů → zavřeno**
@@ -20,7 +22,7 @@ Model je parametrický (OpenSCAD) a všechny díly se tisknou **bez podpěr**.
 ![mechanismus zezadu](obrazky/mechanismus.png)
 
 1. Deset vodorovných lamel se otáčí na čepech v rámu.
-2. Na pravém konci má každá lamela **vidlicové rameno**. Rameno je schované
+2. Na konci u táhla má každá lamela **vidlicové rameno**. Rameno je schované
    v boční komoře rámu, zepředu ho není vidět.
 3. V komoře jezdí svislá **ovládací lišta** (oranžová). Její čepy zapadají
    do vidlic všech lamel najednou.
@@ -49,7 +51,7 @@ Rozložená sestava:
 | límec do otvoru ve zdi | 144 × 210 mm, hloubka 30 mm |
 | lamely | 10 ks, rozteč 20 mm, šířka 25 mm |
 | zdvih táhla | 13 mm |
-| osa tyčky | 25 mm od zdi, 8 mm od pravého okraje |
+| osa tyčky | vlevo, 8 mm od levého okraje a 25 mm od zdi |
 | šrouby do zdi | 4 ks, rozteč 100 mm vodorovně, 228 mm svisle |
 
 > **Změřte si otvor ve zdi.** Rozměry originálního límce Dalap jsem neměl
@@ -101,7 +103,7 @@ Příklad: mřížka má spodek ve 240 cm a rukojeť má být ve 170 cm, tedy ty
 1. **Očistěte díly.** Lamela se musí v drážkách „U“ rámu otáčet volně. Když
    drhne, přejeďte čepy smirkem. Otvor v liště převrtejte vrtákem Ø 6 mm.
 2. Rám položte **lícem dolů** na stůl. Komora mechanismu je teď při pohledu
-   zezadu **vlevo**.
+   zezadu **vpravo**.
 3. **Vložte lištu** do komory. Čepy musí směřovat k lamelám, výstupek
    západky ke stolu (k líci). Posuňte ji do **střední polohy**, kde cvakne
    prostřední drážka.
@@ -124,7 +126,7 @@ Příklad: mřížka má spodek ve 240 cm a rukojeť má být ve 170 cm, tedy ty
 3. Mřížku přišroubujte vruty 4 × 50.
 4. **Táhlo:** stáhněte lištu úplně dolů (zavřeno). Zespodu zasuňte tyčku
    otvorem ve dně až na doraz do lišty (18 mm). Klíčem 1,5 mm utáhněte
-   stavěcí šroub **malým otvorem v líci rámu vpravo dole**.
+   stavěcí šroub **malým otvorem v líci rámu vlevo dole**.
 5. Na spodní konec tyčky nasaďte **rukojeť**. Zajistěte ji druhým červíkem
    nebo lepidlem.
 6. Pokud se tyčka houpe, přišroubujte doprostřed její délky **vodítko**.
@@ -135,6 +137,7 @@ Příklad: mřížka má spodek ve 240 cm a rukojeť má být ve 170 cm, tedy ty
 Otevřete `mrizka.scad` v [OpenSCAD](https://openscad.org) (2021.01 nebo
 novější). V panelu *Customizer* lze měnit hlavně:
 
+- `ovladani`: strana táhla při pohledu zepředu (`vlevo` nebo `vpravo`)
 - `sirka`, `vyska`: vnější rozměr rámu
 - `pocet_lamel`, `roztec`, `sirka_lamely`: počet a velikost lamel.
   Světlý průduch a okraje se dopočítají samy.

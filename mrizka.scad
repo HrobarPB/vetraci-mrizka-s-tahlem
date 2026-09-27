@@ -2,7 +2,7 @@
 //  Větrací mřížka s žaluzií ovládanou svislým táhlem zespodu
 //  (parametrický model pro 3D tisk, OpenSCAD 2021.01+)
 //
-//  Princip: vodorovné lamely se otáčejí na čepech. Na pravém konci má
+//  Princip: vodorovné lamely se otáčejí na čepech. Na konci u táhla má
 //  každá lamela vidlicové rameno. Do vidlic zapadají čepy svislé
 //  ovládací lišty, která jezdí jen nahoru/dolů ve skryté boční komoře.
 //  Do spodku lišty se zasune tyčka (táhlo) Ø6 mm, která vede dolů
@@ -12,6 +12,8 @@
 //  Souřadnice:  X = šířka (zleva doprava při pohledu zepředu)
 //               Y = hloubka (0 = přední líc, kladně směrem do zdi)
 //               Z = výška
+//  Geometrie je popsaná pro mechanismus vpravo; varianta "vlevo"
+//  (parametr ovladani) vznikne zrcadlením celé sestavy.
 // =====================================================================
 
 /* [Zobrazení] */
@@ -19,6 +21,8 @@
 dil = "sestava"; // [sestava, rez, schema, mechanismus, rozlozeno, ram, zadni_deska, lamela, lista, pojistka, rukojet, voditko, spojka]
 // Poloha žaluzie: 0 = zavřeno, 1 = otevřeno
 otevreni = 1; // [0:0.05:1]
+// Na které straně (při pohledu zepředu na mřížku na zdi) je táhlo
+ovladani = "vlevo"; // [vlevo, vpravo]
 // Délka tyčky táhla pro náhled sestavy [mm]
 nahled_delka_tycky = 250;
 
@@ -31,7 +35,7 @@ vyska = 250;
 hloubka = 32;
 // Tloušťka stěn a čelní plochy [mm]
 stena = 3;
-// Šířka bočního okraje (vpravo je v něm skrytá komora mechanismu) [mm]
+// Šířka bočního okraje (na straně táhla je v něm skrytá komora mechanismu) [mm]
 bok = 20;
 
 /* [Lamely] */
@@ -388,12 +392,23 @@ module tycka(s) {
     color("dimgray") translate([x_barc, y_rod, bar_bot0 + s + 2 - nahled_delka_tycky - 20]) rotate([180, 0, 0]) translate([0, 0, -50]) rukojet();
 }
 
+// Model je navržený s mechanismem vpravo; pro levou variantu se zrcadlí.
+vlevo = (ovladani == "vlevo");
+module strana() {
+    if (vlevo) translate([W, 0, 0]) mirror([1, 0, 0]) children();
+    else children();
+}
+module zrcadlo_tisk() {
+    if (vlevo) mirror([1, 0, 0]) children();
+    else children();
+}
+
 module orez(k) {
     if (k) intersection() { children(); translate([-1, -1, -1]) cube([x_arm1 + 1 + eps, D + st + limec_hloubka + 2, H + 2]); }
     else children();
 }
 
-module sestava(phi, explode = 0, rez = false, tyc = true) {
+module sestava(phi, explode = 0, rez = false, tyc = true) strana() {
     s = s_of(phi);
     color("white") orez(rez) ram();
     color("gainsboro") translate([0, 3*explode, 0]) orez(rez) zadni_deska();
@@ -405,10 +420,10 @@ module sestava(phi, explode = 0, rez = false, tyc = true) {
 
 // natočení dílů pro tisk
 module k_tisku(co) {
-    if (co == "ram")         translate([0, H, 0]) rotate([90, 0, 0]) ram();              // lícem dolů
+    if (co == "ram")         zrcadlo_tisk() translate([0, H, 0]) rotate([90, 0, 0]) ram();              // lícem dolů
     if (co == "zadni_deska") translate([0, H, -D]) rotate([90, 0, 0]) zadni_deska();     // límcem nahoru
-    if (co == "lamela")      translate([0, 0, r_osa]) lamela_local();                    // rovnou stranou dolů
-    if (co == "lista")       translate([0, 0, x_bar1]) rotate([0, 90, 0]) lista(0);      // čepy nahoru
+    if (co == "lamela")      zrcadlo_tisk() translate([0, 0, r_osa]) lamela_local();                    // rovnou stranou dolů
+    if (co == "lista")       zrcadlo_tisk() translate([0, 0, x_bar1]) rotate([0, 90, 0]) lista(0);      // čepy nahoru
     if (co == "pojistka")    rotate([0, 90, 0]) translate([-(st - 0.2) - 0.1, 0, 0]) pojistka(0);
     if (co == "rukojet")     rukojet();
     if (co == "voditko")     voditko();
@@ -418,7 +433,7 @@ module k_tisku(co) {
 if (dil == "sestava")   sestava(phi_open);
 if (dil == "rozlozeno") sestava(phi_open, 40);
 if (dil == "rez")       sestava(phi_open, rez = true, tyc = false);
-if (dil == "mechanismus") {   // bez zadní desky, pohled zezadu
+if (dil == "mechanismus") strana() {   // bez zadní desky, pohled zezadu
     s = s_of(phi_open);
     color("white") ram();
     color("lightgray") for (i = [0:N-1]) lamela_na_miste(i, phi_open);

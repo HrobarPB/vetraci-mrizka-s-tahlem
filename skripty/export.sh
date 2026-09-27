@@ -28,7 +28,7 @@ IMG=(--colorscheme=Tomorrow --autocenter --viewall)
 "${OSC[@]}" -o obrazky/sestava_otevreno.png --imgsize=1000,1200 --camera=0,0,0,78,0,-28,0 "${IMG[@]}" -D 'dil="sestava"' -D otevreni=1 "${EXTRA[@]}" mrizka.scad >/dev/null 2>&1
 "${OSC[@]}" -o obrazky/sestava_zavreno.png  --imgsize=1000,1200 --camera=0,0,0,78,0,-28,0 "${IMG[@]}" -D 'dil="sestava"' -D otevreni=0 "${EXTRA[@]}" mrizka.scad >/dev/null 2>&1
 "${OSC[@]}" -o obrazky/mechanismus.png --imgsize=1200,1000 --camera=0,0,0,60,0,150,0 "${IMG[@]}" -D 'dil="mechanismus"' -D otevreni=0.5 -D 'nahled_delka_tycky=0' "${EXTRA[@]}" mrizka.scad >/dev/null 2>&1
-"${OSC[@]}" -o obrazky/rozlozeno.png --imgsize=1200,1000 --camera=0,0,0,65,0,145,0 "${IMG[@]}" -D 'dil="rozlozeno"' -D otevreni=0.5 "${EXTRA[@]}" mrizka.scad >/dev/null 2>&1
+"${OSC[@]}" -o obrazky/rozlozeno.png --imgsize=1200,1000 --camera=0,0,0,65,0,215,0 "${IMG[@]}" -D 'dil="rozlozeno"' -D otevreni=0.5 "${EXTRA[@]}" mrizka.scad >/dev/null 2>&1
 "${OSC[@]}" -o obrazky/lamela.png --imgsize=1200,500 --camera=0,0,0,55,0,25,0 "${IMG[@]}" -D 'dil="lamela"' "${EXTRA[@]}" mrizka.scad >/dev/null 2>&1
 
 echo "== Animace mechanismu"
