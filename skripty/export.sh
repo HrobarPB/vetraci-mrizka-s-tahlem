@@ -17,7 +17,7 @@ echo "OK - žádné kolize v celém rozsahu pohybu"
 
 echo "== STL"
 mkdir -p stl
-for d in ram zadni_deska lamela lista pojistka rukojet voditko spojka krytka; do
+for d in ram zadni_deska lamela lista pojistka rukojet voditko spojka klic kridlo_klice; do
   echo "  $d"
   openscad -o "stl/$d.stl" -D "dil=\"$d\"" "${EXTRA[@]}" mrizka.scad 2>&1 | grep -E "ERROR|WARNING" || true
 done

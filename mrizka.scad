@@ -18,7 +18,7 @@
 
 /* [Zobrazení] */
 // Co vykreslit (díly "..." jsou už natočené pro tisk)
-dil = "sestava"; // [sestava, rez, schema, mechanismus, rozlozeno, ram, zadni_deska, lamela, lista, pojistka, rukojet, voditko, spojka, krytka, detail_uchyceni, vymena_sitky]
+dil = "sestava"; // [sestava, rez, schema, mechanismus, rozlozeno, ram, zadni_deska, lamela, lista, pojistka, rukojet, voditko, spojka, klic, kridlo_klice, detail_uchyceni, vymena_sitky]
 // Poloha žaluzie: 0 = zavřeno, 1 = otevřeno
 otevreni = 1; // [0:0.05:1]
 // Na které straně (při pohledu zepředu na mřížku na zdi) je táhlo
@@ -71,6 +71,8 @@ sitka_tl = 0.25;
 // Tištěná síťka: rozteč vláken [mm] (otvor = rozteč - šířka vlákna)
 tistena_roztec = 1.7;
 tistena_vlakno = 0.5;
+// Tloušťka tištěné síťky [mm]; celá leží na podložce, min. 0,4 = dva průjezdy po 0,2 mm
+tistena_tl = 0.4;
 
 /* [Táhlo] */
 // Průměr tyčky táhla (hliník / ocel / bukový kolík) [mm]
@@ -89,13 +91,11 @@ prumer_sroubu = 5.5;
 // Průměr zápustné hlavy vrutu [mm]
 hlava_sroubu = 10;
 
-/* [Přední kryt k montážní desce – 4x M3 x 10 zepředu pod krytkami] */
-// Vodorovná rozteč šroubů M3 (2 nahoře, 2 dole) [mm]
-roztec_m3 = 50;
-// Hlava šroubu M3x10: válcová (ISO 4762 / DIN 912) nebo zápustná (ISO 10642 / DIN 7991)
-hlava_m3 = "valcova"; // [valcova, zapustna]
-// Průměr zahloubení nad šroubem M3 (hlava + klíč), zakryje ho krytka [mm]
-zahloubeni = 12;
+/* [Přední kryt k montážní desce – 4 tištěné otočné klíče] */
+// Vodorovná rozteč klíčů (2 nahoře, 2 dole) [mm]
+roztec_klicu = 50;
+// Předpětí klíče [mm]: o kolik křídlo přitáhne kryt k desce (0 = bez předpětí, volnější)
+klic_predpeti = 0.15;
 
 /* [Hidden] */
 $fn = 48;
@@ -156,14 +156,25 @@ function s_pos(k) = pocet_poloh < 2 ? 0 : -s_max + k*zdvih/(pocet_poloh-1);
 
 // --- šrouby --------------------------------------------------------------
 screw_pos = [for (zz = [tb/2, H - tb/2]) for (xx = [W/2 - roztec_sroubu/2, W/2 + roztec_sroubu/2]) [xx, zz]];
-m3_pos    = [for (zz = [tb/2, H - tb/2]) for (xx = [W/2 - roztec_m3/2, W/2 + roztec_m3/2]) [xx, zz]];
-// M3x10 jde zepředu skrz rám (4 mm) do montážní desky (závit v celé tloušťce desky)
-y_m3_hlava = D - 4;                      // dosedací plocha hlavy v rámu
-krytky_pos = m3_pos;
+klic_pos  = [for (zz = [tb/2, H - tb/2]) for (xx = [W/2 - roztec_klicu/2, W/2 + roztec_klicu/2]) [xx, zz]];
+// otočný klíč: zápustná hlava v líci krytu, dřík skrz kryt, na konci křídlo, které se
+// v montážní desce otočí o 90° za okraj štěrbiny (odemčeno = křídlo vodorovně)
+kl_d      = 6;                           // dřík
+kl_hlava  = 11.4;                        // hlava
+kl_hl_v   = 1.2;                         // válcová část hlavy
+kl_hl_k   = (kl_hlava - kl_d)/2;         // kuželová část hlavy (45°)
+kl_rt = 11;  kl_rw = 6;  kl_rs = 2.8;    // křídlo: délka, šířka, tloušťka
+kl_pin    = 3;                           // čtyřhran pro nasazení křídla
+ret_lip   = 2.5;                         // okraj štěrbiny v desce, za který se křídlo opře
+kl_dutina = sqrt(kl_rt*kl_rt + kl_rw*kl_rw) + 1;
+y_kridlo  = D + ret_lip - klic_predpeti; // přední plocha křídla
 
 assert(sd >= 4 && sd <= 10, "Montážní deska musí mít 4-10 mm (vrut 5x80 musí jít aspoň 70 mm do hmoždinky 8x65).");
-assert(zahloubeni + 4 <= tb*2 - 2*st, "Zahloubení šroubů M3 se nevejde do horního/dolního okraje.");
-assert(abs(roztec_sroubu - roztec_m3)/2 >= (zahloubeni + 4)/2 + hlava_sroubu/2 + 1, "Vruty do zdi a šrouby M3 jsou moc blízko u sebe.");
+assert(kl_hlava + 4.6 <= tb*2 - 2*st, "Hlava klíče se nevejde do horního/dolního okraje.");
+assert(tb/2 - kl_dutina/2 >= 2, "Dutina klíče v montážní desce je moc blízko okraje.");
+assert(abs(roztec_sroubu - roztec_klicu)/2 >= kl_dutina/2 + hlava_sroubu/2 + 1, "Vruty do zdi a klíče jsou moc blízko u sebe.");
+assert(y_kridlo + kl_rs <= D + sd - 0.3, "Křídlo klíče se nevejde do montážní desky - zvětšete tl_desky.");
+assert(tistena_tl >= 0.4, "Tištěná síťka musí mít aspoň 0,4 mm (dva průjezdy).");
 assert(y_rod - prumer_tycky/2 - y_bar0 >= 5, "Červík M3x5 by vyčníval z lišty a drhl o čelo rámu - posuňte y_rod dozadu.");
 assert(tb >= 14, str("Okraj nahoře/dole vychází jen ", tb, " mm - zvětšete výšku nebo uberte lamely."));
 assert(p*cos(phic) > t + 0.2, "Lamely by do sebe v zavřené poloze narážely - zmenšete uhel_zavreni.");
@@ -291,7 +302,7 @@ module ram() {
             translate([x_cav1, 0, 0]) cube([st, D, H]);
             // pouzdra šroubů do zdi
             // pouzdra montážních šroubků zadní desky
-            for (q = m3_pos) translate([q[0], 0, q[1]]) rotate([-90, 0, 0]) cylinder(d = zahloubeni + 4, h = D);
+            for (q = klic_pos) translate([q[0], 0, q[1]]) rotate([-90, 0, 0]) cylinder(d = kl_hlava + 4.6, h = D);
             // horní doraz lišty (poloha "otevřeno")
             translate([x_bar0 - 0.3, 0, bar_top0 + s_max + 0.1]) cube([x_kom1 - x_bar0 + 0.3 + eps, D, H - st - (bar_top0 + s_max + 0.1) + eps]);
         }
@@ -313,11 +324,11 @@ module ram() {
         for (xs = [x_cav0 - st, x_cav1])
             translate([xs - eps, D - st, tb - st - eps]) cube([st + 2*eps, st + 1, cav_h + 2*st + 2*eps]);
         // otvory pro šrouby do zdi (zápustné)
-        // šrouby M3 zepředu do montážní desky (zahloubení zakryje krytka)
-        for (q = m3_pos) translate([q[0], 0, q[1]]) rotate([-90, 0, 0]) {
-            translate([0, 0, -1]) cylinder(d = zahloubeni, h = y_m3_hlava + 1);
-            if (hlava_m3 == "zapustna") translate([0, 0, y_m3_hlava - eps]) cylinder(d1 = 6.4, d2 = 3.4, h = 1.5 + eps);
-            translate([0, 0, y_m3_hlava - eps]) cylinder(d = 3.4, h = D);
+        // otvory pro otočné klíče: zápustné lůžko hlavy v líci a průchod dříku
+        for (q = klic_pos) translate([q[0], 0, q[1]]) rotate([-90, 0, 0]) {
+            translate([0, 0, -1]) cylinder(d = kl_hlava + 0.4, h = 1 + kl_hl_v);
+            translate([0, 0, kl_hl_v - eps]) cylinder(d1 = kl_hlava + 0.4, d2 = kl_d + 0.4, h = kl_hl_k);
+            translate([0, 0, -1]) cylinder(d = kl_d + 0.4, h = D + 2);
         }
         // průchod tyčky dnem rámu
         translate([x_barc, y_rod, -1]) rotate([0, 0, 90]) teardrop_z(prumer_tycky/2 + 0.5, st + 2);
@@ -375,8 +386,19 @@ module zadni_deska() {
             translate([0, 0, -1]) cylinder(d = prumer_sroubu, h = sd + 2);
             translate([0, 0, -eps]) cylinder(d1 = hlava_sroubu + 0.6, d2 = prumer_sroubu, h = (hlava_sroubu + 0.6 - prumer_sroubu)/2);
         }
-        // závity M3 pro přední kryt
-        for (q = m3_pos) translate([q[0], D - 1, q[1]]) rotate([-90, 0, 0]) cylinder(d = 2.5, h = sd + 2);
+        // zámky klíčů: štěrbina pro křídlo (vodorovně) a za ní dutina otevřená ke zdi
+        for (q = klic_pos) translate([q[0], D, q[1]]) rotate([-90, 0, 0]) {
+            translate([0, 0, -1]) linear_extrude(sd + 2) offset(r = 0.3) square([kl_rt, kl_rw], center = true);
+            translate([0, 0, ret_lip]) cylinder(d = kl_dutina, h = sd);
+            // náběh: štěrbina se k dutině rozšiřuje, křídlo při otáčení najede na okraj
+            intersection() {
+                hull() {
+                    translate([0, 0, ret_lip - 0.6]) linear_extrude(eps) offset(r = 0.3) square([kl_rt, kl_rw], center = true);
+                    translate([0, 0, ret_lip]) linear_extrude(eps) offset(r = 0.9) square([kl_rt, kl_rw], center = true);
+                }
+                cylinder(d = kl_dutina, h = sd);      // náběh nesmí vyčnívat mimo dutinu (převis)
+            }
+        }
     }
     // pevný rošt v otvoru (podpírá síťku, zastaví ptáky)
     nx = max(1, round(otv_w/rost_roztec));
@@ -388,10 +410,13 @@ module zadni_deska() {
             for (k = [1:nz-1]) translate([0, D, H/2 - otv_h/2 + k*otv_h/nz - rost_zebro/2]) cube([W, sd, rost_zebro]);
         }
     }
-    // tištěná síťka: první dvě vrstvy zadní desky (vlákna křížem), deska se tiskne touto stranou dolů
+    // tištěná síťka: první vrstvy montážní desky, deska se tiskne touto stranou dolů
     if (sitka == "tistena") translate([W/2 - otv_w/2 - 0.5, D, H/2 - otv_h/2 - 0.5]) {   // vlákna zasahují 0,5 mm do rámu
-        yz_plane(0, 0.2) for (x = [0.5 : tistena_roztec : otv_w + 0.5]) translate([x, 0]) square([tistena_vlakno, otv_h + 1]);
-        yz_plane(0.2, 0.2) for (z = [0.5 : tistena_roztec : otv_h + 0.5]) translate([0, z]) square([otv_w + 1, tistena_vlakno]);
+        // plochá mřížka: vlákna v obou směrech leží celou plochou na podložce, nic nevisí ve vzduchu
+        yz_plane(0, tistena_tl) union() {
+            for (x = [0.5 : tistena_roztec : otv_w + 0.5]) translate([x, 0]) square([tistena_vlakno, otv_h + 1]);
+            for (z = [0.5 : tistena_roztec : otv_h + 0.5]) translate([0, z]) square([otv_w + 1, tistena_vlakno]);
+        }
     }
 }
 
@@ -442,17 +467,35 @@ module spojka() {
     }
 }
 
-// krytka zahloubení šroubu (tiskne se lícem dolů)
-module krytka() {
-    h = 5;
+// otočný klíč (osa +Z, líc hlavy v z = 0); zářez na minci je rovnoběžný s křídlem
+module klic() {
     difference() {
         union() {
-            cylinder(d = zahloubeni + 0.8, h = 0.8);                    // lem na líci
-            cylinder(d = zahloubeni - 0.25, h = h);
-            for (a = [0:120:359]) rotate(a) translate([zahloubeni/2 - 0.2, 0, 1.5]) cylinder(d = 0.9, h = h - 2, $fn = 12);   // přítlačná žebra
+            cylinder(d = kl_hlava, h = kl_hl_v);
+            translate([0, 0, kl_hl_v - eps]) cylinder(d1 = kl_hlava, d2 = kl_d, h = kl_hl_k);
+            cylinder(d = kl_d, h = y_kridlo);
+            translate([-kl_pin/2, -kl_pin/2, y_kridlo - eps]) cube([kl_pin, kl_pin, kl_rs - 0.4]);   // čtyřhran pro křídlo
         }
-        translate([0, 0, 1.2]) cylinder(d = zahloubeni - 2.5, h = h);   // odlehčení, pružnost
-        translate([zahloubeni/2 + 0.4, 0, -1]) cylinder(d = 2, h = 3);  // zářez pro vypáčení
+        translate([-4, -0.8, -1]) cube([8, 1.6, 1 + 1.4]);                                            // zářez na minci
+    }
+}
+
+// křídlo klíče (přední, opěrná plocha v z = 0), nasadí se na čtyřhran a přilepí
+module kridlo() {
+    difference() {
+        hull() {
+            translate([-kl_rt/2, -kl_rw/2 + 0.8, 0]) cube([kl_rt, kl_rw - 1.6, eps]);          // sražení 0,8 mm = náběh
+            translate([-kl_rt/2, -kl_rw/2, 0.8]) cube([kl_rt, kl_rw, kl_rs - 0.8]);
+        }
+        translate([-(kl_pin + 0.15)/2, -(kl_pin + 0.15)/2, -1]) cube([kl_pin + 0.15, kl_pin + 0.15, kl_rs + 2]);
+    }
+}
+
+// klíč i s křídlem na místě (zamčeno = křídlo svisle)
+module klic_na_miste(q, zamceno = true) {
+    translate([q[0], 0, q[1]]) rotate([-90, 0, 0]) rotate([0, 0, zamceno ? 90 : 0]) {
+        klic();
+        translate([0, 0, y_kridlo]) kridlo();
     }
 }
 
@@ -489,7 +532,7 @@ module sestava(phi, explode = 0, rez = false, tyc = true) strana() {
     color("lightsteelblue") translate([0, 2*explode, 0]) orez(rez) for (xs = [x_cav0 - st, x_cav1]) pojistka(xs);
     color("lightgray") translate([0, explode, 0]) orez(rez) for (i = [0:N-1]) lamela_na_miste(i, phi);
     color("darkorange") translate([explode*0.4, 0, 0]) orez(rez) lista(s);
-    color("white") for (q = krytky_pos) translate([q[0], -0.8 - 0.01 - explode*1.5, q[1]]) rotate([-90, 0, 0]) krytka();
+    color("goldenrod") for (q = klic_pos) translate([0, -explode*1.5, 0]) klic_na_miste(q, explode == 0);
     if (tyc) tycka(s);
 }
 
@@ -503,7 +546,8 @@ module k_tisku(co) {
     if (co == "rukojet")     rukojet();
     if (co == "voditko")     voditko();
     if (co == "spojka")      spojka();
-    if (co == "krytka")      krytka();
+    if (co == "klic")        klic();                                                     // hlavou dolů
+    if (co == "kridlo_klice") translate([0, 0, kl_rs]) rotate([180, 0, 0]) kridlo();    // sražením nahoru
 }
 
 if (dil == "sestava")   sestava(phi_open);
@@ -530,6 +574,7 @@ if (dil == "vymena_sitky") {   // montážní deska zůstává na zdi, přední 
         color("lightgray") for (i = [0:N-1]) lamela_na_miste(i, phi_open);
         color("darkorange") lista(s);
         color("lightsteelblue") for (xs = [x_cav0 - st, x_cav1]) pojistka(xs);
+        color("goldenrod") for (q = klic_pos) klic_na_miste(q, false);
     }
 }
 if (dil == "detail_uchyceni") detail_uchyceni();
@@ -600,4 +645,4 @@ module schema(phi) {
     color("black") vrstva(6) for (i = [0:N-1]) translate([y_ax, zl(i)]) circle(r = 0.8);
 }
 if (dil == "ram" || dil == "zadni_deska" || dil == "lamela" || dil == "lista" || dil == "pojistka"
-    || dil == "rukojet" || dil == "voditko" || dil == "spojka" || dil == "krytka") k_tisku(dil);
+    || dil == "rukojet" || dil == "voditko" || dil == "spojka" || dil == "klic" || dil == "kridlo_klice") k_tisku(dil);

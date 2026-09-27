@@ -12,7 +12,7 @@ Tyčka je při pohledu zepředu **vlevo**. Na pravou stranu ji přepne parametr
 - pružná západka drží tři polohy: **zavřeno / napůl / otevřeno**
 - vzadu je **pevný rošt** a za ním **síťka proti hmyzu**, kupovaná nebo tištěná
 - mřížka má dvě části: **montážní deska** zůstává na zdi, **přední kryt**
-  s lamelami se sundá po povolení 4 šroubků, třeba kvůli výměně síťky
+  s lamelami se sundá po pootočení 4 tištěných klíčů, třeba kvůli výměně síťky
 
 Model je parametrický (OpenSCAD) a všechny díly se tisknou **bez podpěr**.
 
@@ -58,7 +58,7 @@ Rozložená sestava:
 | zdvih táhla | 13 mm |
 | osa tyčky | vlevo, 8 mm od levého okraje a 26 mm od zdi |
 | vruty do zdi | 4× Fischer DuoPower 8 × 65 S jen skrz montážní desku, rozteč 100 mm vodorovně a 228 mm svisle, osa 11 mm od horní/dolní hrany |
-| přední kryt k montážní desce | 4× M3 × 10 zepředu pod krytkami, rozteč 50 mm |
+| přední kryt k montážní desce | 4 tištěné otočné klíče (čtvrt otáčky), rozteč 50 mm |
 
 > **Změřte si otvor ve zdi.** Rozměry originálního límce Dalap jsem neměl
 > k dispozici. Pokud je otvor jiný, nastavte `limec_sirka` a `limec_vyska`
@@ -79,7 +79,8 @@ Hotová STL jsou ve složce [`stl/`](stl). Jsou už natočená do tiskové poloh
 | Rukojeť | `rukojet.stl` | 1 | otvorem nahoru |
 | Vodítko tyčky na zeď | `voditko.stl` | 0–2 | volitelné, když se tyčka moc houpe |
 | Spojka tyčí | `spojka.stl` | 0–1 | volitelné, pro spojení dvou tyček |
-| Krytka šroubu | `krytka.stl` | **4** | lícem dolů; zakryje šrouby M3 předního krytu |
+| Otočný klíč | `klic.stl` | **4** | hlavou dolů; 4 perimetry |
+| Křídlo klíče | `kridlo_klice.stl` | **4** | naplocho, sražením nahoru |
 
 **Materiál:** PETG (do interiéru) nebo ASA (na přímé slunce, originál je
 také z ASA). PLA nedoporučuji, protože pružná západka z PLA časem povolí
@@ -96,7 +97,7 @@ Lištu tiskněte se 4 perimetry, protože západka a čepy jsou namáhané nejv�
 | Stavěcí šroub (červík) **M3 × 5**, DIN 913 / ISO 4026, imbus | 1 + 1 do rukojeti (+2 do spojky) | [PeckaModel – šrouby a červíky na imbus](https://www.peckamodel.cz/produkty/rc-modely-a-prislusenstvi/prislusenstvi/spojovaci-material/srouby-cerviky-imbus), [ATILASHOP – stavěcí šrouby](https://www.atilashop.cz/staveci-srouby-cerviky/), [KUTIL.cz – DIN 913](https://www.kutil.cz/spojovaci-material-a-kotevni-technika/srouby/imbus-vnitrni-sestihran/sroub-staveci-plochy-konec-imbus-din-913/) |
 | Síť proti hmyzu, sklolaminátová, metráž (stačí kus 15 × 22 cm) | 1 | [UNI HOBBY – metráž šedá](https://unihobby.cz/sit-proti-hmyzu-sklovlaknita-metraz-seda), [BAUHAUS – sítě proti hmyzu](https://www.bauhaus.cz/site-proti-hmyzu-245270), [OBI – sítě proti hmyzu](https://www.obi.cz/ochrana-proti-hmyzu/ochranne-site-proti-hmyzu/c/2200), [Onpira – metráž](https://www.onpira.cz/zbozi/site-proti-hmyzu-skelne-vlakno/) |
 | Imbusový klíč **1,5 mm** (na červíky) | 1 | [UNI HOBBY](https://www.unihobby.cz/imbus-klic-1-5mm-cv), [PeckaModel](https://www.peckamodel.cz/600900-klic-imbus-1-5mm), [Kavon (dlouhý)](https://www.kavon.cz/e-shop/wi-06059-49656/) |
-| Šroub **M3 × 10**, DIN 912 válcová hlava (nebo zápustná DIN 7991), na přišroubování předního krytu k montážní desce | 4 | [ProPrumysl](https://www.proprumysl.cz/sroub-valcova-hlava-inbus-din-912-m3x10-8-8-pozink/), [Prumex](https://www.prumex.cz/sroub-valcova-hlava-inbus-din-912-m3x10-8-8-pozink/), [MEPAC](https://www.mepac-eshop.cz/cs/sroub-valcova-hlava-imbus-m3x10-zb-din912-88-8590002029366) |
+| Vteřinové lepidlo (kyanoakrylát) na křídla klíčů | 1 | [UNI HOBBY – Loctite Super Bond](https://www.unihobby.cz/loctite-super-bond), [UNI HOBBY – Alteco 3 g](https://www.unihobby.cz/lepidlo-vterinove-alteco-sg-12-sp-cz-3g), [HORNBACH – Bison Super Glue Gel](https://www.hornbach.cz/p/vterinove-lepidlo-bison-super-glue-gel-2-g/6065686/) |
 | Vodítko (volitelné): 2 vruty 3,5 × 30 mm a hmoždinky 5 mm | 2 | [Heureka – hmoždinka 5 mm s vrutem](https://www.heureka.cz/?h%5Bfraze%5D=hmo%C5%BEdinka+5+mm+s+vrutem) |
 
 > **Červík musí být M3 × 5 (nebo kratší), ne delší.** V liště je pro něj přesně
@@ -131,6 +132,10 @@ Příklad: mřížka má spodek ve 240 cm a rukojeť má být ve 170 cm, tedy ty
 6. **Vyzkoušejte chod:** prstem nebo kouskem tyčky zatlačte lištu otvorem ve
    dně nahoru a dolů. Lamely se musí otáčet všechny současně a západka musí
    cvakat ve třech polohách.
+7. **Otočné klíče:** zasuňte 4 klíče zepředu do otvorů v líci krytu (hlava
+   zapadne do zápustného lůžka). Zezadu na čtyřhran každého klíče nasaďte
+   křídlo **rovnoběžně se zářezem na hlavě** a přilepte ho kapkou
+   vteřinového lepidla. Tím je klíč v krytu natrvalo a nevypadne.
 
 ## Montáž na zeď (Fischer DuoPower 8 × 65 S)
 
@@ -150,9 +155,11 @@ jde do hmoždinky 74 mm (Fischer předepisuje aspoň 70 mm).
 5. **Síťka:** kupovanou síťku 145 × 211 mm přichyťte na zadní stranu
    předního krytu 2–3 malými kousky lepicí pásky, aby při nasazování
    nespadla. (U montážní desky s tištěnou síťkou tento krok odpadá.)
-6. **Nasaďte přední kryt** na montážní desku a zepředu ho přišroubujte
-   **4 šrouby M3 × 10** (2 nahoře, 2 dole). Závit si vyříznou do montážní
-   desky. Utahujte citlivě, závit je v plastu. Zacvakněte 4 krytky.
+6. **Nasaďte přední kryt** na montážní desku. Všechny 4 klíče musí mít
+   zářez **vodorovně** (odemčeno), aby křídla prošla štěrbinami v desce.
+   Kryt přitlačte k desce a mincí nebo plochým šroubovákem otočte každý
+   klíč o **čtvrt otáčky**, až je zářez **svisle** (zamčeno). Křídlo přitom
+   najede za okraj štěrbiny a kryt k desce přitáhne.
 7. **Táhlo:** stáhněte lištu úplně dolů (zavřeno). Zespodu zasuňte tyčku
    otvorem ve dně až na doraz do lišty (18 mm). Klíčem 1,5 mm utáhněte
    červík **malým otvorem v líci rámu vlevo dole**.
@@ -178,12 +185,12 @@ jde do hmoždinky 74 mm (Fischer předepisuje aspoň 70 mm).
 | ![zezadu](obrazky/zezadu_sitka.png) | ![rozloženo se síťkou](obrazky/rozlozeno_sitka.png) |
 
 Síťka je **uprostřed mřížky, sevřená mezi předním krytem a montážní
-deskou**. Drží ji po celém obvodu 4 šrouby M3, takže nemůže vypadnout ani
+deskou**. Drží ji po celém obvodu 4 otočné klíče, takže nemůže vypadnout ani
 se po okraji vysunout. Hned za ní je **pevný rošt** v montážní desce, který
 ji podepře a nepustí dovnitř ptáky. Před ní je 1,5 mm volného místa
 k lamelám.
 
-**Výměna nebo vyčištění síťky:** sundejte 4 krytky, povolte 4 šrouby M3
+**Výměna nebo vyčištění síťky:** mincí otočte 4 klíče zářezem vodorovně
 a přední kryt i s tyčkou sundejte. Montážní deska zůstane na zdi a síťka je
 hned přístupná.
 
@@ -192,8 +199,10 @@ hned přístupná.
 montážní deska pevně stiskne.
 
 **Tištěná síťka:** vytiskněte `zadni_deska_se_sitkou.stl` místo
-`zadni_deska.stl`. Síťka jsou první dvě vrstvy montážní desky: vlákna
-křížem, oka 1,2 × 1,2 mm, tloušťka 0,4 mm. Tiskne se deskou dolů na čistou
+`zadni_deska.stl`. Síťka je plochá mřížka v prvních dvou vrstvách montážní
+desky: vlákna v obou směrech leží celou plochou na podložce, nic nevisí ve
+vzduchu. Oka 1,2 × 1,2 mm, tloušťka 0,4 mm (dva průjezdy po 0,2 mm, lze
+zvětšit parametrem `tistena_tl`). Tiskne se deskou dolů na čistou
 podložku, výška vrstvy **0,2 mm**, šířka extruze 0,45–0,5 mm, bez
 „ironing“. Pokud slicer vlákna vynechá, zvětšete `tistena_vlakno` na 0,6.
 Rozteč lze změnit parametrem `tistena_roztec`.
@@ -213,8 +222,9 @@ novější). V panelu *Customizer* lze měnit hlavně:
 - `limec_sirka`, `limec_vyska`, `limec_hloubka`: límec do otvoru ve zdi
 - `tl_desky`, `roztec_sroubu`, `hlava_sroubu`: montážní deska a vruty do
   zdi (výchozí hodnoty pro Fischer DuoPower 8 × 65 S s vrutem 5 × 80)
-- `roztec_m3`, `hlava_m3`, `zahloubeni`: šrouby M3 × 10 předního krytu
-  (`valcova` nebo `zapustna` hlava)
+- `roztec_klicu`, `klic_predpeti`: otočné klíče předního krytu; když jde
+  klíč moc ztuha, zmenšete `klic_predpeti` na 0, když kryt drží volně,
+  zvětšete na 0,3
 - `sitka`: `kupovana`, `tistena` nebo `zadna`; `sitka_tl`: hloubka lůžka
   pro kupovanou síťku; `rost_roztec`, `rost_zebro`: pevný rošt;
   `tistena_roztec`, `tistena_vlakno`: tištěná síťka
