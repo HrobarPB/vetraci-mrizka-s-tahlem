@@ -17,10 +17,18 @@ echo "OK - žádné kolize v celém rozsahu pohybu"
 
 echo "== STL"
 mkdir -p stl
-for d in ram zadni_deska lamela lista pojistka rukojet voditko spojka krytka; do
+for d in ram zadni_deska lamela lista pojistka rukojet voditko spojka krytka ramecek_sitky sitka_tistena; do
   echo "  $d"
   openscad -o "stl/$d.stl" -D "dil=\"$d\"" "${EXTRA[@]}" mrizka.scad 2>&1 | grep -E "ERROR|WARNING" || true
 done
+
+# převod na binární STL (menší soubory), pokud je k dispozici numpy-stl
+python3 - <<'PY' 2>/dev/null && echo "  STL převedena na binární" || echo "  (binární převod přeskočen: pip install numpy-stl)"
+import glob
+from stl import mesh, Mode
+for f in glob.glob("stl/*.stl"):
+    mesh.Mesh.from_file(f).save(f, mode=Mode.BINARY)
+PY
 
 echo "== Obrázky"
 mkdir -p obrazky
@@ -30,6 +38,8 @@ IMG=(--colorscheme=Tomorrow --autocenter --viewall)
 "${OSC[@]}" -o obrazky/mechanismus.png --imgsize=1200,1000 --camera=0,0,0,60,0,150,0 "${IMG[@]}" -D 'dil="mechanismus"' -D otevreni=0.5 -D 'nahled_delka_tycky=0' "${EXTRA[@]}" mrizka.scad >/dev/null 2>&1
 "${OSC[@]}" -o obrazky/rozlozeno.png --imgsize=1200,1000 --camera=0,0,0,65,0,215,0 "${IMG[@]}" -D 'dil="rozlozeno"' -D otevreni=0.5 "${EXTRA[@]}" mrizka.scad >/dev/null 2>&1
 "${OSC[@]}" -o obrazky/detail_uchyceni.png --imgsize=2000,760 --camera=0,0,0,0,0,0,0 --projection=ortho --viewall --autocenter --colorscheme=Tomorrow -D 'dil="detail_uchyceni"' -D 'ovladani="vpravo"' "${EXTRA[@]}" mrizka.scad >/dev/null 2>&1
+"${OSC[@]}" -o obrazky/zezadu_sitka.png --imgsize=900,1000 --camera=0,0,0,60,0,200,0 "${IMG[@]}" -D 'dil="sestava"' -D 'nahled_delka_tycky=0' "${EXTRA[@]}" mrizka.scad >/dev/null 2>&1
+"${OSC[@]}" -o obrazky/rozlozeno_sitka.png --imgsize=900,1000 --camera=0,0,0,60,0,200,0 "${IMG[@]}" -D 'dil="rozlozeno"' -D 'sitka="tistena"' -D 'nahled_delka_tycky=0' "${EXTRA[@]}" mrizka.scad >/dev/null 2>&1
 "${OSC[@]}" -o obrazky/lamela.png --imgsize=1200,500 --camera=0,0,0,55,0,25,0 "${IMG[@]}" -D 'dil="lamela"' "${EXTRA[@]}" mrizka.scad >/dev/null 2>&1
 
 python3 - <<'PY'

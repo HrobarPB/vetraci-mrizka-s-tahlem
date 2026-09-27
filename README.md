@@ -10,6 +10,7 @@ Tyčka je při pohledu zepředu **vlevo**. Na pravou stranu ji přepne parametr
 - **zatlačit tyčku nahoru → otevřeno**
 - **stáhnout tyčku dolů → zavřeno**
 - pružná západka drží tři polohy: **zavřeno / napůl / otevřeno**
+- vzadu je **pevný rošt** a za ním **síťka proti hmyzu**, kupovaná nebo tištěná
 
 Model je parametrický (OpenSCAD) a všechny díly se tisknou **bez podpěr**.
 
@@ -49,6 +50,8 @@ Rozložená sestava:
 | vystoupení ze zdi | 35 mm (rám 32 + zadní deska 3) |
 | světlý průduch | 140 × 206 mm |
 | límec do otvoru ve zdi | 144 × 210 mm, hloubka 30 mm |
+| rošt v zadní desce | oka cca 22 × 22 mm, žebra 1,6 mm |
+| síťka proti hmyzu | ustřihnout na **139 × 205 mm** |
 | lamely | 10 ks, rozteč 20 mm, šířka 25 mm |
 | zdvih táhla | 13 mm |
 | osa tyčky | vlevo, 8 mm od levého okraje a 23 mm od zdi |
@@ -72,7 +75,9 @@ Hotová STL jsou ve složce [`stl/`](stl). Jsou už natočená do tiskové poloh
 | Rukojeť | `rukojet.stl` | 1 | otvorem nahoru |
 | Vodítko tyčky na zeď | `voditko.stl` | 0–2 | volitelné, když se tyčka moc houpe |
 | Spojka tyčí | `spojka.stl` | 0–1 | volitelné, pro spojení dvou tyček |
-| Krytka šroubu | `krytka.stl` | **4** | lícem dolů, zacvakne se do otvoru nad šroubem |
+| Krytka šroubu | `krytka.stl` | **6** | lícem dolů; 4 nad vruty do zdi, 2 nad šrouby M3 |
+| Přítlačný rámeček síťky | `ramecek_sitky.stl` | 1 | pro kupovanou síťku; naplocho |
+| Rámeček s tištěnou síťkou | `sitka_tistena.stl` | 1 | místo kupované síťky; síťkou dolů, viz [Síťka proti hmyzu](#síťka-proti-hmyzu) |
 
 **Materiál:** PETG (do interiéru) nebo ASA (na přímé slunce, originál je
 také z ASA). PLA nedoporučuji, protože pružná západka z PLA časem povolí
@@ -87,6 +92,7 @@ Lištu tiskněte se 4 perimetry, protože západka a čepy jsou namáhané nejv�
 | Hmoždinka **Fischer DuoPower 8 × 65 S** (balení obsahuje zápustné vruty **5 × 80**) | 4 | [KUTIL.cz](https://www.kutil.cz/spojovaci-material-a-kotevni-technika/kotevni-technika/vseobecne-hmozdinky/hmozdinka-duopower-fischer-8x65-1/), [srovnání cen na Heureka](https://www.heureka.cz/?h%5Bfraze%5D=hmo%C5%BEdinka+duopower+fischer+8x65), [technický list Fischer](https://www.fischer-cz.cz/cs-cz/products/bezne-hmozdinky/plastove-hmozdinky/duopower/538256-duopower-8x65-s) |
 | Tyčka **Ø 6 mm**: hliníková kulatina (plná), délka dle výšky (viz níže) | 1 | [KUTIL.cz – tyč kruhová hliník 6 mm](https://www.kutil.cz/zelezarstvi/hutni-material/hlinikovy/tyc-kruhova-hlinik-6mm/), [ATREON – hliníková kulatina 6 mm](https://www.atreon.cz/hlinikova-kulatina-6-mm-en-6060/), [HORNBACH – trubka Ø 6 mm, 1 m](https://www.hornbach.cz/p/kulata-trubka-hlinikova-stribrna-o-6-mm-1m/6069570/) |
 | Stavěcí šroub (červík) **M3 × 5**, DIN 913 / ISO 4026, imbus | 1 + 1 do rukojeti (+2 do spojky) | [PeckaModel – šrouby a červíky na imbus](https://www.peckamodel.cz/produkty/rc-modely-a-prislusenstvi/prislusenstvi/spojovaci-material/srouby-cerviky-imbus), [ATILASHOP – stavěcí šrouby](https://www.atilashop.cz/staveci-srouby-cerviky/), [KUTIL.cz – DIN 913](https://www.kutil.cz/spojovaci-material-a-kotevni-technika/srouby/imbus-vnitrni-sestihran/sroub-staveci-plochy-konec-imbus-din-913/) |
+| Síť proti hmyzu, sklolaminátová, metráž (stačí kus 14 × 21 cm) | 1 | [UNI HOBBY – metráž šedá](https://unihobby.cz/sit-proti-hmyzu-sklovlaknita-metraz-seda), [BAUHAUS – sítě proti hmyzu](https://www.bauhaus.cz/site-proti-hmyzu-245270), [OBI – sítě proti hmyzu](https://www.obi.cz/ochrana-proti-hmyzu/ochranne-site-proti-hmyzu/c/2200), [Onpira – metráž](https://www.onpira.cz/zbozi/site-proti-hmyzu-skelne-vlakno/) |
 | Imbusový klíč **1,5 mm** (na červíky) | 1 | [UNI HOBBY](https://www.unihobby.cz/imbus-klic-1-5mm-cv), [PeckaModel](https://www.peckamodel.cz/600900-klic-imbus-1-5mm), [Kavon (dlouhý)](https://www.kavon.cz/e-shop/wi-06059-49656/) |
 | Šroub **M3 × 10**, DIN 912 válcová hlava (nebo zápustná DIN 7991), na spojení rámu se zadní deskou | 2 | [ProPrumysl](https://www.proprumysl.cz/sroub-valcova-hlava-inbus-din-912-m3x10-8-8-pozink/), [Prumex](https://www.prumex.cz/sroub-valcova-hlava-inbus-din-912-m3x10-8-8-pozink/), [MEPAC](https://www.mepac-eshop.cz/cs/sroub-valcova-hlava-imbus-m3x10-zb-din912-88-8590002029366) |
 | Vodítko (volitelné): 2 vruty 3,5 × 30 mm a hmoždinky 5 mm | 2 | [Heureka – hmoždinka 5 mm s vrutem](https://www.heureka.cz/?h%5Bfraze%5D=hmo%C5%BEdinka+5+mm+s+vrutem) |
@@ -118,13 +124,43 @@ Příklad: mřížka má spodek ve 240 cm a rukojeť má být ve 170 cm, tedy ty
    budou pootevřené pod stejným úhlem.
 5. **Nasaďte oba pojistné hřebínky** do vybrání na horní hraně přepážek.
    Jejich prsty zajistí čepy lamel v drážkách.
-6. **Přiložte zadní desku** a přišroubujte ji dvěma šrouby **M3 × 10**
-   (uprostřed nahoře a dole). Šroub si závit do plastu vyřízne sám. Model
-   počítá s válcovou hlavou (`hlava_m3 = "valcova"`). Pro zápustnou hlavu
-   přepněte `hlava_m3 = "zapustna"` a zadní desku vytiskněte znovu.
+6. **Přiložte zadní desku.** Rám i s deskou opatrně otočte lícem nahoru
+   a zepředu zašroubujte dva šrouby **M3 × 10** s válcovou hlavou do
+   otvorů uprostřed nahoře a dole. Šroub projde rámem a závit si vyřízne do
+   zadní desky. Otvory později zakryjí krytky.
+   Pro šrouby se zápustnou hlavou přepněte `hlava_m3 = "zapustna"`: šrouby
+   pak jdou zezadu skrz zadní desku do rámu.
 7. **Vyzkoušejte chod:** prstem nebo kouskem tyčky zatlačte lištu otvorem ve
    dně nahoru a dolů. Lamely se musí otáčet všechny současně a západka musí
    cvakat ve třech polohách.
+8. **Vložte síťku** (viz další kapitola).
+
+## Síťka proti hmyzu
+
+| Zezadu (kupovaná síťka) | Rozloženo (tištěná síťka) |
+|---|---|
+| ![zezadu](obrazky/zezadu_sitka.png) | ![rozloženo se síťkou](obrazky/rozlozeno_sitka.png) |
+
+Zadní deska má v průduchu **pevný rošt**, který síťku podepře a nepustí
+dovnitř ptáky. Síťka leží v límci na roštu, tedy na straně ke zdi, a drží ji
+**přítlačný rámeček**. Ten zacvakne pod výstupky na vnitřních stěnách
+límce. Vyměnit se dá bez nářadí, jen je potřeba mřížku sundat ze zdi.
+
+**Kupovaná síťka:** ze sklolaminátové sítě proti hmyzu ustřihněte obdélník
+**139 × 205 mm**. Položte ho do límce na rošt a zatlačte rámeček
+(`ramecek_sitky.stl`), až cvakne.
+
+**Tištěná síťka:** `sitka_tistena.stl` je rámeček, na kterém je rovnou
+tenká síťka. Má dvě vrstvy vláken křížem, oka 1,2 × 1,2 mm a tloušťku
+0,4 mm. Vložte ji síťkou k roštu místo kupované síťky a rámečku.
+Tisk: síťkou dolů na čistou podložku, výška vrstvy **0,2 mm**, šířka
+extruze 0,45–0,5 mm, bez límce (brim) a bez „ironing“. Rozteč a šířku vláken
+lze změnit parametry `tistena_roztec` a `tistena_vlakno`. Pokud slicer
+vlákna vynechá, zvětšete `tistena_vlakno` na 0,6.
+
+Lem a rošt uberou asi 18 % průřezu, síťka proti hmyzu dalších zhruba 30–40 %.
+S tím je potřeba počítat, pokud je větrání na hraně.
+
 
 ## Montáž na zeď (Fischer DuoPower 8 × 65 S)
 
@@ -145,7 +181,7 @@ nad hlavou zakryje zepředu tisknutá **krytka**.
 5. Nasaďte mřížku a zašroubujte vruty 5 × 80 skrz otvory v líci.
    Potřebujete bit s dlouhým nástavcem, protože hlava sedí 27 mm hluboko
    a otvor má Ø 12 mm. Utahujte citlivě, aby hlava nepraskla plast patky.
-6. Zacvakněte 4 krytky.
+6. Zacvakněte 6 krytek (4 nad vruty do zdi, 2 nad šrouby M3).
 7. **Táhlo:** stáhněte lištu úplně dolů (zavřeno). Zespodu zasuňte tyčku
    otvorem ve dně až na doraz do lišty (18 mm). Klíčem 1,5 mm utáhněte
    červík **malým otvorem v líci rámu vlevo dole**.
@@ -174,8 +210,10 @@ novější). V panelu *Customizer* lze měnit hlavně:
 - `limec_sirka`, `limec_vyska`, `limec_hloubka`: límec do otvoru ve zdi
 - `roztec_sroubu`, `tl_upevneni`, `hlava_sroubu`, `zahloubeni`: uchycení na
   zeď (výchozí hodnoty pro Fischer DuoPower 8 × 65 S s vrutem 5 × 80)
-- `hlava_m3`: hlava šroubů M3 × 10 pro spojení zadní desky (`valcova`/`zapustna`)
-- `sitka = true`: síťka proti hmyzu v zadní desce
+- `hlava_m3`: hlava šroubů M3 × 10 pro spojení zadní desky (`valcova`
+  zepředu pod krytkou / `zapustna` zezadu)
+- `sitka`: `kupovana`, `tistena` nebo `zadna`; `rost_roztec`, `rost_zebro`:
+  pevný rošt; `tistena_roztec`, `tistena_vlakno`: tištěná síťka
 - `prumer_tycky`: průměr tyčky, například 8 mm pro silnější kolík
 - `pocet_poloh`: počet aretačních poloh (3 nebo 5)
 - `dil`: co se vykreslí (sestava, řez, schéma, rozložený pohled nebo

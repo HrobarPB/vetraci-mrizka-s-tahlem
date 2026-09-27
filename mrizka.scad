@@ -18,7 +18,7 @@
 
 /* [Zobrazení] */
 // Co vykreslit (díly "..." jsou už natočené pro tisk)
-dil = "sestava"; // [sestava, rez, schema, mechanismus, rozlozeno, ram, zadni_deska, lamela, lista, pojistka, rukojet, voditko, spojka, krytka, detail_uchyceni]
+dil = "sestava"; // [sestava, rez, schema, mechanismus, rozlozeno, ram, zadni_deska, lamela, lista, pojistka, rukojet, voditko, spojka, krytka, ramecek_sitky, sitka_tistena, detail_uchyceni]
 // Poloha žaluzie: 0 = zavřeno, 1 = otevřeno
 otevreni = 1; // [0:0.05:1]
 // Na které straně (při pohledu zepředu na mřížku na zdi) je táhlo
@@ -57,9 +57,21 @@ limec_sirka = 0;
 limec_vyska = 0;
 limec_hloubka = 30;
 limec_stena = 2;
-// Síťka proti hmyzu v zadní desce
-sitka = false;
-sitka_oko = 3;
+
+/* [Síťka proti hmyzu] */
+// Síťka v límci za pevným roštem: kupovaná (ustřihnout na míru), tištěná, nebo žádná
+sitka = "kupovana"; // [kupovana, tistena, zadna]
+// Rozteč pevného roštu v zadní desce [mm]
+rost_roztec = 22;
+// Šířka žeber roštu [mm]
+rost_zebro = 1.6;
+// Lem pro okraj síťky kolem průduchu [mm]
+sitka_lem = 3;
+// Mezera pro síťku mezi roštem a rámečkem [mm] (kupovaná síťka 0,3-0,4 mm)
+sitka_mezera = 0.4;
+// Tištěná síťka: rozteč vláken [mm] (otvor = rozteč - šířka vlákna)
+tistena_roztec = 1.7;
+tistena_vlakno = 0.5;
 
 /* [Táhlo] */
 // Průměr tyčky táhla (hliník / ocel / bukový kolík) [mm]
@@ -143,9 +155,11 @@ function s_pos(k) = pocet_poloh < 2 ? 0 : -s_max + k*zdvih/(pocet_poloh-1);
 // --- šrouby --------------------------------------------------------------
 screw_pos = [for (zz = [tb/2, H - tb/2]) for (xx = [W/2 - roztec_sroubu/2, W/2 + roztec_sroubu/2]) [xx, zz]];
 pre_pos   = [[W/2, tb/2], [W/2, H - tb/2]];
-// válcová hlava se zapustí do nálitku zadní desky (3 mm), zápustná přímo do desky
-pre_nalitek = hlava_m3 == "valcova" ? 3 : 0;
-y_pre_end = D - pre_nalitek;             // konec nálitku v rámu
+// M3x10 s válcovou hlavou jde zepředu skrz rám do zadní desky (otvor zakryje krytka),
+// se zápustnou hlavou zezadu skrz zadní desku do rámu
+pre_zepredu = hlava_m3 == "valcova";
+y_pre_hlava = D - 7;                     // dosedací plocha válcové hlavy v rámu
+krytky_pos = concat(screw_pos, pre_zepredu ? pre_pos : []);
 
 assert(tl_upevneni > st + 2 && tl_upevneni <= 10, "Svěrná tloušťka musí být 5-10 mm (vrut 5x80 musí jít aspoň 70 mm do hmoždinky 8x65).");
 assert(zahloubeni + 4 <= tb*2 - 2*st, "Zahloubení šroubů se nevejde do horního/dolního okraje.");
@@ -277,7 +291,7 @@ module ram() {
             // pouzdra šroubů do zdi
             for (q = screw_pos) translate([q[0], 0, q[1]]) rotate([-90, 0, 0]) cylinder(d = zahloubeni + 4, h = D);
             // pouzdra montážních šroubků zadní desky
-            for (q = pre_pos) translate([q[0], 0, q[1]]) rotate([-90, 0, 0]) cylinder(d = 8, h = y_pre_end);
+            for (q = pre_pos) translate([q[0], 0, q[1]]) rotate([-90, 0, 0]) cylinder(d = pre_zepredu ? zahloubeni + 4 : 8, h = D);
             // horní doraz lišty (poloha "otevřeno")
             translate([x_bar0 - 0.3, 0, bar_top0 + s_max + 0.1]) cube([x_kom1 - x_bar0 + 0.3 + eps, D, H - st - (bar_top0 + s_max + 0.1) + eps]);
         }
@@ -306,7 +320,12 @@ module ram() {
             translate([0, 0, y_patka - eps]) cylinder(d1 = hlava_sroubu + 0.6, d2 = prumer_sroubu, h = (hlava_sroubu + 0.6 - prumer_sroubu)/2);
         }
         // předvrtání pro montážní šroubky (zezadu, nejdou skrz líc)
-        for (q = pre_pos) translate([q[0], y_pre_end - 9, q[1]]) rotate([-90, 0, 0]) cylinder(d = 2.5, h = 10);   // M3 do plastu, 9 mm
+        for (q = pre_pos) translate([q[0], 0, q[1]]) rotate([-90, 0, 0]) {
+            if (pre_zepredu) {
+                translate([0, 0, -1]) cylinder(d = zahloubeni, h = y_pre_hlava + 1);     // pod krytku, hlava sedí 7 mm od zadní strany
+                translate([0, 0, y_pre_hlava - eps]) cylinder(d = 3.4, h = D);
+            } else translate([0, 0, D - 9]) cylinder(d = 2.5, h = 10);                  // M3 do plastu, 9 mm
+        }
         // průchod tyčky dnem rámu
         translate([x_barc, y_rod, -1]) rotate([0, 0, 90]) teardrop_z(prumer_tycky/2 + 0.5, st + 2);
         // přístupový otvor ke stavěcímu šroubu (lišta v poloze zavřeno)
@@ -332,36 +351,82 @@ module pojistka(xs = 0) {
 // =====================================================================
 //  ZADNÍ DESKA S LÍMCEM
 // =====================================================================
+// rozměry límce a síťky
+lim_w  = limec_sirka > 0 ? limec_sirka : cav_w + 2*limec_stena;
+lim_h  = limec_vyska > 0 ? limec_vyska : cav_h + 2*limec_stena;
+lim_iw = min(cav_w, lim_w - 2*limec_stena);   // světlost límce
+lim_ih = min(cav_h, lim_h - 2*limec_stena);
+otv_w  = lim_iw - 2*sitka_lem;                // otvor v zadní desce (s roštem)
+otv_h  = lim_ih - 2*sitka_lem;
+ram_t  = 2.5;                                 // tloušťka přítlačného rámečku
+ram_b  = sitka_lem + 3;                       // šířka rámečku
+y_sit  = D + st;                              // rovina síťky (zadní líc desky)
+y_zap  = y_sit + sitka_mezera + ram_t;        // západky rámečku v límci
+assert(sitka == "zadna" || limec, "Síťka se drží v límci - zapněte limec.");
+
 module zadni_deska() {
-    lw = limec_sirka > 0 ? limec_sirka : cav_w + 2*limec_stena;
-    lh = limec_vyska > 0 ? limec_vyska : cav_h + 2*limec_stena;
-    iw = min(cav_w, lw - 2*limec_stena);
-    ih = min(cav_h, lh - 2*limec_stena);
     difference() {
         union() {
             translate([0, D, 0]) cube([W, st, H]);
-            if (pre_nalitek > 0) for (q = pre_pos) translate([q[0], D - pre_nalitek, q[1]]) rotate([-90, 0, 0]) cylinder(d = 8, h = pre_nalitek + eps);
-            if (limec) translate([W/2 - lw/2, D + st - eps, H/2 - lh/2]) difference() {
-                cube([lw, limec_hloubka, lh]);
-                translate([(lw - iw)/2, -1, (lh - ih)/2]) cube([iw, limec_hloubka + 2, ih]);
+            if (limec) translate([W/2 - lim_w/2, D + st - eps, H/2 - lim_h/2]) difference() {
+                cube([lim_w, limec_hloubka, lim_h]);
+                translate([(lim_w - lim_iw)/2, -1, (lim_h - lim_ih)/2]) cube([lim_iw, limec_hloubka + 2, lim_ih]);
             }
         }
-        translate([x_cav0, D - 1, tb]) cube([cav_w, st + 2, cav_h]);
+        translate([W/2 - otv_w/2, D - 1, H/2 - otv_h/2]) cube([otv_w, st + 2, otv_h]);
         for (q = screw_pos) translate([q[0], D - 1, q[1]]) rotate([-90, 0, 0]) cylinder(d = prumer_sroubu, h = st + 2);
-        for (q = pre_pos) translate([q[0], D - pre_nalitek - 1, q[1]]) rotate([-90, 0, 0]) {
-            cylinder(d = 3.4, h = pre_nalitek + st + 2);
-            if (hlava_m3 == "valcova") translate([0, 0, 1 + pre_nalitek + st - 3.2]) cylinder(d = 6.2, h = 3.2 + eps);
-            else translate([0, 0, 1 + st - 1.7]) cylinder(d1 = 3.4, d2 = 6.4, h = 1.7 + eps);
+        for (q = pre_pos) translate([q[0], D - 1, q[1]]) rotate([-90, 0, 0]) {
+            if (pre_zepredu) cylinder(d = 2.5, h = st + 2);                          // závit M3 do desky
+            else {
+                cylinder(d = 3.4, h = st + 2);
+                translate([0, 0, 1 + st - 1.7]) cylinder(d1 = 3.4, d2 = 6.4, h = 1.7 + eps);
+            }
         }
     }
-    if (sitka) intersection() {
-        translate([x_cav0, D, tb]) cube([cav_w, 1, cav_h]);
+    // pevný rošt v otvoru (podpírá síťku, zastaví ptáky)
+    nx = max(1, round(otv_w/rost_roztec));
+    nz = max(1, round(otv_h/rost_roztec));
+    intersection() {
+        translate([W/2 - otv_w/2, D, H/2 - otv_h/2]) cube([otv_w, st, otv_h]);
         union() {
-            for (x = [x_cav0 : sitka_oko : x_cav1]) translate([x, D, tb]) cube([0.8, 1, cav_h]);
-            for (z = [tb : sitka_oko : tb + cav_h]) translate([x_cav0, D, z]) cube([cav_w, 1, 0.8]);
+            for (i = [1:nx-1]) translate([W/2 - otv_w/2 + i*otv_w/nx - rost_zebro/2, D, 0]) cube([rost_zebro, st, H]);
+            for (k = [1:nz-1]) translate([0, D, H/2 - otv_h/2 + k*otv_h/nz - rost_zebro/2]) cube([W, st, rost_zebro]);
+        }
+    }
+    // západky pro přítlačný rámeček síťky (na vnitřních stěnách límce)
+    if (limec && sitka != "zadna") for (m = [0, 1]) {
+        // svislé stěny (2 západky na stranu), vodorovné stěny (1 západka)
+        for (zc = [H/2 - lim_ih/4, H/2 + lim_ih/4])
+            translate([m == 0 ? W/2 - lim_iw/2 : W/2 + lim_iw/2, y_zap, zc]) mirror([m, 0, 0]) zapadka(20);
+        translate([W/2, y_zap, m == 0 ? H/2 - lim_ih/2 : H/2 + lim_ih/2]) mirror([0, 0, m]) rotate([0, -90, 0]) zapadka(24);
+    }
+}
+
+// trojúhelníková západka na stěně: stěna v rovině x = 0, výstupek do +X, délka podél Z
+module zapadka(len) {
+    translate([0, 0, -len/2]) linear_extrude(len) polygon([[-eps, 0], [0.6, 0.6], [-eps, 1.2]]);
+}
+
+// přítlačný rámeček síťky (v souřadnicích sestavy)
+module ramecek_sitky(tistena = false) {
+    rw = lim_iw - 0.5;  rh = lim_ih - 0.5;
+    translate([W/2 - rw/2, y_sit + sitka_mezera, H/2 - rh/2]) difference() {
+        cube([rw, ram_t, rh]);
+        translate([ram_b, -1, ram_b]) cube([rw - 2*ram_b, ram_t + 2, rh - 2*ram_b]);
+        // zářezy pro šroubovák k vypáčení
+        for (z = [rh/2 - 4]) for (x = [-1, rw - 2]) translate([x, ram_t - 1, z]) cube([3, 2, 8]);
+    }
+    // tištěná síťka: dvě vrstvy vláken křížem na straně k roštu
+    if (tistena) translate([0, 0.1, 0]) {   // přesah 0,1 mm do rámečku
+        vw = rw - 2*ram_b + 2;  vh = rh - 2*ram_b + 2;
+        translate([W/2 - vw/2, y_sit, H/2 - vh/2]) {
+            yz_plane(0, 0.2) for (x = [0 : tistena_roztec : vw]) translate([x, 0]) square([tistena_vlakno, vh]);
+            yz_plane(0.2, 0.2) for (z = [0 : tistena_roztec : vh]) translate([0, z]) square([vw, tistena_vlakno]);
         }
     }
 }
+// 2D (x, z) vytažený podél +Y o h od y0
+module yz_plane(y0, h) translate([0, y0 + h, 0]) rotate([90, 0, 0]) linear_extrude(h) children();
 
 // =====================================================================
 //  PŘÍSLUŠENSTVÍ TÁHLA
@@ -449,10 +514,13 @@ module sestava(phi, explode = 0, rez = false, tyc = true) strana() {
     s = s_of(phi);
     color("white") orez(rez) ram();
     color("gainsboro") translate([0, 3*explode, 0]) orez(rez) zadni_deska();
+    if (sitka != "zadna") color(sitka == "tistena" ? "slategray" : "lightsteelblue") translate([0, 4.5*explode, 0]) orez(rez) ramecek_sitky(sitka == "tistena");
+    if (sitka == "kupovana") color("dimgray", 0.6) translate([0, 3.8*explode, 0]) orez(rez)
+        translate([W/2 - (lim_iw - 1)/2, y_sit + 0.05, H/2 - (lim_ih - 1)/2]) cube([lim_iw - 1, 0.3, lim_ih - 1]);
     color("lightsteelblue") translate([0, 2*explode, 0]) orez(rez) for (xs = [x_cav0 - st, x_cav1]) pojistka(xs);
     color("lightgray") translate([0, explode, 0]) orez(rez) for (i = [0:N-1]) lamela_na_miste(i, phi);
     color("darkorange") translate([explode*0.4, 0, 0]) orez(rez) lista(s);
-    color("white") for (q = screw_pos) translate([q[0], -0.8 - 0.01 - explode*1.5, q[1]]) rotate([-90, 0, 0]) krytka();
+    color("white") for (q = krytky_pos) translate([q[0], -0.8 - 0.01 - explode*1.5, q[1]]) rotate([-90, 0, 0]) krytka();
     if (tyc) tycka(s);
 }
 
@@ -467,6 +535,8 @@ module k_tisku(co) {
     if (co == "voditko")     voditko();
     if (co == "spojka")      spojka();
     if (co == "krytka")      krytka();
+    if (co == "ramecek_sitky") translate([0, 0, -(y_sit + sitka_mezera)]) rotate([90, 0, 0]) ramecek_sitky(false);   // stranou k roštu dolů
+    if (co == "sitka_tistena") translate([0, 0, -(y_sit + 0.1)]) rotate([90, 0, 0]) ramecek_sitky(true);         // síťkou dolů
 }
 
 if (dil == "sestava")   sestava(phi_open);
@@ -549,4 +619,5 @@ module schema(phi) {
     color("black") vrstva(6) for (i = [0:N-1]) translate([y_ax, zl(i)]) circle(r = 0.8);
 }
 if (dil == "ram" || dil == "zadni_deska" || dil == "lamela" || dil == "lista" || dil == "pojistka"
-    || dil == "rukojet" || dil == "voditko" || dil == "spojka" || dil == "krytka") k_tisku(dil);
+    || dil == "rukojet" || dil == "voditko" || dil == "spojka" || dil == "krytka"
+    || dil == "ramecek_sitky" || dil == "sitka_tistena") k_tisku(dil);
