@@ -87,13 +87,12 @@ Lištu tiskněte se 4 perimetry, protože západka a čepy jsou namáhané nejv�
 | Hmoždinka **Fischer DuoPower 8 × 65 S** (balení obsahuje zápustné vruty **5 × 80**) | 4 | [KUTIL.cz](https://www.kutil.cz/spojovaci-material-a-kotevni-technika/kotevni-technika/vseobecne-hmozdinky/hmozdinka-duopower-fischer-8x65-1/), [srovnání cen na Heureka](https://www.heureka.cz/?h%5Bfraze%5D=hmo%C5%BEdinka+duopower+fischer+8x65), [technický list Fischer](https://www.fischer-cz.cz/cs-cz/products/bezne-hmozdinky/plastove-hmozdinky/duopower/538256-duopower-8x65-s) |
 | Tyčka **Ø 6 mm**: hliníková kulatina (plná), délka dle výšky (viz níže) | 1 | [KUTIL.cz – tyč kruhová hliník 6 mm](https://www.kutil.cz/zelezarstvi/hutni-material/hlinikovy/tyc-kruhova-hlinik-6mm/), [ATREON – hliníková kulatina 6 mm](https://www.atreon.cz/hlinikova-kulatina-6-mm-en-6060/), [HORNBACH – trubka Ø 6 mm, 1 m](https://www.hornbach.cz/p/kulata-trubka-hlinikova-stribrna-o-6-mm-1m/6069570/) |
 | Stavěcí šroub (červík) **M3 × 5**, DIN 913 / ISO 4026, imbus | 1 + 1 do rukojeti (+2 do spojky) | [PeckaModel – šrouby a červíky na imbus](https://www.peckamodel.cz/produkty/rc-modely-a-prislusenstvi/prislusenstvi/spojovaci-material/srouby-cerviky-imbus), [ATILASHOP – stavěcí šrouby](https://www.atilashop.cz/staveci-srouby-cerviky/), [KUTIL.cz – DIN 913](https://www.kutil.cz/spojovaci-material-a-kotevni-technika/srouby/imbus-vnitrni-sestihran/sroub-staveci-plochy-konec-imbus-din-913/) |
-| Imbusový klíč **1,5 mm** (na červíky) | 1 | běžně v sadě imbusů |
-| Šroub **M3 × 10** (válcová nebo zápustná hlava) na spojení rámu se zadní deskou | 2 | máte doma |
-| Vodítko (volitelné): 2 vruty 3,5 × 30 mm a hmoždinky 5 mm | 2 | |
+| Imbusový klíč **1,5 mm** (na červíky) | 1 | [UNI HOBBY](https://www.unihobby.cz/imbus-klic-1-5mm-cv), [PeckaModel](https://www.peckamodel.cz/600900-klic-imbus-1-5mm), [Kavon (dlouhý)](https://www.kavon.cz/e-shop/wi-06059-49656/) |
+| Šroub **M3 × 10**, DIN 912 válcová hlava (nebo zápustná DIN 7991), na spojení rámu se zadní deskou | 2 | [ProPrumysl](https://www.proprumysl.cz/sroub-valcova-hlava-inbus-din-912-m3x10-8-8-pozink/), [Prumex](https://www.prumex.cz/sroub-valcova-hlava-inbus-din-912-m3x10-8-8-pozink/), [MEPAC](https://www.mepac-eshop.cz/cs/sroub-valcova-hlava-imbus-m3x10-zb-din912-88-8590002029366) |
+| Vodítko (volitelné): 2 vruty 3,5 × 30 mm a hmoždinky 5 mm | 2 | [Heureka – hmoždinka 5 mm s vrutem](https://www.heureka.cz/?h%5Bfraze%5D=hmo%C5%BEdinka+5+mm+s+vrutem) |
 
 > **Červík musí být M3 × 5 (nebo kratší), ne delší.** V liště je pro něj přesně
 > 5,6 mm místa. Delší červík by vyčníval a drhl o čelo rámu.
-> Šrouby M3 × 18 se nikde nepoužívají.
 
 ### Délka tyčky
 
