@@ -12,7 +12,7 @@ Tyčka je při pohledu zepředu **vlevo**. Na pravou stranu ji přepne parametr
 - pružná západka drží tři polohy: **zavřeno / napůl / otevřeno**
 - vzadu je **pevný rošt** a za ním **síťka proti hmyzu**, kupovaná nebo tištěná
 - mřížka má dvě části: **montážní deska** zůstává na zdi, **přední kryt**
-  s lamelami se sundá po pootočení 4 tištěných klíčů, třeba kvůli výměně síťky
+  s lamelami se sundá po pootočení 4 tištěných zámků, třeba kvůli výměně síťky
 
 Model je parametrický (OpenSCAD) a všechny díly se tisknou **bez podpěr**.
 
@@ -50,16 +50,16 @@ Rozložená sestava:
 |---|---|
 | vnější rozměr rámu | 180 × 250 mm |
 | vystoupení ze zdi | 38 mm (přední kryt 32 + montážní deska 6) |
-| světlý průduch | 140 × 206 mm |
+| světlý průduch | 152 × 206 mm (mechanismus v okraji 20 mm u táhla, protější okraj jen 8 mm) |
 | otvor ve zdi (zadaný) | 158 × 208 mm |
-| límec do otvoru ve zdi | 156 × 206 mm (vůle 1 mm na stranu), hloubka 30 mm |
-| rošt v montážní desce | oka cca 23 × 23 mm, žebra 1,6 mm |
-| síťka proti hmyzu | ustřihnout na **145 × 211 mm** |
+| límec do otvoru ve zdi | 156 × 206 mm (vůle 1 mm na stranu), stěny 2 mm, hloubka 30 mm; na středu průduchu, tedy 6 mm od středu mřížky směrem od táhla |
+| rošt v montážní desce | 152 × 202 mm, oka cca 22 × 22 mm, žebra 1,6 mm |
+| síťka proti hmyzu | ustřihnout na **157 × 211 mm** |
 | lamely | 10 ks, rozteč 20 mm, šířka 25 mm |
 | zdvih táhla | 13 mm |
 | osa tyčky | vlevo, 8 mm od levého okraje a 26 mm od zdi |
 | vruty do zdi | 4× Fischer DuoPower 8 × 65 S jen skrz montážní desku, rozteč 100 mm vodorovně a 234 mm svisle, osa 8 mm od horní/dolní hrany (13 mm od otvoru ve zdi) |
-| přední kryt k montážní desce | 4 tištěné otočné klíče (čtvrt otáčky), rozteč 50 mm |
+| přední kryt k montážní desce | 4 otočné zámky na čtvrt otáčky s pružinou a aretací (princip Camloc/Dzus), rozteč 50 mm |
 
 > **Otvor ve zdi** je nastavený na 158 × 208 mm (`otvor_sirka`,
 > `otvor_vyska`). Límec se podle něj spočítá sám, o 1 mm na každou stranu
@@ -80,7 +80,7 @@ Hotová STL jsou ve složce [`stl/`](stl). Jsou už natočená do tiskové poloh
 | Rukojeť | `rukojet.stl` | 1 | otvorem nahoru |
 | Vodítko tyčky na zeď | `voditko.stl` | 0–2 | volitelné, když se tyčka moc houpe |
 | Spojka tyčí | `spojka.stl` | 0–1 | volitelné, pro spojení dvou tyček |
-| Otočný klíč (jeden kus) | `klic.stl` | **4** | hlavou dolů, bez podpěr; 4 perimetry |
+| Otočný klíč zámku | `klic.stl` | **4** | naplocho (plochý profil 5 mm), bez podpěr; 4 perimetry, výplň 50 % |
 
 **Materiál:** PETG (do interiéru) nebo ASA (na přímé slunce, originál je
 také z ASA). PLA nedoporučuji, protože pružná západka z PLA časem povolí
@@ -95,7 +95,7 @@ Lištu tiskněte se 4 perimetry, protože západka a čepy jsou namáhané nejv�
 | Hmoždinka **Fischer DuoPower 8 × 65 S** (balení obsahuje zápustné vruty **5 × 80**) | 4 | [KUTIL.cz](https://www.kutil.cz/spojovaci-material-a-kotevni-technika/kotevni-technika/vseobecne-hmozdinky/hmozdinka-duopower-fischer-8x65-1/), [srovnání cen na Heureka](https://www.heureka.cz/?h%5Bfraze%5D=hmo%C5%BEdinka+duopower+fischer+8x65), [technický list Fischer](https://www.fischer-cz.cz/cs-cz/products/bezne-hmozdinky/plastove-hmozdinky/duopower/538256-duopower-8x65-s) |
 | Tyčka **Ø 6 mm**: hliníková kulatina (plná), délka dle výšky (viz níže) | 1 | [KUTIL.cz – tyč kruhová hliník 6 mm](https://www.kutil.cz/zelezarstvi/hutni-material/hlinikovy/tyc-kruhova-hlinik-6mm/), [ATREON – hliníková kulatina 6 mm](https://www.atreon.cz/hlinikova-kulatina-6-mm-en-6060/), [HORNBACH – trubka Ø 6 mm, 1 m](https://www.hornbach.cz/p/kulata-trubka-hlinikova-stribrna-o-6-mm-1m/6069570/) |
 | Stavěcí šroub (červík) **M3 × 5**, DIN 913 / ISO 4026, imbus | 1 + 1 do rukojeti (+2 do spojky) | [PeckaModel – šrouby a červíky na imbus](https://www.peckamodel.cz/produkty/rc-modely-a-prislusenstvi/prislusenstvi/spojovaci-material/srouby-cerviky-imbus), [ATILASHOP – stavěcí šrouby](https://www.atilashop.cz/staveci-srouby-cerviky/), [KUTIL.cz – DIN 913](https://www.kutil.cz/spojovaci-material-a-kotevni-technika/srouby/imbus-vnitrni-sestihran/sroub-staveci-plochy-konec-imbus-din-913/) |
-| Síť proti hmyzu, sklolaminátová, metráž (stačí kus 15 × 22 cm) | 1 | [UNI HOBBY – metráž šedá](https://unihobby.cz/sit-proti-hmyzu-sklovlaknita-metraz-seda), [BAUHAUS – sítě proti hmyzu](https://www.bauhaus.cz/site-proti-hmyzu-245270), [OBI – sítě proti hmyzu](https://www.obi.cz/ochrana-proti-hmyzu/ochranne-site-proti-hmyzu/c/2200), [Onpira – metráž](https://www.onpira.cz/zbozi/site-proti-hmyzu-skelne-vlakno/) |
+| Síť proti hmyzu, sklolaminátová, metráž (stačí kus 16 × 22 cm) | 1 | [UNI HOBBY – metráž šedá](https://unihobby.cz/sit-proti-hmyzu-sklovlaknita-metraz-seda), [BAUHAUS – sítě proti hmyzu](https://www.bauhaus.cz/site-proti-hmyzu-245270), [OBI – sítě proti hmyzu](https://www.obi.cz/ochrana-proti-hmyzu/ochranne-site-proti-hmyzu/c/2200), [Onpira – metráž](https://www.onpira.cz/zbozi/site-proti-hmyzu-skelne-vlakno/) |
 | Imbusový klíč **1,5 mm** (na červíky) | 1 | [UNI HOBBY](https://www.unihobby.cz/imbus-klic-1-5mm-cv), [PeckaModel](https://www.peckamodel.cz/600900-klic-imbus-1-5mm), [Kavon (dlouhý)](https://www.kavon.cz/e-shop/wi-06059-49656/) |
 | Vodítko (volitelné): 2 vruty 3,5 × 30 mm a hmoždinky 5 mm | 2 | [Heureka – hmoždinka 5 mm s vrutem](https://www.heureka.cz/?h%5Bfraze%5D=hmo%C5%BEdinka+5+mm+s+vrutem) |
 
@@ -124,19 +124,41 @@ Příklad: mřížka má spodek ve 240 cm a rukojeť má být ve 170 cm, tedy ty
    vidlice ramene mířila kolmo od stolu**, a spusťte ji dolů. Čepy lamely
    zapadnou do drážek „U“ a vidlice nasedne na čep lišty. Všechny lamely
    budou pootevřené pod stejným úhlem.
-5. **Zatlačte oba pojistné hřebínky** do vybrání na horní hraně přepážek.
-   Jejich prsty zajistí čepy lamel v drážkách. Prsty mají přítlačná žebra,
-   takže hřebínky drží natěsno i bez montážní desky. Když drží volně,
-   zvětšete `hrebinek_zebra` (např. 0,8) a hřebínky vytiskněte znovu; když
-   nejdou zatlačit, zmenšete na 0,4.
+5. **Zatlačte oba pojistné hřebínky** do vybrání na horní hraně přepážek,
+   až **cvaknou**. Jejich prsty zajistí čepy lamel v drážkách. Každý prst je
+   rozdělený na dvě pružné poloviny s výstupky, které zapadnou do drážek ve
+   stěnách krytu, takže hřebínek drží i v sundaném krytu. Vytáhnout se dá
+   silou (výstupky mají šikmé boky). Sílu západky mění `hrebinek_zapadka`.
 6. **Vyzkoušejte chod:** prstem nebo kouskem tyčky zatlačte lištu otvorem ve
    dně nahoru a dolů. Lamely se musí otáčet všechny současně a západka musí
    cvakat ve třech polohách.
-7. **Otočné klíče** (jeden kus, bez lepidla a bez šroubů): každý klíč
-   zasuňte zepředu do otvoru v líci krytu se zářezem **svisle** (křídlo
-   projde svislou štěrbinou v krytu, hlava zapadne do zápustného lůžka).
-   Pak ho otočte zářezem **vodorovně**. Křídlo je teď za krytem napříč
-   štěrbiny, takže klíč z krytu nevypadne ani při sundávání.
+7. **Klíče zámků** (bez lepidla a bez šroubů): každý klíč zasuňte zepředu do
+   otvoru v líci krytu s rukojetí **svisle** (příčka projde svislou štěrbinou
+   v krytu) a pak ho otočte rukojetí **vodorovně**. Příčka je teď za krytem
+   napříč štěrbiny, takže klíč z krytu nevypadne.
+
+## Zámek krytu (jak funguje)
+
+Zámek je udělaný podle průmyslových rychlozámků na čtvrt otáčky (Camloc,
+Dzus): otočný klíč v odnímatelném krytu, pojistka proti vypadnutí
+a **pružina** v pevné části. Přítlak dělá pružina, ne tuhé přesahy, takže
+zámek snese nepřesnost tisku a časem nepovolí.
+
+- **Klíč** je plochý profil 5 mm tištěný naplocho: rukojeť (motýlek) vpředu,
+  dřík 6 × 5 mm skrz kryt a příčka 14,6 mm vzadu. Tah jde podél vrstev, ne
+  napříč, takže se klíč neutrhne.
+- **Pružiny** jsou v montážní desce: dva pásky 1,5 mm nad a pod štěrbinou,
+  oddělené štěrbinami a tištěné naplocho. Příčka je při zamčení prohne ke
+  krytu o 0,3 mm a tím kryt přitáhne k desce.
+- **Aretace:** v zamčené poloze příčka zapadne do mělké drážky v pružinách
+  a zámek **cvakne**. Během otáčení pružiny přejede přes vrchol (0,5 mm),
+  takže se sám nepovolí ani vibracemi.
+- **Pojistka proti vypadnutí:** štěrbina v krytu je svislá, v desce
+  vodorovná.
+- **Ovládání prsty:** rukojeť **svisle = zamčeno**, **vodorovně = odemčeno**.
+
+Když jde zámek moc ztuha, zmenšete `klic_predpeti` (např. 0,2) nebo
+`pruzina_tl`; když kryt drží volně, zvětšete `klic_predpeti` na 0,4.
 
 ## Montáž na zeď (Fischer DuoPower 8 × 65 S)
 
@@ -153,16 +175,14 @@ jde do hmoždinky 74 mm (Fischer předepisuje aspoň 70 mm).
 3. Hmoždinky zatlučte **do roviny zdi**.
 4. Montážní desku přišroubujte vruty 5 × 80. Hlavy musí zapadnout do
    zahloubení v rovině čela desky.
-5. **Síťka:** kupovanou síťku 145 × 211 mm nabodněte na 4 malé trny na zadní
+5. **Síťka:** kupovanou síťku 157 × 211 mm nabodněte na 4 malé trny na zadní
    straně předního krytu (u horního a dolního okraje průduchu). Trny ji
    drží, takže při nasazování nespadne. (U montážní desky s tištěnou síťkou
    tento krok odpadá.)
 6. **Nasaďte přední kryt** na montážní desku. Všechny 4 klíče musí mít
-   zářez **vodorovně** (odemčeno), aby křídla prošla štěrbinami v desce.
-   Kryt přitlačte k desce a mincí nebo plochým šroubovákem otočte každý
-   klíč o **čtvrt otáčky**, až je zářez **svisle** (zamčeno). Kuželový spodek
-   křídla přitom najede do kuželového lůžka za štěrbinou a kryt k desce
-   přitáhne.
+   rukojeť **vodorovně** (odemčeno), aby příčky prošly štěrbinami v desce.
+   Kryt přitlačte k desce a každý klíč otočte prsty o **čtvrt otáčky**, až
+   je rukojeť **svisle** a zámek cvakne.
 7. **Táhlo:** stáhněte lištu úplně dolů (zavřeno). Zespodu zasuňte tyčku
    otvorem ve dně až na doraz do lišty (18 mm). Klíčem 1,5 mm utáhněte
    červík **malým otvorem v líci rámu vlevo dole**.
@@ -195,12 +215,12 @@ se po okraji vysunout. Hned za ní je **pevný rošt** v montážní desce, kter
 ji podepře a nepustí dovnitř ptáky. Před ní je 1,5 mm volného místa
 k lamelám.
 
-**Výměna nebo vyčištění síťky:** mincí otočte 4 klíče zářezem vodorovně
+**Výměna nebo vyčištění síťky:** otočte 4 klíče rukojetí vodorovně
 a přední kryt i s tyčkou sundejte. Montážní deska zůstane na zdi a síťka je
 hned přístupná.
 
 **Kupovaná síťka:** ze sklolaminátové sítě proti hmyzu ustřihněte obdélník
-**145 × 211 mm**. Přední kryt má pro síťku lůžko hluboké 0,25 mm, takže ji
+**157 × 211 mm**. Přední kryt má pro síťku lůžko hluboké 0,25 mm, takže ji
 montážní deska pevně stiskne.
 
 **Tištěná síťka:** vytiskněte `zadni_deska_se_sitkou.stl` místo
@@ -229,10 +249,10 @@ novější). V panelu *Customizer* lze měnit hlavně:
 - `vrut_od_okraje`: vzdálenost vrutu od hrany desky (menší = dál od otvoru)
 - `tl_desky`, `roztec_sroubu`, `hlava_sroubu`: montážní deska a vruty do
   zdi (výchozí hodnoty pro Fischer DuoPower 8 × 65 S s vrutem 5 × 80)
-- `roztec_klicu`, `klic_predpeti`: otočné klíče předního krytu; když jde
-  klíč moc ztuha, zmenšete `klic_predpeti` na 0, když kryt drží volně,
-  zvětšete na 0,3
-- `hrebinek_zebra`: síla přítlačných žeber pojistných hřebínků
+- `roztec_klicu`, `klic_predpeti`, `pruzina_tl`: zámky předního krytu
+  (viz [Zámek krytu](#zámek-krytu-jak-funguje))
+- `bok_protejsi`: šířka bočního okraje bez mechanismu (užší = širší průduch)
+- `hrebinek_zapadka`: výška výstupků západky pojistných hřebínků
 - `sitka`: `kupovana`, `tistena` nebo `zadna`; `sitka_tl`: hloubka lůžka
   pro kupovanou síťku; `rost_roztec`, `rost_zebro`: pevný rošt;
   `tistena_roztec`, `tistena_vlakno`: tištěná síťka
