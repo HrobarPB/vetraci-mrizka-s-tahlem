@@ -18,7 +18,7 @@
 
 /* [Zobrazení] */
 // Co vykreslit (díly "..." jsou už natočené pro tisk)
-dil = "sestava"; // [sestava, rez, schema, mechanismus, rozlozeno, ram, zadni_deska, lamela, lista, pojistka, rukojet, voditko, spojka]
+dil = "sestava"; // [sestava, rez, schema, mechanismus, rozlozeno, ram, zadni_deska, lamela, lista, pojistka, rukojet, voditko, spojka, krytka, detail_uchyceni]
 // Poloha žaluzie: 0 = zavřeno, 1 = otevřeno
 otevreni = 1; // [0:0.05:1]
 // Na které straně (při pohledu zepředu na mřížku na zdi) je táhlo
@@ -67,10 +67,21 @@ prumer_tycky = 6;
 // Počet aretačních poloh (3 = zavřeno / půl / otevřeno)
 pocet_poloh = 3;
 
-/* [Rozteč upevňovacích šroubů] */
+/* [Upevnění na zeď – Fischer DuoPower 8 x 65 S (vrut 5 x 80 zápustný)] */
 // Vodorovná rozteč šroubů do zdi (2 nahoře, 2 dole) [mm]
 roztec_sroubu = 100;
-prumer_sroubu = 4.5;
+// Průměr průchozího otvoru pro vrut [mm]
+prumer_sroubu = 5.5;
+// Průměr zápustné hlavy vrutu [mm]
+hlava_sroubu = 10;
+// Svěrná tloušťka pod hlavou vrutu (patka rámu + zadní deska) [mm]; DuoPower 8x65 + vrut 80 => max 10
+tl_upevneni = 8;
+// Průměr zahloubení v rámu (hlava + bit) [mm]
+zahloubeni = 12;
+
+/* [Spojení zadní desky s rámem – 2x M3 x 10] */
+// Hlava šroubu M3x10: válcová (ISO 4762 / DIN 912) nebo zápustná (ISO 10642 / DIN 7991)
+hlava_m3 = "valcova"; // [valcova, zapustna]
 
 /* [Hidden] */
 $fn = 48;
@@ -119,7 +130,7 @@ y_bar0 = st + 0.4;  y_bar1 = D - 0.3;
 y_pin  = y_ax + e;
 bar_bot0 = st + s_max;          // spodek lišty v poloze s = 0 (dole doráží na dno = zavřeno)
 bar_top0 = zl(N-1) + 8;
-y_rod  = 10;                    // osa tyčky
+y_rod  = 12;                    // osa tyčky (červík M3x5 se celý schová v liště)
 d_sock = prumer_tycky + 0.3;
 sock_h = 18;                    // hloubka zásuvky tyčky
 z_grub = 7;                     // stavěcí šroub nad spodkem lišty
@@ -132,7 +143,13 @@ function s_pos(k) = pocet_poloh < 2 ? 0 : -s_max + k*zdvih/(pocet_poloh-1);
 // --- šrouby --------------------------------------------------------------
 screw_pos = [for (zz = [tb/2, H - tb/2]) for (xx = [W/2 - roztec_sroubu/2, W/2 + roztec_sroubu/2]) [xx, zz]];
 pre_pos   = [[W/2, tb/2], [W/2, H - tb/2]];
+// válcová hlava se zapustí do nálitku zadní desky (3 mm), zápustná přímo do desky
+pre_nalitek = hlava_m3 == "valcova" ? 3 : 0;
+y_pre_end = D - pre_nalitek;             // konec nálitku v rámu
 
+assert(tl_upevneni > st + 2 && tl_upevneni <= 10, "Svěrná tloušťka musí být 5-10 mm (vrut 5x80 musí jít aspoň 70 mm do hmoždinky 8x65).");
+assert(zahloubeni + 4 <= tb*2 - 2*st, "Zahloubení šroubů se nevejde do horního/dolního okraje.");
+assert(y_rod - prumer_tycky/2 - y_bar0 >= 5, "Červík M3x5 by vyčníval z lišty a drhl o čelo rámu - posuňte y_rod dozadu.");
 assert(tb >= 14, str("Okraj nahoře/dole vychází jen ", tb, " mm - zvětšete výšku nebo uberte lamely."));
 assert(p*cos(phic) > t + 0.2, "Lamely by do sebe v zavřené poloze narážely - zmenšete uhel_zavreni.");
 assert(sb - 2*st >= 13, "Boční okraj je příliš úzký pro komoru mechanismu.");
@@ -258,9 +275,9 @@ module ram() {
             // pravá přepážka mezi průduchem a komorou (celá výška)
             translate([x_cav1, 0, 0]) cube([st, D, H]);
             // pouzdra šroubů do zdi
-            for (q = screw_pos) translate([q[0], 0, q[1]]) rotate([-90, 0, 0]) cylinder(d = prumer_sroubu + 5.5, h = D);
+            for (q = screw_pos) translate([q[0], 0, q[1]]) rotate([-90, 0, 0]) cylinder(d = zahloubeni + 4, h = D);
             // pouzdra montážních šroubků zadní desky
-            for (q = pre_pos) translate([q[0], 0, q[1]]) rotate([-90, 0, 0]) cylinder(d = 8, h = D);
+            for (q = pre_pos) translate([q[0], 0, q[1]]) rotate([-90, 0, 0]) cylinder(d = 8, h = y_pre_end);
             // horní doraz lišty (poloha "otevřeno")
             translate([x_bar0 - 0.3, 0, bar_top0 + s_max + 0.1]) cube([x_kom1 - x_bar0 + 0.3 + eps, D, H - st - (bar_top0 + s_max + 0.1) + eps]);
         }
@@ -280,12 +297,16 @@ module ram() {
         for (xs = [x_cav0 - st, x_cav1])
             translate([xs - eps, D - st, tb - st - eps]) cube([st + 2*eps, st + 1, cav_h + 2*st + 2*eps]);
         // otvory pro šrouby do zdi (zápustné)
-        for (q = screw_pos) translate([q[0], -1, q[1]]) rotate([-90, 0, 0]) {
-            cylinder(d = prumer_sroubu, h = D + 2);
-            cylinder(d1 = prumer_sroubu + 5, d2 = prumer_sroubu, h = 1 + 2.5);
+        // hlava vrutu sedí hluboko na patce u zdi (svěrná tloušťka tl_upevneni),
+        // zahloubení zepředu zakryje krytka
+        y_patka = D + st - tl_upevneni;
+        for (q = screw_pos) translate([q[0], 0, q[1]]) rotate([-90, 0, 0]) {
+            translate([0, 0, -1]) cylinder(d = prumer_sroubu, h = D + 2);
+            translate([0, 0, -1]) cylinder(d = zahloubeni, h = y_patka + 1);
+            translate([0, 0, y_patka - eps]) cylinder(d1 = hlava_sroubu + 0.6, d2 = prumer_sroubu, h = (hlava_sroubu + 0.6 - prumer_sroubu)/2);
         }
         // předvrtání pro montážní šroubky (zezadu, nejdou skrz líc)
-        for (q = pre_pos) translate([q[0], 8, q[1]]) rotate([-90, 0, 0]) cylinder(d = 2.5, h = D);
+        for (q = pre_pos) translate([q[0], y_pre_end - 9, q[1]]) rotate([-90, 0, 0]) cylinder(d = 2.5, h = 10);   // M3 do plastu, 9 mm
         // průchod tyčky dnem rámu
         translate([x_barc, y_rod, -1]) rotate([0, 0, 90]) teardrop_z(prumer_tycky/2 + 0.5, st + 2);
         // přístupový otvor ke stavěcímu šroubu (lišta v poloze zavřeno)
@@ -319,6 +340,7 @@ module zadni_deska() {
     difference() {
         union() {
             translate([0, D, 0]) cube([W, st, H]);
+            if (pre_nalitek > 0) for (q = pre_pos) translate([q[0], D - pre_nalitek, q[1]]) rotate([-90, 0, 0]) cylinder(d = 8, h = pre_nalitek + eps);
             if (limec) translate([W/2 - lw/2, D + st - eps, H/2 - lh/2]) difference() {
                 cube([lw, limec_hloubka, lh]);
                 translate([(lw - iw)/2, -1, (lh - ih)/2]) cube([iw, limec_hloubka + 2, ih]);
@@ -326,9 +348,10 @@ module zadni_deska() {
         }
         translate([x_cav0, D - 1, tb]) cube([cav_w, st + 2, cav_h]);
         for (q = screw_pos) translate([q[0], D - 1, q[1]]) rotate([-90, 0, 0]) cylinder(d = prumer_sroubu, h = st + 2);
-        for (q = pre_pos) translate([q[0], D - 1, q[1]]) rotate([-90, 0, 0]) {
-            cylinder(d = 3.4, h = st + 2);
-            translate([0, 0, 1 + st - 1.6]) cylinder(d1 = 3.4, d2 = 6.4, h = 1.6 + eps);
+        for (q = pre_pos) translate([q[0], D - pre_nalitek - 1, q[1]]) rotate([-90, 0, 0]) {
+            cylinder(d = 3.4, h = pre_nalitek + st + 2);
+            if (hlava_m3 == "valcova") translate([0, 0, 1 + pre_nalitek + st - 3.2]) cylinder(d = 6.2, h = 3.2 + eps);
+            else translate([0, 0, 1 + st - 1.7]) cylinder(d1 = 3.4, d2 = 6.4, h = 1.7 + eps);
         }
     }
     if (sitka) intersection() {
@@ -378,9 +401,23 @@ module voditko() {
 // spojka dvou tyček (tiskne se nastojato)
 module spojka() {
     difference() {
-        cylinder(d = prumer_tycky + 6, h = 50, $fn = 6*8);
+        cylinder(d = prumer_tycky + 10, h = 50, $fn = 6*8);   // stěna 5 mm pro červík M3x5
         translate([0, 0, -1]) cylinder(d = d_sock, h = 52);
         for (z = [10, 40]) translate([0, 0, z]) rotate([0, 90, 0]) cylinder(d = 2.5, h = 20);
+    }
+}
+
+// krytka zahloubení šroubu (tiskne se lícem dolů)
+module krytka() {
+    h = 5;
+    difference() {
+        union() {
+            cylinder(d = zahloubeni + 0.8, h = 0.8);                    // lem na líci
+            cylinder(d = zahloubeni - 0.25, h = h);
+            for (a = [0:120:359]) rotate(a) translate([zahloubeni/2 - 0.2, 0, 1.5]) cylinder(d = 0.9, h = h - 2, $fn = 12);   // přítlačná žebra
+        }
+        translate([0, 0, 1.2]) cylinder(d = zahloubeni - 2.5, h = h);   // odlehčení, pružnost
+        translate([zahloubeni/2 + 0.4, 0, -1]) cylinder(d = 2, h = 3);  // zářez pro vypáčení
     }
 }
 
@@ -415,6 +452,7 @@ module sestava(phi, explode = 0, rez = false, tyc = true) strana() {
     color("lightsteelblue") translate([0, 2*explode, 0]) orez(rez) for (xs = [x_cav0 - st, x_cav1]) pojistka(xs);
     color("lightgray") translate([0, explode, 0]) orez(rez) for (i = [0:N-1]) lamela_na_miste(i, phi);
     color("darkorange") translate([explode*0.4, 0, 0]) orez(rez) lista(s);
+    color("white") for (q = screw_pos) translate([q[0], -0.8 - 0.01 - explode*1.5, q[1]]) rotate([-90, 0, 0]) krytka();
     if (tyc) tycka(s);
 }
 
@@ -428,6 +466,7 @@ module k_tisku(co) {
     if (co == "rukojet")     rukojet();
     if (co == "voditko")     voditko();
     if (co == "spojka")      spojka();
+    if (co == "krytka")      krytka();
 }
 
 if (dil == "sestava")   sestava(phi_open);
@@ -440,6 +479,34 @@ if (dil == "mechanismus") strana() {   // bez zadní desky, pohled zezadu
     color("darkorange") lista(s);
 }
 if (dil == "schema") schema(phi_open);
+if (dil == "detail_uchyceni") detail_uchyceni();
+
+// řez rámem v místě šroubu (2D): zeď, hmoždinka DuoPower 8x65, vrut 5x80
+module detail_uchyceni() {
+    q = screw_pos[0];
+    y_hl = D + st - tl_upevneni;                 // horní plocha hlavy vrutu
+    wall = D + st;
+    module rez() projection(cut = true) multmatrix([[0,1,0,0],[0,0,1,0],[1,0,0,-q[0]],[0,0,0,1]]) children();
+    module okno() intersection() { children(); translate([-5, -25]) square([wall + 95, tb + 40]); }
+    // zeď s vývrtem Ø8 hloubky 85; nad okrajem otvor ve zdi (průduch)
+    color("tan") vrstva(0) okno() difference() {
+        translate([wall, -60]) square([120, 200]);
+        translate([wall - 1, q[1] - 4]) square([86, 8]);
+        translate([wall - 1, tb - limec_stena + 0.5 + 0]) square([200, 200]);
+    }
+    color("dimgray") vrstva(1) okno() rez() ram();
+    color("darkgray") vrstva(1) okno() rez() zadni_deska();
+    color("dimgray") vrstva(1) translate([-0.8, q[1]]) rotate(-90) translate([-(zahloubeni + 0.8)/2, 0]) square([zahloubeni + 0.8, 0.8]);
+    color("dimgray") vrstva(1) translate([0, q[1] - (zahloubeni - 0.25)/2]) square([5, zahloubeni - 0.25]);
+    // hmoždinka
+    color("orange") vrstva(2) translate([wall, q[1] - 4]) difference() { square([65, 8]); translate([-1, 2]) square([67, 4]); }
+    // vrut
+    color("steelblue") vrstva(3) translate([y_hl, q[1]]) {
+        polygon([[0, -hlava_sroubu/2], [0, hlava_sroubu/2], [(hlava_sroubu - 5)/2, 2.5], [(hlava_sroubu - 5)/2, -2.5]]);
+        translate([0, -2.5]) square([79, 5]);
+        polygon([[79, -2.5], [79, 2.5], [80, 0.5], [80, -0.5]]);
+    }
+}
 
 // 2D schéma v bočním pohledu (zleva líc, vpravo zeď): Y -> vodorovně, Z -> svisle
 module vrstva(k) translate([0, 0, k]) linear_extrude(0.5) children();
@@ -482,4 +549,4 @@ module schema(phi) {
     color("black") vrstva(6) for (i = [0:N-1]) translate([y_ax, zl(i)]) circle(r = 0.8);
 }
 if (dil == "ram" || dil == "zadni_deska" || dil == "lamela" || dil == "lista" || dil == "pojistka"
-    || dil == "rukojet" || dil == "voditko" || dil == "spojka") k_tisku(dil);
+    || dil == "rukojet" || dil == "voditko" || dil == "spojka" || dil == "krytka") k_tisku(dil);

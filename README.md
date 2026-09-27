@@ -51,8 +51,8 @@ Rozložená sestava:
 | límec do otvoru ve zdi | 144 × 210 mm, hloubka 30 mm |
 | lamely | 10 ks, rozteč 20 mm, šířka 25 mm |
 | zdvih táhla | 13 mm |
-| osa tyčky | vlevo, 8 mm od levého okraje a 25 mm od zdi |
-| šrouby do zdi | 4 ks, rozteč 100 mm vodorovně, 228 mm svisle |
+| osa tyčky | vlevo, 8 mm od levého okraje a 23 mm od zdi |
+| šrouby do zdi | 4× Fischer DuoPower 8 × 65 S, rozteč 100 mm vodorovně a 228 mm svisle, osa 11 mm od horní/dolní hrany rámu |
 
 > **Změřte si otvor ve zdi.** Rozměry originálního límce Dalap jsem neměl
 > k dispozici. Pokud je otvor jiný, nastavte `limec_sirka` a `limec_vyska`
@@ -72,6 +72,7 @@ Hotová STL jsou ve složce [`stl/`](stl). Jsou už natočená do tiskové poloh
 | Rukojeť | `rukojet.stl` | 1 | otvorem nahoru |
 | Vodítko tyčky na zeď | `voditko.stl` | 0–2 | volitelné, když se tyčka moc houpe |
 | Spojka tyčí | `spojka.stl` | 0–1 | volitelné, pro spojení dvou tyček |
+| Krytka šroubu | `krytka.stl` | **4** | lícem dolů, zacvakne se do otvoru nad šroubem |
 
 **Materiál:** PETG (do interiéru) nebo ASA (na přímé slunce, originál je
 také z ASA). PLA nedoporučuji, protože pružná západka z PLA časem povolí
@@ -81,13 +82,18 @@ Lištu tiskněte se 4 perimetry, protože západka a čepy jsou namáhané nejv�
 
 ## Co koupit
 
-| Položka | Ks |
-|---|---|
-| Tyčka **Ø 6 mm**: hliníková kulatina, ocel nebo bukový kolík, délka dle výšky (viz níže) | 1 |
-| Stavěcí šroub (červík) **M3 × 5**, ISO 4026, a imbusový klíč 1,5 mm | 1 (+1 do rukojeti) |
-| Vruty do zdi 4 × 50 mm se zápustnou hlavou a hmoždinky 6 mm | 4 |
-| Vruty 2,9 × 13 mm se zápustnou hlavou (nebo M3 × 12) na spojení rámu se zadní deskou | 2 |
-| Vodítko (volitelné): 2 vruty 3,5 × 30 mm a hmoždinky 5 mm | 2 |
+| Položka | Ks | Kde koupit (příklady) |
+|---|---|---|
+| Hmoždinka **Fischer DuoPower 8 × 65 S** (balení obsahuje zápustné vruty **5 × 80**) | 4 | [KUTIL.cz](https://www.kutil.cz/spojovaci-material-a-kotevni-technika/kotevni-technika/vseobecne-hmozdinky/hmozdinka-duopower-fischer-8x65-1/), [srovnání cen na Heureka](https://www.heureka.cz/?h%5Bfraze%5D=hmo%C5%BEdinka+duopower+fischer+8x65), [technický list Fischer](https://www.fischer-cz.cz/cs-cz/products/bezne-hmozdinky/plastove-hmozdinky/duopower/538256-duopower-8x65-s) |
+| Tyčka **Ø 6 mm**: hliníková kulatina (plná), délka dle výšky (viz níže) | 1 | [KUTIL.cz – tyč kruhová hliník 6 mm](https://www.kutil.cz/zelezarstvi/hutni-material/hlinikovy/tyc-kruhova-hlinik-6mm/), [ATREON – hliníková kulatina 6 mm](https://www.atreon.cz/hlinikova-kulatina-6-mm-en-6060/), [HORNBACH – trubka Ø 6 mm, 1 m](https://www.hornbach.cz/p/kulata-trubka-hlinikova-stribrna-o-6-mm-1m/6069570/) |
+| Stavěcí šroub (červík) **M3 × 5**, DIN 913 / ISO 4026, imbus | 1 + 1 do rukojeti (+2 do spojky) | [PeckaModel – šrouby a červíky na imbus](https://www.peckamodel.cz/produkty/rc-modely-a-prislusenstvi/prislusenstvi/spojovaci-material/srouby-cerviky-imbus), [ATILASHOP – stavěcí šrouby](https://www.atilashop.cz/staveci-srouby-cerviky/), [KUTIL.cz – DIN 913](https://www.kutil.cz/spojovaci-material-a-kotevni-technika/srouby/imbus-vnitrni-sestihran/sroub-staveci-plochy-konec-imbus-din-913/) |
+| Imbusový klíč **1,5 mm** (na červíky) | 1 | běžně v sadě imbusů |
+| Šroub **M3 × 10** (válcová nebo zápustná hlava) na spojení rámu se zadní deskou | 2 | máte doma |
+| Vodítko (volitelné): 2 vruty 3,5 × 30 mm a hmoždinky 5 mm | 2 | |
+
+> **Červík musí být M3 × 5 (nebo kratší), ne delší.** V liště je pro něj přesně
+> 5,6 mm místa. Delší červík by vyčníval a drhl o čelo rámu.
+> Šrouby M3 × 18 se nikde nepoužívají.
 
 ### Délka tyčky
 
@@ -113,24 +119,49 @@ Příklad: mřížka má spodek ve 240 cm a rukojeť má být ve 170 cm, tedy ty
    budou pootevřené pod stejným úhlem.
 5. **Nasaďte oba pojistné hřebínky** do vybrání na horní hraně přepážek.
    Jejich prsty zajistí čepy lamel v drážkách.
-6. **Přiložte zadní desku** a přišroubujte ji dvěma vruty 2,9 × 13
-   (uprostřed nahoře a dole).
+6. **Přiložte zadní desku** a přišroubujte ji dvěma šrouby **M3 × 10**
+   (uprostřed nahoře a dole). Šroub si závit do plastu vyřízne sám. Model
+   počítá s válcovou hlavou (`hlava_m3 = "valcova"`). Pro zápustnou hlavu
+   přepněte `hlava_m3 = "zapustna"` a zadní desku vytiskněte znovu.
 7. **Vyzkoušejte chod:** prstem nebo kouskem tyčky zatlačte lištu otvorem ve
    dně nahoru a dolů. Lamely se musí otáčet všechny současně a západka musí
    cvakat ve třech polohách.
 
-## Montáž na zeď
+## Montáž na zeď (Fischer DuoPower 8 × 65 S)
+
+![detail uchycení](obrazky/detail_uchyceni.png)
+
+Vrut 5 × 80 z balení musí jít do hmoždinky 8 × 65 aspoň **70 mm**. Může tedy
+sevřít nejvýš 10 mm materiálu. Rám je ale hluboký 35 mm, a proto jsou šrouby
+**zapuštěné hluboko do rámu**. Zápustná hlava dosedne na patku těsně u zdi,
+která se zadní deskou měří 8 mm (vrut jde do hmoždinky 72 mm). Otvor Ø 12 mm
+nad hlavou zakryje zepředu tisknutá **krytka**.
 
 1. Límec zasuňte do otvoru ve zdi a srovnejte mřížku do vodováhy.
-2. Otvory v rámu označte a vyvrtejte 4 díry pro hmoždinky 6 mm.
-3. Mřížku přišroubujte vruty 4 × 50.
-4. **Táhlo:** stáhněte lištu úplně dolů (zavřeno). Zespodu zasuňte tyčku
+2. Tužkou nebo vrtákem Ø 5 mm (jen ťuknout) označte na zdi 4 otvory skrz
+   rám. Mřížku sundejte.
+3. Vyvrtejte díry **Ø 8 mm, hloubka aspoň 85 mm**. Do cihly a porobetonu
+   vrtejte bez příklepu. Vyfoukejte prach.
+4. Hmoždinky zatlučte **do roviny zdi**.
+5. Nasaďte mřížku a zašroubujte vruty 5 × 80 skrz otvory v líci.
+   Potřebujete bit s dlouhým nástavcem, protože hlava sedí 27 mm hluboko
+   a otvor má Ø 12 mm. Utahujte citlivě, aby hlava nepraskla plast patky.
+6. Zacvakněte 4 krytky.
+7. **Táhlo:** stáhněte lištu úplně dolů (zavřeno). Zespodu zasuňte tyčku
    otvorem ve dně až na doraz do lišty (18 mm). Klíčem 1,5 mm utáhněte
-   stavěcí šroub **malým otvorem v líci rámu vlevo dole**.
-5. Na spodní konec tyčky nasaďte **rukojeť**. Zajistěte ji druhým červíkem
+   červík **malým otvorem v líci rámu vlevo dole**.
+8. Na spodní konec tyčky nasaďte **rukojeť**. Zajistěte ji druhým červíkem
    nebo lepidlem.
-6. Pokud se tyčka houpe, přišroubujte doprostřed její délky **vodítko**.
+9. Pokud se tyčka houpe, přišroubujte doprostřed její délky **vodítko**.
    Tyčka se do něj dá zacvaknout i dodatečně.
+
+> ⚠️ **Vzdálenost od okraje otvoru ve zdi.** Osa šroubu je jen 11 mm od
+> horní a dolní hrany rámu. Kdyby otvor ve zdi byl stejně velký jako límec
+> (210 mm), zbylo by mezi vývrtem Ø 8 a otvorem jen asi 5 mm zdiva a to se při
+> utahování vylomí. Hmoždinka potřebuje kolem sebe plné zdivo
+> (minimální vzdálenost od okraje najdete v technickém listu Fischer pro
+> váš materiál). Pokud je otvor ve zdi kulatý (trubka) nebo menší, je to
+> v pořádku. Jinak rám zvětšete (`vyska`) nebo změňte `roztec_sroubu`.
 
 ## Úpravy modelu
 
@@ -142,6 +173,9 @@ novější). V panelu *Customizer* lze měnit hlavně:
 - `pocet_lamel`, `roztec`, `sirka_lamely`: počet a velikost lamel.
   Světlý průduch a okraje se dopočítají samy.
 - `limec_sirka`, `limec_vyska`, `limec_hloubka`: límec do otvoru ve zdi
+- `roztec_sroubu`, `tl_upevneni`, `hlava_sroubu`, `zahloubeni`: uchycení na
+  zeď (výchozí hodnoty pro Fischer DuoPower 8 × 65 S s vrutem 5 × 80)
+- `hlava_m3`: hlava šroubů M3 × 10 pro spojení zadní desky (`valcova`/`zapustna`)
 - `sitka = true`: síťka proti hmyzu v zadní desce
 - `prumer_tycky`: průměr tyčky, například 8 mm pro silnější kolík
 - `pocet_poloh`: počet aretačních poloh (3 nebo 5)
