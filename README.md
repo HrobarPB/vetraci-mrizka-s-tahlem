@@ -49,17 +49,17 @@ Rozložená sestava:
 | | |
 |---|---|
 | vnější rozměr rámu | 180 × 250 mm |
-| vystoupení ze zdi | 38 mm (přední kryt 32 + montážní deska 6) |
-| světlý průduch | 152 × 206 mm (mechanismus v okraji 20 mm u táhla, protější okraj jen 8 mm) |
+| vystoupení ze zdi | 40 mm (přední kryt 32 + montážní deska 8) |
+| světlý průduch (lamely) | 140 × 206 mm |
 | otvor ve zdi (zadaný) | 158 × 208 mm |
-| límec do otvoru ve zdi | 156 × 206 mm (vůle 1 mm na stranu), stěny 2 mm, hloubka 30 mm; na středu průduchu, tedy 6 mm od středu mřížky směrem od táhla |
+| límec do otvoru ve zdi | 156 × 206 mm (vůle 1 mm na stranu), **stěny 2 mm**, hloubka 30 mm |
 | rošt v montážní desce | 152 × 202 mm, oka cca 22 × 22 mm, žebra 1,6 mm |
-| síťka proti hmyzu | ustřihnout na **157 × 211 mm** |
+| síťka proti hmyzu | přes celý otvor v límci, ustřihnout na **159 × 211 mm** |
 | lamely | 10 ks, rozteč 20 mm, šířka 25 mm |
 | zdvih táhla | 13 mm |
-| osa tyčky | vlevo, 8 mm od levého okraje a 26 mm od zdi |
+| osa tyčky | vlevo, 8 mm od levého okraje a 28 mm od zdi |
 | vruty do zdi | 4× Fischer DuoPower 8 × 65 S jen skrz montážní desku, rozteč 100 mm vodorovně a 234 mm svisle, osa 8 mm od horní/dolní hrany (13 mm od otvoru ve zdi) |
-| přední kryt k montážní desce | 4 otočné zámky na čtvrt otáčky s pružinou a aretací (princip Camloc/Dzus), rozteč 50 mm |
+| přední kryt k montážní desce | 4 otočné zámky na čtvrt otáčky: šroubovitý náběh, půlkruhová aretace, dorazy; rozteč 50 mm |
 
 > **Otvor ve zdi** je nastavený na 158 × 208 mm (`otvor_sirka`,
 > `otvor_vyska`). Límec se podle něj spočítá sám, o 1 mm na každou stranu
@@ -80,7 +80,7 @@ Hotová STL jsou ve složce [`stl/`](stl). Jsou už natočená do tiskové poloh
 | Rukojeť | `rukojet.stl` | 1 | otvorem nahoru |
 | Vodítko tyčky na zeď | `voditko.stl` | 0–2 | volitelné, když se tyčka moc houpe |
 | Spojka tyčí | `spojka.stl` | 0–1 | volitelné, pro spojení dvou tyček |
-| Otočný klíč zámku | `klic.stl` | **4** | naplocho (plochý profil 5 mm), bez podpěr; 4 perimetry, výplň 50 % |
+| Otočný klíč zámku | `klic.stl` | **4** | naplocho na rovné ploše profilu D, bez podpěr; 4 perimetry, výplň 50 % |
 
 **Materiál:** PETG (do interiéru) nebo ASA (na přímé slunce, originál je
 také z ASA). PLA nedoporučuji, protože pružná západka z PLA časem povolí
@@ -129,6 +129,11 @@ Příklad: mřížka má spodek ve 240 cm a rukojeť má být ve 170 cm, tedy ty
    rozdělený na dvě pružné poloviny s výstupky, které zapadnou do drážek ve
    stěnách krytu, takže hřebínek drží i v sundaném krytu. Vytáhnout se dá
    silou (výstupky mají šikmé boky). Sílu západky mění `hrebinek_zapadka`.
+
+   ![detail západky hřebínku](obrazky/hrebinek_detail.png)
+
+   *Hřebínek (modrý) vytažený z krytu: každý prst je rozdělený na dvě pružné
+   poloviny s výstupky, ve stěnách drážek „U“ v krytu jsou proti nim drážky.*
 6. **Vyzkoušejte chod:** prstem nebo kouskem tyčky zatlačte lištu otvorem ve
    dně nahoru a dolů. Lamely se musí otáčet všechny současně a západka musí
    cvakat ve třech polohách.
@@ -141,23 +146,26 @@ Příklad: mřížka má spodek ve 240 cm a rukojeť má být ve 170 cm, tedy ty
 
 ![řez zámkem v zamčené poloze](obrazky/zamek_rez.png)
 
-*Řez osou zámku: vlevo rukojeť klíče na líci krytu, dřík skrz kryt, vpravo
-příčka za pružinami montážní desky, úplně vpravo zeď.*
+*Řez osou zámku: vlevo rukojeť klíče na líci krytu, kulatý dřík skrz kryt,
+vpravo půlkulatá příčka za pružnými pásky montážní desky, úplně vpravo zeď.*
 
-Zámek je udělaný podle průmyslových rychlozámků na čtvrt otáčky (Camloc,
-Dzus): otočný klíč v odnímatelném krytu, pojistka proti vypadnutí
-a **pružina** v pevné části. Přítlak dělá pružina, ne tuhé přesahy, takže
-zámek snese nepřesnost tisku a časem nepovolí.
+Zámek je udělaný jako současné vačkové zámky na čtvrt otáčky (např. u
+rozvaděčů): příčka po **šroubovitém náběhu** postupně přitáhne kryt, na konci
+zapadne do **aretace** a **doraz** nedovolí přetočení. Všechny tvary, které
+se o sebe opírají, jsou **zaoblené (půlkulaté)**: nemají ostré hrany, které
+by soustředily napětí a vyrývaly se do plastu.
 
-- **Klíč** je plochý profil 5 mm tištěný naplocho: rukojeť (motýlek) vpředu,
-  dřík 6 × 5 mm skrz kryt a příčka 14,6 mm vzadu. Tah jde podél vrstev, ne
-  napříč, takže se klíč neutrhne.
-- **Pružiny** jsou v montážní desce: dva pásky 1,5 mm nad a pod štěrbinou,
-  oddělené štěrbinami a tištěné naplocho. Příčka je při zamčení prohne ke
-  krytu o 0,3 mm a tím kryt přitáhne k desce.
-- **Aretace:** v zamčené poloze příčka zapadne do mělké drážky v pružinách
-  a zámek **cvakne**. Během otáčení pružiny přejede přes vrchol (0,5 mm),
-  takže se sám nepovolí ani vibracemi.
+- **Klíč** má profil „D“: kulatý dřík Ø 8 mm a půlkulatou příčku Ø 5 mm se
+  zaoblenými konci. Rovná plocha dole slouží k tisku naplocho, takže tah jde
+  podél vrstev a klíč se neutrhne.
+- **Náběh:** za vodorovnou štěrbinou v montážní desce jsou dva pružné pásky
+  (1,5 mm, tištěné naplocho) se šroubovitým náběhem se sklonem asi 7°.
+  Příčka po něm najíždí, pásky se prohnou až o 0,65 mm a kryt se přitáhne.
+- **Aretace:** v zamčené poloze příčka zapadne do půlkruhového lůžka
+  vytvarovaného přesně podle ní a zámek **cvakne**. Pásky zůstanou
+  prohnuté o 0,3 mm, to je stálý přítlak krytu. Aby se zámek povolil, musí
+  příčka vyjet zpátky přes vrchol náběhu, takže se sám neotevře.
+- **Dorazy:** klíč se točí jen jedním směrem a jen o čtvrt otáčky.
 - **Pojistka proti vypadnutí:** štěrbina v krytu je svislá, v desce
   vodorovná.
 - **Ovládání prsty:** rukojeť **svisle = zamčeno**, **vodorovně = odemčeno**.
@@ -169,9 +177,9 @@ Když jde zámek moc ztuha, zmenšete `klic_predpeti` (např. 0,2) nebo
 
 ![detail uchycení](obrazky/detail_uchyceni.png)
 
-Na zeď se přišroubuje jen **montážní deska** (6 mm). Zápustné hlavy vrutů
+Na zeď se přišroubuje jen **montážní deska** (8 mm). Zápustné hlavy vrutů
 5 × 80 jsou v rovině jejího čela, takže je přední kryt zcela zakryje. Vrut
-jde do hmoždinky 74 mm (Fischer předepisuje aspoň 70 mm).
+jde do hmoždinky 72 mm (Fischer předepisuje aspoň 70 mm).
 
 1. Montážní desku zasuňte límcem do otvoru ve zdi a srovnejte do vodováhy.
    Skrz 4 otvory označte místa pro hmoždinky a desku sundejte.
@@ -180,7 +188,7 @@ jde do hmoždinky 74 mm (Fischer předepisuje aspoň 70 mm).
 3. Hmoždinky zatlučte **do roviny zdi**.
 4. Montážní desku přišroubujte vruty 5 × 80. Hlavy musí zapadnout do
    zahloubení v rovině čela desky.
-5. **Síťka:** kupovanou síťku 157 × 211 mm nabodněte na 4 malé trny na zadní
+5. **Síťka:** kupovanou síťku 159 × 211 mm nabodněte na 4 malé trny na zadní
    straně předního krytu (u horního a dolního okraje průduchu). Trny ji
    drží, takže při nasazování nespadne. (U montážní desky s tištěnou síťkou
    tento krok odpadá.)
@@ -225,7 +233,7 @@ a přední kryt i s tyčkou sundejte. Montážní deska zůstane na zdi a síťk
 hned přístupná.
 
 **Kupovaná síťka:** ze sklolaminátové sítě proti hmyzu ustřihněte obdélník
-**157 × 211 mm**. Přední kryt má pro síťku lůžko hluboké 0,25 mm, takže ji
+**159 × 211 mm** (pokryje celý otvor v límci). Přední kryt má pro síťku lůžko hluboké 0,25 mm, takže ji
 montážní deska pevně stiskne.
 
 **Tištěná síťka:** vytiskněte `zadni_deska_se_sitkou.stl` místo
@@ -256,7 +264,7 @@ novější). V panelu *Customizer* lze měnit hlavně:
   zdi (výchozí hodnoty pro Fischer DuoPower 8 × 65 S s vrutem 5 × 80)
 - `roztec_klicu`, `klic_predpeti`, `pruzina_tl`: zámky předního krytu
   (viz [Zámek krytu](#zámek-krytu-jak-funguje))
-- `bok_protejsi`: šířka bočního okraje bez mechanismu (užší = širší průduch)
+- `bok_protejsi`: šířka bočního okraje bez mechanismu (výchozí 20 mm = souměrný kryt)
 - `hrebinek_zapadka`: výška výstupků západky pojistných hřebínků
 - `sitka`: `kupovana`, `tistena` nebo `zadna`; `sitka_tl`: hloubka lůžka
   pro kupovanou síťku; `rost_roztec`, `rost_zebro`: pevný rošt;

@@ -44,6 +44,7 @@ IMG=(--colorscheme=Tomorrow --autocenter --viewall)
 "${OSC[@]}" -o obrazky/zezadu_sitka.png --imgsize=900,1000 --camera=0,0,0,60,0,200,0 "${IMG[@]}" -D 'dil="sestava"' -D 'nahled_delka_tycky=0' "${EXTRA[@]}" mrizka.scad >/dev/null 2>&1
 "${OSC[@]}" -o obrazky/rozlozeno_sitka.png --imgsize=900,1000 --camera=0,0,0,60,0,200,0 "${IMG[@]}" -D 'dil="rozlozeno"' -D 'sitka="tistena"' -D 'nahled_delka_tycky=0' "${EXTRA[@]}" mrizka.scad >/dev/null 2>&1
 "${OSC[@]}" -o obrazky/vymena_sitky.png --imgsize=1100,1000 --camera=0,0,0,70,0,-35,0 "${IMG[@]}" -D 'dil="vymena_sitky"' "${EXTRA[@]}" mrizka.scad >/dev/null 2>&1
+"${OSC[@]}" -o obrazky/hrebinek_detail.png --imgsize=1100,900 --camera=-35,75,95,15,22,40 --colorscheme=Tomorrow -D 'dil="hrebinek_detail"' -D 'ovladani="vpravo"' "${EXTRA[@]}" mrizka.scad >/dev/null 2>&1
 "${OSC[@]}" -o obrazky/lamela.png --imgsize=1200,500 --camera=0,0,0,55,0,25,0 "${IMG[@]}" -D 'dil="lamela"' "${EXTRA[@]}" mrizka.scad >/dev/null 2>&1
 
 "${OSC[@]}" -o obrazky/zamek_rez.png --imgsize=1600,560 --camera=0,0,0,0,0,0,0 --projection=ortho --viewall --autocenter --colorscheme=Tomorrow -D 'dil="zamek_rez"' -D 'ovladani="vpravo"' "${EXTRA[@]}" mrizka.scad >/dev/null 2>&1
