@@ -15,7 +15,7 @@ module steny_A() {
     translate([-big/2, -big]) square([big, big + tb - eps]);
     translate([-big/2, H - tb + eps]) square([big, big]);
     translate([-big, -big/2]) square([big + 0 - eps, 2*big]);          // před lícem (y < 0)
-    translate([D + st + limec_hloubka + eps, -big/2]) square([big, 2*big]);
+    translate([D + sd + limec_hloubka + eps, -big/2]) square([big, 2*big]);
 }
 // stěny v řezu ramen: čelo, zadní deska, dno, strop komory
 module steny_B() {
