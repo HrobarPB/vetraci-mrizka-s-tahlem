@@ -173,26 +173,27 @@ by soustředily napětí a vyrývaly se do plastu.
   něm šroubovitý náběh. Příčka se točí v kulaté kapse, okolo je deska plná
   až k okraji. Příčka po náběhu najíždí a kryt se přitáhne.
 - **Aretace:** v zamčené poloze příčka zapadne do půlkruhového lůžka
-  vytvarovaného přesně podle ní a zámek **cvakne**. Přesah 0,1 mm drží
+  vytvarovaného přesně podle ní a zámek **cvakne**. Přesah 0,3 mm drží
   kryt přitažený. Aby se zámek povolil, musí příčka vyjet zpátky přes
-  hranu aretace (0,15 mm), takže se sám neotevře.
+  hranu aretace (0,35 mm), takže se sám neotevře.
 - **Dorazy:** klíč se točí jen jedním směrem a jen o čtvrt otáčky. Dorazy
   jsou plné bloky přes celou hloubku kapsy (až po zadní plochu desky),
   srostlé s její stěnou a s rovným čelem, takže se přes ně oblá příčka
   nepřetlačí.
 - **Stejný směr zasunutí:** štěrbina v krytu i v montážní desce je
   vodorovná, klíč se zasune skrz oba díly najednou.
-- **Středicí kolíky:** na zadní straně krytu jsou 2 kolíky Ø 5 mm se
-  zkosenou špičkou (uprostřed nahoře a dole), v montážní desce jsou pro ně
-  díry. Kryt se jimi na desce vystředí dřív, než se zasunou klíče, takže
-  štěrbiny v obou dílech jsou přesně proti sobě.
+- **Obvodová polodrážka (lip and groove):** zadní hrana stěn krytu má po
+  celém obvodu límeček 1,4 × 1,8 mm se zúženou špičkou a v čele montážní
+  desky je pro něj drážka s vůlí 0,2 mm. Kryt se na desce vystředí ve
+  všech směrech dřív, než se zasunou klíče, takže štěrbiny v obou dílech
+  jsou přesně proti sobě. Spára mezi díly je navíc zakrytá.
 - **Ovládání:** mincí nebo plochým šroubovákem; zářez **svisle = zamčeno**,
   **vodorovně = odemčeno**.
 
 Zámek je tuhý (nic v něm nepruží), proto rozhoduje přesnost tisku. Nejdřív
 vytiskněte jeden klíč a kousek desky se zámkem. Když jde zámek moc ztuha,
-zmenšete `klic_predpeti` na 0,05 nebo 0; když kryt drží volně, zvětšete ho
-na 0,15–0,2.
+zmenšete `klic_predpeti` (např. 0,15) a `aretace_hl` (např. 0,2); když kryt
+drží volně, `klic_predpeti` zvětšete.
 
 ## Montáž na zeď (Fischer DuoPower 8 × 65 S)
 
@@ -213,8 +214,8 @@ jde do hmoždinky 72 mm (Fischer předepisuje aspoň 70 mm).
    straně předního krytu (u horního a dolního okraje průduchu). Trny ji
    drží, takže při nasazování nespadne. (U montážní desky s tištěnou síťkou
    tento krok odpadá.)
-6. **Nasaďte přední kryt** na montážní desku tak, aby 2 středicí kolíky
-   zapadly do děr v desce. Pak do každého otvoru v líci krytu zasuňte klíč
+6. **Nasaďte přední kryt** na montážní desku tak, aby límeček na zadní
+   hraně krytu zapadl po celém obvodu do drážky v desce. Pak do každého otvoru v líci krytu zasuňte klíč
    se zářezem **vodorovně** (příčka projde vodorovnou štěrbinou v krytu
    i v desce, hlava zapadne do zápustného lůžka). Klíč přitlačte a otočte
    mincí nebo šroubovákem o **čtvrt otáčky**, až je zářez **svisle**
@@ -285,7 +286,7 @@ novější). V panelu *Customizer* lze měnit hlavně:
 - `vrut_od_okraje`: vzdálenost vrutu od hrany desky (menší = dál od otvoru)
 - `tl_desky`, `roztec_sroubu`, `hlava_sroubu`: montážní deska a vruty do
   zdi (výchozí hodnoty pro Fischer DuoPower 8 × 65 S s vrutem 5 × 80)
-- `roztec_klicu`, `klic_predpeti`, `dno_zamku`: zámky předního krytu
+- `roztec_klicu`, `klic_predpeti`, `aretace_hl`, `dno_zamku`: zámky předního krytu
   (viz [Zámek krytu](#zámek-krytu-jak-funguje))
 - `bok_protejsi`: šířka bočního okraje bez mechanismu (výchozí 20 mm = souměrný kryt)
 - `hrebinek_zapadka`: výška výstupků západky pojistných hřebínků

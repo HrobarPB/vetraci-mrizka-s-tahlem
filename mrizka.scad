@@ -105,7 +105,9 @@ hlava_sroubu = 10;
 // Vodorovná rozteč zámků (2 nahoře, 2 dole) [mm]
 roztec_klicu = 50;
 // Přesah příčky v aretaci [mm] = stálý přítlak krytu (menší = lehčí chod, větší = pevnější)
-klic_predpeti = 0.1;
+klic_predpeti = 0.3;
+// Hloubka aretace [mm]: o kolik musí příčka vyjet, aby se zámek povolil
+aretace_hl = 0.35;
 // Tloušťka plného dna zámku v montážní desce [mm] (leží celou plochou na podložce)
 dno_zamku = 2.4;
 
@@ -186,13 +188,18 @@ klic_pos  = [for (zz = [tb/2, H - tb/2]) for (xx = [W/2 - roztec_klicu/2, W/2 + 
 //    doraz je i na druhé straně, takže se klíč točí jen správným směrem a jen o 90°;
 //    dorazy jsou plné bloky přes celou hloubku kapsy, srostlé s její stěnou,
 //  - štěrbina v krytu i v desce je vodorovná (stejný směr zasunutí): kryt se nasadí na desku,
-//    vystředí ho 2 kolíky, pak se klíče zasunou zářezem vodorovně a otočí zářezem svisle.
-// Středicí kolíky krytu (zadní plocha krytu) a díry pro ně v montážní desce
-kol_pos  = [for (zz = [tb/2, H - tb/2]) [W/2, zz]];   // uprostřed mezi zámky nahoře a dole
-kol_d    = 5;                            // průměr kolíku
-kol_h    = 4;                            // délka kolíku za zadní plochou krytu (poslední 1 mm kužel)
-kol_boss = 9;                            // průměr sloupku kolíku v krytu
-kol_vule = 0.3;                          // vůle díry v desce (na průměr)
+//    vystředí ho obvodová polodrážka, pak se klíče zasunou zářezem vodorovně a otočí zářezem svisle.
+// Obvodová polodrážka (lip and groove): límeček na zadní hraně stěn krytu zapadne do drážky
+// v čele montážní desky po celém obvodu -> kryt je vystředěný ve všech směrech, spára je zakrytá.
+// Límeček vyrůstá přímo ze stěny krytu (kryt se tiskne lícem dolů, límeček je nahoře),
+// drážka je v čele desky (deska se tiskne čelem dolů, drážka je otevřená k podložce).
+lem_a    = 1.4;                          // odsazení límečku od vnější hrany
+lem_w    = 1.4;                          // tloušťka límečku (leží celý na stěně krytu)
+lem_h    = 1.8;                          // výška límečku za zadní plochou krytu
+lem_vule = 0.2;                          // vůle v drážce (na každou stranu)
+lem_hl   = lem_h + 0.2;                  // hloubka drážky v desce
+module obrys() square([W, H]);          // obrys zadní hrany krytu i montážní desky
+module prstenec(a, w) difference() { offset(delta = -a) obrys(); offset(delta = -(a + w)) obrys(); }
 kl_r      = 4;                           // poloměr dříku (profil D)
 kl_lr     = 4;                           // poloměr půlkulaté příčky (rovná strana ke zdi)
 kl_ll     = 8;                           // polovina délky příčky
@@ -204,7 +211,7 @@ pr_x      = 12;                          // polovina šířky oblasti zámku
 pr_z      = kl_ll + 0.4;                 // vnější hrana náběhu (od osy)
 pr_dutina = kl_ll + kl_vule + 0.3;       // poloměr kulaté kapsy, ve které se točí příčka (okolo je deska plná)
 kl_mezera = 0.1;                         // vůle příčky nad dnem v odemčené poloze
-ar_hl     = 0.15;                        // výška hrany aretace nad přítlakem (cvaknutí)
+ar_hl     = aretace_hl;                  // výška hrany aretace nad přítlakem (cvaknutí)
 h_det     = kl_mezera + klic_predpeti;   // výška náběhu pod příčkou v aretaci
 h_pk      = h_det + ar_hl;               // vrchol náběhu
 h_stop    = sd - dno_zamku;              // dorazy přes celou hloubku kapsy (až po zadní plochu desky)
@@ -212,6 +219,8 @@ y_pruz    = D + dno_zamku;               // zadní plocha dna zámku
 y_pricka  = y_pruz + kl_mezera;          // přední (opěrná) plocha příčky
 y_lug     = y_pricka + kl_lr;            // rovná (zadní) strana příčky
 
+assert(lem_hl < dno_zamku - 0.3, "Drážka pro límeček by se protla s kapsou zámku.");
+assert(lem_a + lem_w <= st, "Límeček musí ležet celý na stěně krytu.");
 assert(sd >= 4 && sd <= 10, "Montážní deska musí mít 4-10 mm (vrut 5x80 musí jít aspoň 70 mm do hmoždinky 8x65).");
 assert(tb/2 - pr_dutina >= 1.5, "Zámek v montážní desce je moc blízko okraje.");
 assert(kl_hlava/2 <= tb/2 - 1.5, "Hlava klíče se nevejde do okraje krytu.");
@@ -335,11 +344,10 @@ module lista(s = 0) {
 module ram() {
     ram_telo();
     if (sitka == "kupovana") trny_sitky();
-    // středicí kolíky: zapadnou do děr v montážní desce dřív, než se zasunou klíče
-    for (q = kol_pos) translate([q[0], D - eps, q[1]]) rotate([-90, 0, 0]) {
-        cylinder(d = kol_d, h = kol_h - 1 + eps);
-        translate([0, 0, kol_h - 1]) cylinder(d1 = kol_d, d2 = kol_d - 2, h = 1);
-    }
+    // obvodový límeček: zapadne do drážky v montážní desce dřív, než se zasunou klíče
+    // (špička se zúženým vnějším okrajem navede límeček do drážky)
+    yz_plane(D - eps, lem_h - 0.4 + eps) prstenec(lem_a, lem_w);
+    yz_plane(D + lem_h - 0.4, 0.4) prstenec(lem_a + 0.4, lem_w - 0.4);
 }
 module ram_telo() {
     ch = 1.5;
@@ -362,7 +370,6 @@ module ram_telo() {
             // pouzdra šroubů do zdi
             // pouzdra montážních šroubků zadní desky
             for (q = klic_pos) translate([q[0], 0, q[1]]) rotate([-90, 0, 0]) cylinder(d = kl_boss, h = D);   // sloupek zámku
-            for (q = kol_pos) translate([q[0], 0, q[1]]) rotate([-90, 0, 0]) cylinder(d = kol_boss, h = D);    // sloupek středicího kolíku
             // horní doraz lišty (poloha "otevřeno")
             translate([x_bar0 - 0.3, 0, bar_top0 + s_max + 0.1]) cube([x_kom1 - x_bar0 + 0.3 + eps, D, H - st - (bar_top0 + s_max + 0.1) + eps]);
         }
@@ -465,11 +472,9 @@ module zadni_deska() {
             translate([0, 0, -1]) cylinder(d = prumer_sroubu, h = sd + 2);
             translate([0, 0, -eps]) cylinder(d1 = hlava_sroubu + 0.6, d2 = prumer_sroubu, h = (hlava_sroubu + 0.6 - prumer_sroubu)/2);
         }
-        // díry pro středicí kolíky krytu (se sražením na vstupu)
-        for (q = kol_pos) translate([q[0], D, q[1]]) rotate([-90, 0, 0]) {
-            translate([0, 0, -1]) cylinder(d = kol_d + kol_vule, h = 1 + kol_h + 0.5);
-            translate([0, 0, -eps]) cylinder(d1 = kol_d + kol_vule + 1.2, d2 = kol_d + kol_vule, h = 0.6);
-        }
+        // obvodová drážka pro límeček krytu (na vstupu rozšířená o 0,3 mm pro snadné navedení)
+        yz_plane(D - 1, 1 + lem_hl) prstenec(lem_a - lem_vule, lem_w + 2*lem_vule);
+        yz_plane(D - 1, 1 + 0.4) prstenec(lem_a - lem_vule - 0.3, lem_w + 2*lem_vule + 0.6);
         // otvory pro trny síťky
         if (sitka == "kupovana") for (q = trny_pos) translate([q[0], D - 1, q[1]]) rotate([-90, 0, 0]) cylinder(d = 2, h = 1 + 1.6, $fn = 16);
         // zámky klíčů: vodorovná štěrbina pro křídlo a za ní kuželové lůžko otevřené ke zdi
