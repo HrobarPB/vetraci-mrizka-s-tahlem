@@ -183,9 +183,16 @@ klic_pos  = [for (zz = [tb/2, H - tb/2]) for (xx = [W/2 - roztec_klicu/2, W/2 + 
 //    celou plochou na podložce) a na něm šroubovitý náběh: příčka po něm najíždí a kryt
 //    postupně přitahuje,
 //  - na konci náběhu je půlkruhové lůžko přesně podle příčky (aretace) a za ním doraz,
-//    doraz je i na druhé straně, takže se klíč točí jen správným směrem a jen o 90°,
-//  - štěrbina v krytu je svislá, v desce vodorovná: klíč se zasune zepředu rukojetí svisle,
-//    otočí se vodorovně a z krytu už nevypadne.
+//    doraz je i na druhé straně, takže se klíč točí jen správným směrem a jen o 90°;
+//    dorazy jsou plné bloky přes celou hloubku kapsy, srostlé s její stěnou,
+//  - štěrbina v krytu i v desce je vodorovná (stejný směr zasunutí): kryt se nasadí na desku,
+//    vystředí ho 2 kolíky, pak se klíče zasunou zářezem vodorovně a otočí zářezem svisle.
+// Středicí kolíky krytu (zadní plocha krytu) a díry pro ně v montážní desce
+kol_pos  = [for (zz = [tb/2, H - tb/2]) [W/2, zz]];   // uprostřed mezi zámky nahoře a dole
+kol_d    = 5;                            // průměr kolíku
+kol_h    = 4;                            // délka kolíku za zadní plochou krytu (poslední 1 mm kužel)
+kol_boss = 9;                            // průměr sloupku kolíku v krytu
+kol_vule = 0.3;                          // vůle díry v desce (na průměr)
 kl_r      = 4;                           // poloměr dříku (profil D)
 kl_lr     = 4;                           // poloměr půlkulaté příčky (rovná strana ke zdi)
 kl_ll     = 8;                           // polovina délky příčky
@@ -200,7 +207,7 @@ kl_mezera = 0.1;                         // vůle příčky nad dnem v odemčen�
 ar_hl     = 0.15;                        // výška hrany aretace nad přítlakem (cvaknutí)
 h_det     = kl_mezera + klic_predpeti;   // výška náběhu pod příčkou v aretaci
 h_pk      = h_det + ar_hl;               // vrchol náběhu
-h_stop    = 2;                           // výška dorazů
+h_stop    = sd - dno_zamku;              // dorazy přes celou hloubku kapsy (až po zadní plochu desky)
 y_pruz    = D + dno_zamku;               // zadní plocha dna zámku
 y_pricka  = y_pruz + kl_mezera;          // přední (opěrná) plocha příčky
 y_lug     = y_pricka + kl_lr;            // rovná (zadní) strana příčky
@@ -328,6 +335,11 @@ module lista(s = 0) {
 module ram() {
     ram_telo();
     if (sitka == "kupovana") trny_sitky();
+    // středicí kolíky: zapadnou do děr v montážní desce dřív, než se zasunou klíče
+    for (q = kol_pos) translate([q[0], D - eps, q[1]]) rotate([-90, 0, 0]) {
+        cylinder(d = kol_d, h = kol_h - 1 + eps);
+        translate([0, 0, kol_h - 1]) cylinder(d1 = kol_d, d2 = kol_d - 2, h = 1);
+    }
 }
 module ram_telo() {
     ch = 1.5;
@@ -350,6 +362,7 @@ module ram_telo() {
             // pouzdra šroubů do zdi
             // pouzdra montážních šroubků zadní desky
             for (q = klic_pos) translate([q[0], 0, q[1]]) rotate([-90, 0, 0]) cylinder(d = kl_boss, h = D);   // sloupek zámku
+            for (q = kol_pos) translate([q[0], 0, q[1]]) rotate([-90, 0, 0]) cylinder(d = kol_boss, h = D);    // sloupek středicího kolíku
             // horní doraz lišty (poloha "otevřeno")
             translate([x_bar0 - 0.3, 0, bar_top0 + s_max + 0.1]) cube([x_kom1 - x_bar0 + 0.3 + eps, D, H - st - (bar_top0 + s_max + 0.1) + eps]);
         }
@@ -382,7 +395,7 @@ module ram_telo() {
             translate([0, 0, kl_hv - eps]) cylinder(d1 = kl_hlava, d2 = 2*kl_r, h = kl_hlava/2 - kl_r);   // kužel přesně podle hlavy (určuje osovou polohu klíče)
             translate([0, 0, -1]) linear_extrude(D + 2) {
                 circle(r = kl_r + kl_vule);
-                rotate(90) offset(r = kl_vule) klic_silueta();                                // svislá štěrbina pro zasunutí
+                offset(r = kl_vule) klic_silueta();                                           // vodorovná štěrbina, stejně jako v montážní desce
             }
         }
         // průchod tyčky dnem rámu
@@ -451,6 +464,11 @@ module zadni_deska() {
         for (q = screw_pos) translate([q[0], D, q[1]]) rotate([-90, 0, 0]) {
             translate([0, 0, -1]) cylinder(d = prumer_sroubu, h = sd + 2);
             translate([0, 0, -eps]) cylinder(d1 = hlava_sroubu + 0.6, d2 = prumer_sroubu, h = (hlava_sroubu + 0.6 - prumer_sroubu)/2);
+        }
+        // díry pro středicí kolíky krytu (se sražením na vstupu)
+        for (q = kol_pos) translate([q[0], D, q[1]]) rotate([-90, 0, 0]) {
+            translate([0, 0, -1]) cylinder(d = kol_d + kol_vule, h = 1 + kol_h + 0.5);
+            translate([0, 0, -eps]) cylinder(d1 = kol_d + kol_vule + 1.2, d2 = kol_d + kol_vule, h = 0.6);
         }
         // otvory pro trny síťky
         if (sitka == "kupovana") for (q = trny_pos) translate([q[0], D - 1, q[1]]) rotate([-90, 0, 0]) cylinder(d = 2, h = 1 + 1.6, $fn = 16);
@@ -568,14 +586,20 @@ module nabeh_zamku() {
             union() for (s = [0, 180]) rotate(s) {
                 for (k = [0:n-1]) sektor(25 + k*35/n, 35/n + 0.3, h_pk*(k + 1)/n);   // šroubovitý náběh 25°-60°
                 sektor(60, 62, h_pk);                                                  // vrchol
-                sektor(126, 16, h_stop, 7);                                            // doraz za aretací
-                sektor(-46, 13, h_stop, 7);                                            // doraz proti otáčení špatným směrem
             }
             // jen na dně (ne ve štěrbině)
-            for (sy = [-1, 1]) translate([-pr_x, sy > 0 ? kl_lr + kl_vule : -pr_z, 0]) cube([2*pr_x, pr_z - kl_lr - kl_vule, h_stop + 1]);
+            for (sy = [-1, 1]) translate([-pr_x, sy > 0 ? kl_lr + kl_vule : -pr_z, 0]) cube([2*pr_x, pr_z - kl_lr - kl_vule, h_pk + 1]);
         }
         // půlkruhová aretace: lůžko přesně podle příčky v zamčené poloze
         translate([0, 0, y_lug - y_pruz + klic_predpeti]) rotate(90) pricka();
+    }
+    // dorazy: plné bloky přes celou hloubku kapsy až po zadní plochu desky, srostlé se stěnou
+    // kapsy; rovná čela v rovině stěn štěrbiny. Každý blok zastaví jeden konec příčky
+    // za aretací (90°) a druhý konec při otáčení špatným směrem (pod 0°), přes rovné čelo
+    // se oblá příčka nepřetlačí.
+    for (s = [0, 180]) rotate(s) intersection() {
+        cylinder(r = pr_dutina + 0.5, h = h_stop, $fn = 96);
+        translate([-(pr_dutina + 1), kl_lr + kl_vule, 0]) cube([pr_dutina + 1 - (kl_lr + kl_vule), pr_dutina + 1, h_stop]);
     }
 }
 

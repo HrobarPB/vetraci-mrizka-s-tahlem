@@ -137,11 +137,9 @@ Příklad: mřížka má spodek ve 240 cm a rukojeť má být ve 170 cm, tedy ty
 6. **Vyzkoušejte chod:** prstem nebo kouskem tyčky zatlačte lištu otvorem ve
    dně nahoru a dolů. Lamely se musí otáčet všechny současně a západka musí
    cvakat ve třech polohách.
-7. **Klíče zámků** (bez lepidla a bez šroubů): každý klíč zasuňte zepředu do
-   otvoru v líci krytu se zářezem **svisle** (příčka projde svislou štěrbinou
-   v krytu, hlava zapadne do zápustného lůžka) a pak ho otočte zářezem
-   **vodorovně**. Příčka je teď za krytem napříč štěrbiny, takže klíč
-   z krytu nevypadne.
+7. **Klíče zámků** (bez lepidla a bez šroubů) se zasouvají až při nasazení
+   krytu na montážní desku, viz [Montáž na zeď](#montáž-na-zeď-fischer-duopower-8--65-s),
+   krok 6.
 
 ## Zámek krytu (jak funguje)
 
@@ -156,8 +154,7 @@ vpravo půlkulatá příčka za plným dnem zámku v montážní desce, úplně 
 krytu a otáčejí se v kuželovém lůžku; zářez svisle = zamčeno, vodorovně =
 odemčeno. Vpravo klíč v tiskové poloze. Dole pohled od zdi do montážní
 desky: příčka se otáčí v kulaté kapse montážní desky za krytem, v krytu je jen
-kulatý dřík. Svislou štěrbinu pro první zasunutí klíče hlava zakryje
-v každé poloze.*
+kulatý dřík. Vodorovnou štěrbinu v krytu hlava zakryje v každé poloze.*
 
 Zámek je udělaný jako současné vačkové zámky na čtvrt otáčky (např. u
 rozvaděčů): příčka po **šroubovitém náběhu** postupně přitáhne kryt, na konci
@@ -179,9 +176,16 @@ by soustředily napětí a vyrývaly se do plastu.
   vytvarovaného přesně podle ní a zámek **cvakne**. Přesah 0,1 mm drží
   kryt přitažený. Aby se zámek povolil, musí příčka vyjet zpátky přes
   hranu aretace (0,15 mm), takže se sám neotevře.
-- **Dorazy:** klíč se točí jen jedním směrem a jen o čtvrt otáčky.
-- **Pojistka proti vypadnutí:** štěrbina v krytu je svislá, v desce
-  vodorovná.
+- **Dorazy:** klíč se točí jen jedním směrem a jen o čtvrt otáčky. Dorazy
+  jsou plné bloky přes celou hloubku kapsy (až po zadní plochu desky),
+  srostlé s její stěnou a s rovným čelem, takže se přes ně oblá příčka
+  nepřetlačí.
+- **Stejný směr zasunutí:** štěrbina v krytu i v montážní desce je
+  vodorovná, klíč se zasune skrz oba díly najednou.
+- **Středicí kolíky:** na zadní straně krytu jsou 2 kolíky Ø 5 mm se
+  zkosenou špičkou (uprostřed nahoře a dole), v montážní desce jsou pro ně
+  díry. Kryt se jimi na desce vystředí dřív, než se zasunou klíče, takže
+  štěrbiny v obou dílech jsou přesně proti sobě.
 - **Ovládání:** mincí nebo plochým šroubovákem; zářez **svisle = zamčeno**,
   **vodorovně = odemčeno**.
 
@@ -209,10 +213,12 @@ jde do hmoždinky 72 mm (Fischer předepisuje aspoň 70 mm).
    straně předního krytu (u horního a dolního okraje průduchu). Trny ji
    drží, takže při nasazování nespadne. (U montážní desky s tištěnou síťkou
    tento krok odpadá.)
-6. **Nasaďte přední kryt** na montážní desku. Všechny 4 klíče musí mít
-   zářez **vodorovně** (odemčeno), aby příčky prošly štěrbinami v desce.
-   Kryt přitlačte k desce a každý klíč otočte mincí nebo šroubovákem
-   o **čtvrt otáčky**, až je zářez **svisle** a zámek cvakne.
+6. **Nasaďte přední kryt** na montážní desku tak, aby 2 středicí kolíky
+   zapadly do děr v desce. Pak do každého otvoru v líci krytu zasuňte klíč
+   se zářezem **vodorovně** (příčka projde vodorovnou štěrbinou v krytu
+   i v desce, hlava zapadne do zápustného lůžka). Klíč přitlačte a otočte
+   mincí nebo šroubovákem o **čtvrt otáčky**, až je zářez **svisle**
+   a zámek cvakne.
 7. **Táhlo:** stáhněte lištu úplně dolů (zavřeno). Zespodu zasuňte tyčku
    otvorem ve dně až na doraz do lišty (18 mm). Klíčem 1,5 mm utáhněte
    červík **malým otvorem v líci rámu vlevo dole**.
@@ -245,8 +251,8 @@ se po okraji vysunout. Hned za ní je **pevný rošt** v montážní desce, kter
 ji podepře a nepustí dovnitř ptáky. Před ní je 1,5 mm volného místa
 k lamelám.
 
-**Výměna nebo vyčištění síťky:** mincí otočte 4 klíče zářezem vodorovně
-a přední kryt i s tyčkou sundejte. Montážní deska zůstane na zdi a síťka je
+**Výměna nebo vyčištění síťky:** mincí otočte 4 klíče zářezem vodorovně,
+vytáhněte je a přední kryt i s tyčkou sundejte. Montážní deska zůstane na zdi a síťka je
 hned přístupná.
 
 **Kupovaná síťka:** ze sklolaminátové sítě proti hmyzu ustřihněte obdélník
