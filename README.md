@@ -76,7 +76,8 @@ Hotová STL jsou ve složce [`stl/`](stl). Jsou už natočená do tiskové poloh
 | *nebo* montážní deska s tištěnou síťkou | `zadni_deska_se_sitkou.stl` | 1 | místo předchozí; deskou dolů, viz [Síťka proti hmyzu](#síťka-proti-hmyzu) |
 | Lamela | `lamela.stl` | **10** | rovnou stranou dolů, rameno nahoru |
 | Ovládací lišta | `lista.stl` | 1 | čepy nahoru, délka 214 mm |
-| Pojistný hřebínek | `pojistka.stl` | **2** | naležato |
+| Pojistný hřebínek u táhla | `pojistka_u_tahla.stl` | 1 | naležato |
+| Pojistný hřebínek protější (se žebry) | `pojistka_protejsi.stl` | 1 | naležato, žebry nahoru |
 | Rukojeť | `rukojet.stl` | 1 | otvorem nahoru |
 | Vodítko tyčky na zeď | `voditko.stl` | 0–2 | volitelné, když se tyčka moc houpe |
 | Spojka tyčí | `spojka.stl` | 0–1 | volitelné, pro spojení dvou tyček |
@@ -129,6 +130,14 @@ Příklad: mřížka má spodek ve 240 cm a rukojeť má být ve 170 cm, tedy ty
    rozdělený na dvě pružné poloviny s výstupky, které zapadnou do drážek ve
    stěnách krytu, takže hřebínek drží i v sundaném krytu. Vytáhnout se dá
    silou (výstupky mají šikmé boky). Sílu západky mění `hrebinek_zapadka`.
+
+   Hřebínky jsou dva různé díly. `pojistka_u_tahla` patří na přepážku vedle
+   mechanismu (při táhle vlevo je to levý). `pojistka_protejsi` patří na
+   volně stojící stěnu průduchu na druhé straně (při táhle vlevo pravý).
+   Ten má navíc žebra, která vyplní mezeru mezi stěnou průduchu a vnější
+   stěnou krytu a opřou se o ni. Hřebínek se tak nemůže naklonit ani
+   posunout do strany a výstupky prstů nevyskočí z drážek. Žebra jsou mezi
+   prsty, takže prsty dál pruží.
 
    ![detail západky hřebínku](obrazky/hrebinek_detail.png)
 

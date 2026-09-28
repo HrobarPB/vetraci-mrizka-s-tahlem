@@ -18,7 +18,7 @@
 
 /* [Zobrazení] */
 // Co vykreslit (díly "..." jsou už natočené pro tisk)
-dil = "sestava"; // [sestava, rez, schema, mechanismus, rozlozeno, ram, zadni_deska, lamela, lista, pojistka, rukojet, voditko, spojka, klic, detail_uchyceni, zamek_rez, hrebinek_detail, vymena_sitky]
+dil = "sestava"; // [sestava, rez, schema, mechanismus, rozlozeno, ram, zadni_deska, lamela, lista, pojistka_u_tahla, pojistka_protejsi, rukojet, voditko, spojka, klic, detail_uchyceni, zamek_rez, hrebinek_detail, vymena_sitky]
 // Poloha žaluzie: 0 = zavřeno, 1 = otevřeno
 otevreni = 1; // [0:0.05:1]
 // Na které straně (při pohledu zepředu na mřížku na zdi) je táhlo
@@ -422,9 +422,25 @@ module ram_telo() {
 zap_y  = 1.5;
 prst_w = 2*r_osa + 0.1;                 // šířka prstu
 prst_y = y_ax + r_osa + 0.3;            // konec prstu (nad čepem lamely)
-module pojistka(xs = 0) {
+// Protější hřebínek (na volně stojící stěně průduchu, daleko od táhla) má navíc žebra:
+// vyplní mezeru mezi stěnou průduchu a vnější stěnou krytu a opřou se o ni, takže se
+// hřebínek nemůže naklonit ani posunout do strany a výstupky prstů nevyskočí z drážek.
+// Žebra jsou mezi prsty (prsty dál pruží), zespodu zkosená 45° (tisk naležato bez podpěr).
+pojistka_zebro = 2.4;                   // tloušťka žebra
+pojistka_zebro_vule = 0.15;             // vůle žebra k vnější stěně krytu
+function pojistka_zebra_z() = concat([tb - st + 0.1 + pojistka_zebro/2],
+    [for (i = [0:N-2]) (zl(i) + zl(i+1))/2],
+    [tb + cav_h + st - 0.1 - pojistka_zebro/2]);
+module pojistka(xs = 0, volna = false) {
     tt = st - 0.2;
     flen = D - st + 0.2 - prst_y;
+    if (volna) {
+        yd = D - st + 0.1;                        // spodek lišty hřebínku
+        yh = yd + st - 0.15 - luzko_tl;           // vršek lišty hřebínku (pod síťkou)
+        xo = st + pojistka_zebro_vule;            // vnitřní líc vnější stěny krytu + vůle
+        for (zc = pojistka_zebra_z()) translate([0, 0, zc - pojistka_zebro/2]) linear_extrude(pojistka_zebro)
+            polygon([[xs + 0.1 + eps, yd], [xs + 0.1 + eps, yh], [xo, yh], [xo, yd - (xs - 0.1 - xo)], [xs - 0.1, yd]]);
+    }
     translate([xs + 0.1, 0, 0]) {
         translate([0, D - st + 0.1, tb - st + 0.1]) cube([tt, st - 0.15 - luzko_tl, cav_h + 2*st - 0.2]);
         for (i = [0:N-1]) translate([0, prst_y, zl(i) - prst_w/2]) difference() {
@@ -652,7 +668,7 @@ module sestava(phi, explode = 0, rez = false, tyc = true) strana() {
     color("gainsboro") translate([0, 3*explode, 0]) orez(rez) zadni_deska();
     if (sitka == "kupovana") color("dimgray", 0.7) translate([0, 2.5*explode, 0]) orez(rez)
         translate([x_cc - sit_w/2 + 0.25, D - luzko_tl, H/2 - sit_h/2 + 0.25]) cube([sit_w - 0.5, luzko_tl, sit_h - 0.5]);
-    color("lightsteelblue") translate([0, 2*explode, 0]) orez(rez) for (xs = [x_cav0 - st, x_cav1]) pojistka(xs);
+    color("lightsteelblue") translate([0, 2*explode, 0]) orez(rez) { pojistka(x_cav0 - st, true); pojistka(x_cav1); }
     color("lightgray") translate([0, explode, 0]) orez(rez) for (i = [0:N-1]) lamela_na_miste(i, phi);
     color("darkorange") translate([explode*0.4, 0, 0]) orez(rez) lista(s);
     color("goldenrod") for (q = klic_pos) translate([0, -explode*1.5, 0]) klic_na_miste(q, explode == 0);
@@ -665,7 +681,8 @@ module k_tisku(co) {
     if (co == "zadni_deska") zrcadlo_tisk() translate([0, H, -D]) rotate([90, 0, 0]) zadni_deska();     // límcem nahoru
     if (co == "lamela")      zrcadlo_tisk() translate([0, 0, r_osa]) lamela_local();                    // rovnou stranou dolů
     if (co == "lista")       zrcadlo_tisk() translate([0, 0, x_bar1]) rotate([0, 90, 0]) lista(0);      // čepy nahoru
-    if (co == "pojistka")    rotate([0, 90, 0]) translate([-(st - 0.2) - 0.1, 0, 0]) pojistka(0);
+    if (co == "pojistka_u_tahla") rotate([0, 90, 0]) translate([-(st - 0.2) - 0.1, 0, 0]) pojistka(0);
+    if (co == "pojistka_protejsi") zrcadlo_tisk() rotate([0, 90, 0]) translate([-(x_cav0 - st) - (st - 0.2) - 0.1, 0, 0]) pojistka(x_cav0 - st, true);   // žebry nahoru
     if (co == "rukojet")     rukojet();
     if (co == "voditko")     voditko();
     if (co == "spojka")      spojka();
@@ -695,7 +712,7 @@ if (dil == "vymena_sitky") strana() {   // montážní deska zůstává na zdi, 
         color("white") ram();
         color("lightgray") for (i = [0:N-1]) lamela_na_miste(i, phi_open);
         color("darkorange") lista(s);
-        color("lightsteelblue") for (xs = [x_cav0 - st, x_cav1]) pojistka(xs);
+        color("lightsteelblue") { pojistka(x_cav0 - st, true); pojistka(x_cav1); }
         color("goldenrod") for (q = klic_pos) klic_na_miste(q, false);
     }
 }
@@ -704,7 +721,7 @@ if (dil == "zamek_rez") zamek_rez();
 if (dil == "hrebinek_detail") intersection() {   // hřebínek vytažený z krytu: pružné prsty s výstupky a drážky v krytu
     union() {
         color("white") ram();
-        color("lightsteelblue") translate([0, 14, 0]) pojistka(x_cav0 - st);
+        color("lightsteelblue") translate([0, 14, 0]) pojistka(x_cav0 - st, true);
         color("lightgray") for (i = [0:1]) lamela_na_miste(i, 0);
     }
     translate([0, 0, 15]) cube([40, 60, 45]);
@@ -786,5 +803,5 @@ module schema(phi) {
     // osy
     color("black") vrstva(6) for (i = [0:N-1]) translate([y_ax, zl(i)]) circle(r = 0.8);
 }
-if (dil == "ram" || dil == "zadni_deska" || dil == "lamela" || dil == "lista" || dil == "pojistka"
+if (dil == "ram" || dil == "zadni_deska" || dil == "lamela" || dil == "lista" || dil == "pojistka_u_tahla" || dil == "pojistka_protejsi"
     || dil == "rukojet" || dil == "voditko" || dil == "spojka" || dil == "klic") k_tisku(dil);
