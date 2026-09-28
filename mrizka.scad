@@ -18,7 +18,7 @@
 
 /* [Zobrazení] */
 // Co vykreslit (díly "..." jsou už natočené pro tisk)
-dil = "sestava"; // [sestava, rez, schema, mechanismus, rozlozeno, ram, zadni_deska, lamela, lista, pojistka_u_tahla, pojistka_protejsi, rukojet, voditko, spojka, klic, detail_uchyceni, zamek_rez, hrebinek_detail, vymena_sitky]
+dil = "sestava"; // [sestava, rez, schema, mechanismus, rozlozeno, ram, zadni_deska, lamela, lista, pojistka_u_tahla, pojistka_protejsi, klika, voditko, klic, detail_uchyceni, zamek_rez, hrebinek_detail, vymena_sitky]
 // Poloha žaluzie: 0 = zavřeno, 1 = otevřeno
 otevreni = 1; // [0:0.05:1]
 // Na které straně (při pohledu zepředu na mřížku na zdi) je táhlo
@@ -82,11 +82,15 @@ tistena_vlakno = 0.5;
 // Tloušťka tištěné síťky [mm]; celá leží na podložce, min. 0,4 = dva průjezdy po 0,2 mm
 tistena_tl = 0.4;
 
-/* [Táhlo] */
-// Průměr tyčky táhla (hliník / ocel / bukový kolík) [mm]
+/* [Táhlo – otočná závitová tyč M6 s kličkou] */
+// Závitová tyč M6 (DIN 975): v komoře je to šroub, který posouvá lištou, dolů visí ke kličce
 prumer_tycky = 6;
-// Počet aretačních poloh (3 = zavřeno / půl / otevřeno)
-pocet_poloh = 3;
+// Stoupání závitu [mm na otáčku] (M6 = 1)
+stoupani = 1;
+// Poloměr kličky (od osy tyče ke středu knoflíku) [mm]
+klika_r = 32;
+// Tloušťka pružných prstů prokluzovací spojky v kličce [mm]; tlustší = prokluzuje až při větší síle
+spojka_prst = 2.4;
 
 /* [Montážní deska na zeď – Fischer DuoPower 8 x 65 S (vrut 5 x 80 zápustný)] */
 // Zadní (montážní) deska zůstává na zdi; přední kryt s lamelami se k ní přišroubuje zepředu.
@@ -117,6 +121,11 @@ hrebinek_zapadka = 0.35;
 
 /* [Hidden] */
 $fn = 48;
+// kupované díly M6
+mat_s = 10;  mat_h = 5;       // matice DIN 934 M6 (klíč 10, výška 5)
+nyl_h = 6;                    // samojistná matice DIN 985 M6 (výška 6)
+podl_d = 12; podl_h = 1.6;    // podložka DIN 125 M6
+spoj_l = 18;                  // spojovací matice DIN 6334 M6 (klíč 10, délka 18)
 eps = 0.01;
 
 W = sirka; H = vyska; D = hloubka; st = stena; sb = bok; sd = tl_desky;
@@ -130,14 +139,18 @@ r_hub = 2.8;                  // výztužné žebro kolem osy
 gap   = 0.8;                  // vůle krajních lamel k rámu v zavřené poloze
 y_ax  = st + (D - st)/2;      // hloubka osy lamel
 
-// --- kinematika (kulisa: čep lišty ve vidlici ramene) -------------------
-alpha  = phic/2;              // rameno svírá s lamelou alpha -> symetrický zdvih
-e      = 7.5;                 // vodorovná vzdálenost čepu lišty od osy lamely
-r_cep  = 2;                   // čep lišty Ø4
-s_max  = e*tan(alpha);        // polovina zdvihu lišty
+// --- kinematika (čep na rameni lamely jezdí ve vodorovné drážce lišty) ----
+// Rameno míří dozadu a svírá s lamelou alpha; čep je na poloměru e. Lišta se posouvá
+// o s = e*sin(phi + alpha), čep přitom jen klouže po drážce, která je otevřená dozadu:
+// lamela se vkládá zezadu a čep vjede do drážky stejným pohybem jako osa do drážky "U".
+alpha  = phic/2;              // symetrický rozsah ramene -41°..+41° kolem vodorovné
+e      = 6.5;                 // poloměr čepu na rameni
+r_cep  = 2;                   // čep Ø4 (zespodu zkosený 45°, tiskne se bez podpěr)
+cep_ext = r_cep*sqrt(1 + pow(sqrt(2) - 1, 2));   // největší poloměr zkoseného čepu
+s_max  = e*sin(alpha);        // polovina zdvihu lišty
 zdvih  = 2*s_max;
-L_arm  = e/cos(alpha) + 1.6;  // délka ramene (vidlice přesahuje nejvzdálenější polohu čepu)
-w_arm  = 2*r_cep + 0.4 + 2*2.2;
+w_arm  = 8;                   // průměr náboje ramene
+r_boss = r_cep + 1.2;         // oko čepu
 t_arm  = 3;
 
 // --- odvozené svislé rozměry --------------------------------------------
@@ -158,20 +171,25 @@ x_arm0 = x_kom0 + 0.5; x_arm1 = x_arm0 + t_arm;
 x_bar0 = x_arm1 + 0.5; x_bar1 = x_kom1 - 0.5;         // ovládací lišta
 x_barc = (x_bar0 + x_bar1)/2;
 
-// --- ovládací lišta ------------------------------------------------------
+// --- ovládací lišta a šroub ---------------------------------------------
 y_bar0 = st + 0.4;  y_bar1 = D - 0.6;     // vzadu místo pro síťku přes komoru
-y_pin  = y_ax + e;
-bar_bot0 = st + s_max;          // spodek lišty v poloze s = 0 (dole doráží na dno = zavřeno)
+g_d    = 3;                               // hloubka drážky v liště = délka čepu v drážce
+g_h    = 2*cep_ext + 0.3;                 // výška drážky
+y_gr0  = y_ax + e*cos(alpha) - cep_ext - 0.4;   // přední (zavřený) konec drážky
 bar_top0 = zl(N-1) + 8;
-y_rod  = 12;                    // osa tyčky (červík M3x5 se celý schová v liště)
-d_sock = prumer_tycky + 0.3;
-sock_h = 18;                    // hloubka zásuvky tyčky
-z_grub = 7;                     // stavěcí šroub nad spodkem lišty
-// pružná západka
-L_j = 25; t_j = 2.5; g_j = 1.5; r_bump = 1.5;
-tz0 = (bar_bot0 + bar_top0)/2 - L_j/2;   // volný konec jazýčku
-z_bump0 = tz0 + 2.5;
-function s_pos(k) = pocet_poloh < 2 ? 0 : -s_max + k*zdvih/(pocet_poloh-1);
+x_rod  = (x_kom0 + 0.3 + x_bar1)/2;       // osa závitové tyče (uprostřed spodního bloku lišty)
+y_rod  = 10;
+z_nyl  = st + podl_h + nyl_h;             // vršek samojistné matice nad dnem komory
+z_stop = z_nyl + 0.5;                     // dolní doraz lišty (výstupky v krytu, ne matice)
+bar_bot0 = z_stop + s_max;                // spodek lišty v poloze s = 0
+h_blok = 1.5 + mat_h + 0.3 + 1.5;         // spodní blok lišty s maticí M6
+z_mat  = 1.5;                             // matice nad spodkem lišty
+z_tyc  = bar_bot0 + s_max + z_mat + mat_h + 1.5;   // horní konec závitové tyče (nehýbe se)
+kanal_h = z_tyc - (bar_bot0 - s_max) + 4; // kanál pro tyč v liště (4 mm rezerva na nepřesné zkrácení)
+L_nad  = z_tyc - st;                      // o kolik krátký kus tyče přečnívá nad dno komory
+L_kus  = z_tyc + podl_h + spoj_l/2;       // krátký kus závitové tyče v krytu (dole končí v půlce spojovací matice)
+L_nad_mat = L_nad - podl_h - nyl_h;       // kolik tyče zbude nad samojistnou maticí v komoře
+otacky = zdvih/stoupani;
 
 // --- šrouby --------------------------------------------------------------
 screw_pos = [for (zz = [vrut_od_okraje, H - vrut_od_okraje]) for (xx = [W/2 - roztec_sroubu/2, W/2 + roztec_sroubu/2]) [xx, zz]];
@@ -228,19 +246,22 @@ assert(2*(kl_ll + kl_vule) < kl_hlava, "Hlava klíče musí zakrýt štěrbinu p
 assert(abs(roztec_sroubu - roztec_klicu)/2 >= pr_x + hlava_sroubu/2 + 1, "Vruty do zdi a zámky jsou moc blízko u sebe.");
 assert(y_lug <= D + sd - 0.3, "Příčka klíče se nevejde do montážní desky - zvětšete tl_desky.");
 assert(tistena_tl >= 0.4, "Tištěná síťka musí mít aspoň 0,4 mm (dva průjezdy).");
-assert(y_rod - prumer_tycky/2 - y_bar0 >= 5, "Červík M3x5 by vyčníval z lišty a drhl o čelo rámu - posuňte y_rod dozadu.");
 assert(bok_protejsi >= 2*st + 1, "Protější boční okraj musí mít aspoň 2 stěny + 1 mm.");
 assert(tb >= 14, str("Okraj nahoře/dole vychází jen ", tb, " mm - zvětšete výšku nebo uberte lamely."));
 assert(p*cos(phic) > t + 0.2, "Lamely by do sebe v zavřené poloze narážely - zmenšete uhel_zavreni.");
 assert(sb - 2*st >= 13, "Boční okraj je příliš úzký pro komoru mechanismu.");
-assert(y_ax + sqrt(L_arm*L_arm + w_arm*w_arm/4) < D - 0.3, "Rameno by drhlo o zadní desku - zvětšete hloubku.");
-assert(bar_bot0 + sock_h < tz0 - 3, "Zásuvka tyčky zasahuje do západky lišty.");
+assert(y_ax + e + r_boss < D - 0.3, "Rameno by drhlo o zadní desku - zvětšete hloubku.");
+assert(x_rod - mat_s/2 >= x_kom0 + 1.2 && x_rod + mat_s/2 <= x_bar1 - 1.2, "Matice M6 se nevejde do spodku lišty.");
+assert(y_rod - (podl_d/2 + 0.5) >= st, "Podložka tyče by drhla o čelo komory.");
+assert(y_gr0 - g_h/2 > y_rod + prumer_tycky/2 + 1, "Drážka pro čep zasahuje do kanálu pro tyč.");
 
 // stav žaluzie
 phi_open = -phic*(1 - otevreni);          // úhel lamel (0 = vodorovně)
-function s_of(phi) = e*tan(phi + alpha);  // poloha lišty pro daný úhel lamel
+function s_of(phi) = e*sin(phi + alpha);  // poloha lišty pro daný úhel lamel
 
-echo(str("Průduch: ", cav_w, " x ", cav_h, " mm, zdvih táhla: ", zdvih, " mm, okraj nahoře/dole: ", tb, " mm"));
+echo(str("Průduch: ", cav_w, " x ", cav_h, " mm, zdvih lišty: ", zdvih, " mm = ", otacky, " otáček kličky, okraj nahoře/dole: ", tb, " mm"));
+echo(str("Krátký kus závitové tyče M6: ", L_kus, " mm; samojistná matice ", L_nad_mat, " mm od horního konce (+-1,5 mm)"));
+echo(str("Klička: 2 matice M6 staženy proti sobě, jejich spodek ", kl_mat, " mm nad spodním koncem tyče"));
 zdivo = H/2 - otvor_vyska/2 - vrut_od_okraje - 4;   // plné zdivo mezi vývrtem Ø8 a otvorem ve zdi
 echo(str("Hmoždinka: osa ", H/2 - otvor_vyska/2 - vrut_od_okraje, " mm od otvoru ve zdi, mezi vývrtem a otvorem zbývá ", zdivo, " mm zdiva"));
 assert(otvor_sirka < W - 10 && otvor_vyska < H - 2*(vrut_od_okraje + 4) - 4, "Otvor ve zdi je na tuto mřížku moc velký - vruty by šly do otvoru.");
@@ -275,24 +296,25 @@ module lamela_profil() {
     }
 }
 
-// vidlicové rameno na pravém konci lamely
+// rameno na konci lamely u mechanismu (v souřadnicích lamely; dole vyplněné k podložce)
 module rameno_profil() {
-    r_sl = r_cep + 0.2;
-    difference() {
-        intersection() {
-            hull() {
-                circle(d = w_arm);
-                rotate(alpha) translate([0, -w_arm/2]) square([L_arm, w_arm]);
-                translate([0, -r_osa]) square([L_arm*cos(alpha) + w_arm/2*sin(alpha), eps]);
-            }
-            translate([-50, -r_osa]) square([100, 100]);
+    intersection() {
+        hull() {
+            circle(d = w_arm);
+            rotate(alpha) translate([e, 0]) circle(r = r_boss);
+            translate([0, -r_osa]) square([e*cos(alpha) + r_boss, eps]);
         }
-        rotate(alpha) hull() {
-            translate([e - 0.2, 0]) circle(r = r_sl);
-            translate([L_arm + 5, -r_sl]) square([eps, 2*r_sl]);
-        }
+        translate([-50, -r_osa]) square([100, 100]);
     }
 }
+// průřez čepu: kruh se zkosením 45° a plochou špičkou na spodní straně (tisk bez podpěr)
+module cep_profil() {
+    intersection() {
+        union() { circle(r = r_cep); rotate(225) square(r_cep); }
+        translate([-5, -r_cep]) square(10);
+    }
+}
+module cep_na_rameni() rotate(alpha) translate([e, 0]) rotate(-alpha) cep_profil();
 
 // =====================================================================
 //  LAMELA  (osa v počátku, podélně X)
@@ -303,8 +325,9 @@ module lamela_local() {
     yz(x_cav0 - st + 0.2, x_lam0 - (x_cav0 - st + 0.2) + eps) circle(r = r_osa);
     // pravá osa přes přepážku
     yz(x_lam1 - eps, x_arm0 - x_lam1 + 2*eps) circle(r = r_osa);
-    // rameno s vidlicí
+    // rameno s čepem (čep míří do drážky v liště)
     yz(x_arm0, t_arm) rameno_profil();
+    yz(x_arm1 - eps, x_bar0 + g_d - x_arm1 + eps) cep_na_rameni();
 }
 
 module lamela_na_miste(i, phi) {
@@ -314,27 +337,31 @@ module lamela_na_miste(i, phi) {
 // =====================================================================
 //  OVLÁDACÍ LIŠTA  (s = svislý posun od střední polohy)
 // =====================================================================
+// 2D profil drážky pro čep (y, z; z = 0 je osa čepu), otevřená dozadu s náběhem
+module drazka_profil() {
+    hull() {
+        translate([y_gr0 + g_h/2, 0]) circle(d = g_h);
+        translate([y_bar1, -g_h/2]) square([2, g_h]);
+    }
+    polygon([[y_bar1 - 4, -g_h/2], [y_bar1 + 2, -g_h/2 - 2], [y_bar1 + 2, g_h/2 + 2], [y_bar1 - 4, g_h/2]]);
+}
 module lista(s = 0) {
-    L_pin = x_bar0 - (x_kom0 + 0.3);
     translate([0, 0, s]) difference() {
         union() {
             translate([x_bar0, y_bar0, bar_bot0]) cube([x_bar1 - x_bar0, y_bar1 - y_bar0, bar_top0 - bar_bot0]);
-            // čepy do vidlic
-            for (i = [0:N-1]) translate([x_bar0 + eps, y_pin, zl(i)]) rotate([0, -90, 0]) {
-                cylinder(r = r_cep, h = L_pin - 0.5 + eps);
-                translate([0, 0, L_pin - 0.5]) cylinder(r1 = r_cep, r2 = r_cep - 0.5, h = 0.5);
-            }
-            // výstupek západky
-            translate([x_bar0, y_bar0 + r_bump - 1.0, z_bump0]) rotate([0, 90, 0]) cylinder(r = r_bump, h = x_bar1 - x_bar0);
+            // spodní blok přes celou šířku komory s maticí M6
+            translate([x_kom0 + 0.3, y_bar0, bar_bot0]) cube([x_bar1 - x_kom0 - 0.3, y_bar1 - y_bar0, h_blok]);
         }
-        // pružný jazýček západky (kořen nahoře, volný konec dole)
-        translate([x_bar0 - 1, y_bar0 + t_j, tz0 - 1.5]) cube([x_bar1 - x_bar0 + 2, g_j, L_j + 1.5]);
-        translate([x_bar0 - 1, y_bar0 - 2, tz0 - 1.5]) cube([x_bar1 - x_bar0 + 2, t_j + g_j + 2, 1.5]);
-        // zásuvka pro tyčku (kapka kvůli tisku na boku)
-        translate([x_barc, y_rod, bar_bot0 - eps]) rotate([0, 0, 180]) teardrop_z(d_sock/2, sock_h);
-        translate([x_barc, y_rod, bar_bot0 - eps]) cylinder(d1 = d_sock + 1.5, d2 = d_sock, h = 0.75);
-        // stavěcí šroub M3 (zepředu)
-        translate([x_barc, y_bar0 - 1, bar_bot0 + z_grub]) rotate([-90, 0, 0]) cylinder(d = 2.5, h = y_rod);
+        // vodorovné drážky pro čepy lamel, otevřené dozadu
+        for (i = [0:N-1]) translate([0, 0, zl(i)]) yz(x_bar0 - 1, 1 + g_d + 0.4) drazka_profil();
+        // matice M6 DIN 934: zasune se zezadu, závitová tyč ji pak zajistí
+        translate([x_rod, y_rod, bar_bot0 + z_mat]) {
+            rotate(30) cylinder(d = (mat_s + 0.3)/cos(30), h = mat_h + 0.3, $fn = 6);
+            translate([-(mat_s + 0.3)/2, 0, 0]) cube([mat_s + 0.3, y_bar1, mat_h + 0.3]);
+        }
+        // kanál pro závitovou tyč
+        translate([x_rod, y_rod, bar_bot0 - 1]) rotate(180) teardrop_z(prumer_tycky/2 + 0.3, kanal_h + 1);   // špička k líci lišty (tisk naležato)
+        translate([x_rod, y_rod, bar_bot0 - eps]) cylinder(d1 = prumer_tycky + 2, d2 = prumer_tycky + 0.6, h = 0.7);
     }
 }
 
@@ -372,6 +399,8 @@ module ram_telo() {
             for (q = klic_pos) translate([q[0], 0, q[1]]) rotate([-90, 0, 0]) cylinder(d = kl_boss, h = D);   // sloupek zámku
             // horní doraz lišty (poloha "otevřeno")
             translate([x_bar0 - 0.3, 0, bar_top0 + s_max + 0.1]) cube([x_kom1 - x_bar0 + 0.3 + eps, D, H - st - (bar_top0 + s_max + 0.1) + eps]);
+            // dolní dorazy lišty (poloha "zavřeno"): výstupky na obou bočních stěnách komory za maticemi
+            for (xx = [x_kom0 - eps, x_kom1 - 1.5]) translate([xx, y_rod + podl_d/2 + 1, st - eps]) cube([1.5 + eps, D - (y_rod + podl_d/2 + 1), z_stop - st + eps]);
         }
         // čelní okno se sražením
         translate([x_cav0, -1, tb]) cube([cav_w, st + 2, cav_h]);
@@ -405,13 +434,8 @@ module ram_telo() {
                 offset(r = kl_vule) klic_silueta();                                           // vodorovná štěrbina, stejně jako v montážní desce
             }
         }
-        // průchod tyčky dnem rámu
-        translate([x_barc, y_rod, -1]) rotate([0, 0, 90]) teardrop_z(prumer_tycky/2 + 0.5, st + 2);
-        // přístupový otvor ke stavěcímu šroubu (lišta v poloze zavřeno)
-        translate([x_barc, -1, st + z_grub]) rotate([-90, 0, 0]) cylinder(d = 3.5, h = st + 2);
-        // drážky aretace v čelní stěně komory
-        for (k = [0:max(pocet_poloh, 1)-1]) translate([x_bar0 - 0.5, st + 1.1, z_bump0 + s_pos(k)])
-            rotate([0, 90, 0]) cylinder(r = 1.6, h = x_bar1 - x_bar0 + 1);
+        // průchod závitové tyče dnem rámu (kapka kvůli tisku lícem dolů)
+        translate([x_rod, y_rod, -1]) rotate([0, 0, 90]) teardrop_z(prumer_tycky/2 + 0.4, st + 2);
     }
 }
 
@@ -529,14 +553,37 @@ module yz_plane(y0, h) translate([0, y0 + h, 0]) rotate([90, 0, 0]) linear_extru
 // =====================================================================
 //  PŘÍSLUŠENSTVÍ TÁHLA
 // =====================================================================
-// rukojeť na konec tyčky (tiskne se tak, jak je, otvorem nahoru)
-module rukojet() {
+// Klička na spodní konec závitové tyče s prokluzovací spojkou (tiskne se tak, jak je).
+// Na konci tyče jsou 2 matice M6 stažené proti sobě; sedí v šestihranném pouzdře z šesti
+// pružných prstů. Při běžném točení prsty matice drží, v krajní poloze se roztáhnou
+// a klička cvaká naprázdno - šroub tak nemůže přetížit dorazy a plastové díly.
+// Kličku drží na tyči zespodu samojistná matice M6.
+kl_dno  = 4;                                   // tloušťka dna kličky
+kl_prst = 26;                                  // výška pružných prstů
+kl_af   = mat_s - 0.1;                         // šestihran pouzdra (mírně menší než matice = předpětí)
+kl_mat  = nyl_h + 0.5 + kl_dno + kl_prst - 2*mat_h;   // spodek matic nad koncem tyče (matice nahoře v prstech)
+module klika() {
+    ri = kl_af/2;                              // vnitřní "poloměr" (na plošku)
+    ro = ri + spojka_prst;
     difference() {
-        rotate_extrude($fn = 64) polygon([
-            [0, 0], [12, 0], [14, 2], [14.5, 6], [13, 14], [9.5, 28], [8, 45], [8.5, 48], [7.5, 50], [0, 50]]);
-        translate([0, 0, 50 - 30]) cylinder(d = d_sock, h = 31);
-        translate([0, 0, 50 - 0.8]) cylinder(d1 = d_sock, d2 = d_sock + 1.6, h = 0.8 + eps);
-        translate([0, 0, 42]) rotate([0, 90, 0]) cylinder(d = 2.5, h = 20);   // stavěcí šroub M3
+        union() {
+            // dno a rameno
+            hull() {
+                cylinder(r = ro/cos(30) + 1.5, h = kl_dno);
+                translate([klika_r, 0, 0]) cylinder(r = 8, h = kl_dno);
+            }
+            // pružné prsty (šestihranná trubka rozdělená v rozích)
+            difference() {
+                rotate(30) cylinder(r = ro/cos(30), h = kl_dno + kl_prst, $fn = 6);
+                translate([0, 0, kl_dno]) rotate(30) cylinder(r = ri/cos(30), h = kl_prst + 1, $fn = 6);
+                for (a = [30:60:330]) rotate(a) translate([0, -0.4, kl_dno]) cube([ro/cos(30) + 1, 0.8, kl_prst + 1]);   // štěrbiny v rozích
+            }
+            // otočný knoflík nahoru
+            translate([klika_r, 0, 0]) rotate_extrude($fn = 48) polygon([[0, 0], [8, 0], [8, kl_dno], [6.5, kl_dno + 3], [6.5, 34], [5.5, 38], [0, 38.5]]);
+        }
+        translate([0, 0, -1]) cylinder(d = prumer_tycky + 0.6, h = kl_dno + 2);
+        // náběh pro matice na horním konci prstů
+        translate([0, 0, kl_dno + kl_prst - 1.5]) cylinder(r1 = ri/cos(30), r2 = ri/cos(30) + 1.5, h = 1.5 + eps, $fn = 6);
     }
 }
 
@@ -561,14 +608,6 @@ module voditko() {
     }
 }
 
-// spojka dvou tyček (tiskne se nastojato)
-module spojka() {
-    difference() {
-        cylinder(d = prumer_tycky + 10, h = 50, $fn = 6*8);   // stěna 5 mm pro červík M3x5
-        translate([0, 0, -1]) cylinder(d = d_sock, h = 52);
-        for (z = [10, 40]) translate([0, 0, z]) rotate([0, 90, 0]) cylinder(d = 2.5, h = 20);
-    }
-}
 
 // obrys klíče při pohledu podél osy (příčka vodorovně = odemčeno), rovná plocha dole
 module klic_silueta() {
@@ -641,9 +680,20 @@ module trny_sitky() {
 // =====================================================================
 //  SESTAVY
 // =====================================================================
-module tycka(s) {
-    color("silver") translate([x_barc, y_rod, bar_bot0 + s + 2 - nahled_delka_tycky]) cylinder(d = prumer_tycky, h = nahled_delka_tycky + sock_h - 2);
-    color("dimgray") translate([x_barc, y_rod, bar_bot0 + s + 2 - nahled_delka_tycky - 20]) rotate([180, 0, 0]) translate([0, 0, -50]) rukojet();
+// závitová tyč s maticemi a kličkou (tyč se jen otáčí, nahoru ani dolů se nehýbe):
+// krátký kus v krytu, pod dnem spojovací matice, do ní zespodu dlouhá tyč s kontramaticí
+module tycka() {
+    z_kon = -nahled_delka_tycky;               // spodní konec dlouhé tyče
+    z_sp  = -podl_h - spoj_l;                  // spodek spojovací matice
+    color("silver") translate([x_rod, y_rod, z_tyc - L_kus]) cylinder(d = prumer_tycky, h = L_kus);
+    if (nahled_delka_tycky > 0) color("silver") translate([x_rod, y_rod, z_kon]) cylinder(d = prumer_tycky, h = z_sp + spoj_l/2 - z_kon);
+    color("gray") translate([x_rod, y_rod, 0]) {
+        translate([0, 0, st]) { cylinder(d = podl_d, h = podl_h); translate([0, 0, podl_h]) cylinder(d = mat_s/cos(30), h = nyl_h, $fn = 6); }
+        translate([0, 0, -podl_h]) cylinder(d = podl_d, h = podl_h);
+        translate([0, 0, z_sp]) cylinder(d = mat_s/cos(30), h = spoj_l, $fn = 6);
+        if (nahled_delka_tycky > 0) translate([0, 0, z_sp - mat_h]) cylinder(d = mat_s/cos(30), h = mat_h, $fn = 6);
+    }
+    if (nahled_delka_tycky > 0) color("dimgray") translate([x_rod, y_rod, z_kon + nyl_h + 0.5]) rotate(90) klika();
 }
 
 // Model je navržený s mechanismem vpravo; pro levou variantu se zrcadlí.
@@ -672,7 +722,7 @@ module sestava(phi, explode = 0, rez = false, tyc = true) strana() {
     color("lightgray") translate([0, explode, 0]) orez(rez) for (i = [0:N-1]) lamela_na_miste(i, phi);
     color("darkorange") translate([explode*0.4, 0, 0]) orez(rez) lista(s);
     color("goldenrod") for (q = klic_pos) translate([0, -explode*1.5, 0]) klic_na_miste(q, explode == 0);
-    if (tyc) tycka(s);
+    if (tyc) tycka();
 }
 
 // natočení dílů pro tisk
@@ -683,9 +733,8 @@ module k_tisku(co) {
     if (co == "lista")       zrcadlo_tisk() translate([0, 0, x_bar1]) rotate([0, 90, 0]) lista(0);      // čepy nahoru
     if (co == "pojistka_u_tahla") rotate([0, 90, 0]) translate([-(st - 0.2) - 0.1, 0, 0]) pojistka(0);
     if (co == "pojistka_protejsi") zrcadlo_tisk() rotate([0, 90, 0]) translate([-(x_cav0 - st) - (st - 0.2) - 0.1, 0, 0]) pojistka(x_cav0 - st, true);   // žebry nahoru
-    if (co == "rukojet")     rukojet();
+    if (co == "klika")       klika();
     if (co == "voditko")     voditko();
-    if (co == "spojka")      spojka();
     if (co == "klic")        translate([0, 0, y_lug]) rotate([180, 0, 0]) klic();       // nastojato, rovnou stranou příčky dolů
 }
 
@@ -793,15 +842,25 @@ module schema(phi) {
     // ramena (poloprůhledně)
     color("steelblue") vrstva(4) for (i = [0:N-1]) translate([y_ax, zl(i)]) rotate(phi) rameno_profil();
     // lišta
-    color("darkorange") vrstva(3) translate([y_bar0, bar_bot0 + s]) difference() {
-        square([y_bar1 - y_bar0, bar_top0 - bar_bot0]);
-        translate([0.8, 0.8]) square([y_bar1 - y_bar0 - 1.6, bar_top0 - bar_bot0 - 1.6]);
+    color("darkorange") vrstva(3) translate([0, s]) difference() {
+        translate([y_bar0, bar_bot0]) square([y_bar1 - y_bar0, bar_top0 - bar_bot0]);
+        for (i = [0:N-1]) translate([0, zl(i)]) drazka_profil();
+        translate([y_rod - prumer_tycky/2 - 0.3, bar_bot0 - 1]) square([prumer_tycky + 0.6, kanal_h + 1]);
     }
-    color("darkorange") vrstva(5) for (i = [0:N-1]) translate([y_pin, zl(i) + s]) circle(r = r_cep);
-    // tyčka
-    color("black") vrstva(3.5) translate([y_rod - prumer_tycky/2, bar_bot0 + s - 90]) square([prumer_tycky, 90 + sock_h]);
+    color("dimgray") vrstva(1) translate([y_rod + podl_d/2 + 1, st]) square([D - y_rod - podl_d/2 - 1, z_stop - st]);   // dolní doraz
+    color("darkorange") vrstva(5) for (i = [0:N-1]) translate([y_ax, zl(i)]) rotate(phi) cep_na_rameni();
+    // závitová tyč s maticemi
+    color("black") vrstva(3.5) translate([y_rod - prumer_tycky/2, -90]) square([prumer_tycky, z_tyc + 90]);
+    color("gray") vrstva(3.6) translate([y_rod, 0]) {
+        translate([-podl_d/2, st]) square([podl_d, podl_h]);
+        translate([-mat_s/2, st + podl_h]) square([mat_s, nyl_h]);
+        translate([-podl_d/2, -podl_h]) square([podl_d, podl_h]);
+        translate([-mat_s/2, -podl_h - spoj_l]) square([mat_s, spoj_l]);
+        translate([-mat_s/2, -podl_h - spoj_l - mat_h]) square([mat_s, mat_h]);
+    }
+    color("gray") vrstva(3.6) translate([y_rod - mat_s/2, bar_bot0 + s + z_mat]) square([mat_s, mat_h]);
     // osy
     color("black") vrstva(6) for (i = [0:N-1]) translate([y_ax, zl(i)]) circle(r = 0.8);
 }
 if (dil == "ram" || dil == "zadni_deska" || dil == "lamela" || dil == "lista" || dil == "pojistka_u_tahla" || dil == "pojistka_protejsi"
-    || dil == "rukojet" || dil == "voditko" || dil == "spojka" || dil == "klic") k_tisku(dil);
+    || dil == "klika" || dil == "voditko" || dil == "klic") k_tisku(dil);
