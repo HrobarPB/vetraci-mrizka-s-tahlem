@@ -8,7 +8,7 @@ big = 1000;
 
 module lamely2d(phi) for (i = [0:N-1]) translate([y_ax, zl(i)]) rotate(phi) lamela_profil();
 module ramena2d(phi) for (i = [0:N-1]) translate([y_ax, zl(i)]) rotate(phi) rameno_profil();
-module cepy2d(phi)   for (i = [0:N-1]) translate([y_ax, zl(i)]) rotate(phi) cep_na_rameni();
+module cepy2d(s) for (i = [0:N-1]) translate([y_pin, zl(i) + s]) circle(r = r_cep);
 
 // stěny v řezu průduchem: horní a dolní okraj (vepředu je okno, vzadu otvor)
 module steny_A() {
@@ -24,15 +24,19 @@ module steny_B() {
     translate([-big/2, -big]) square([big, big + st - eps]);
     translate([-big/2, H - st + eps]) square([big, big]);
 }
-// lišta v řezu v rovině čepů (x mezi lícem lišty a dnem drážek): plná kromě drážek
-module lista_cepy2d(s) translate([0, s]) difference() {
-    translate([y_bar0, bar_bot0]) square([y_bar1 - y_bar0, bar_top0 - bar_bot0]);
-    for (i = [0:N-1]) translate([0, zl(i)]) drazka_profil();
+
+// vačka a držák jejího horního čepu (pevné, v řezu komorou)
+module vacka2d() translate([vk_y, 0]) {
+    translate([-vk_lim_r, st]) square([2*vk_lim_r, vk_lim]);
+    translate([-vk_r, st]) square([2*vk_r, vk_top - st]);
+    translate([0, vk_top]) polygon([[-vk_r, 0], [vk_r, 0], [vk_hr, vk_r - vk_hr], [-vk_hr, vk_r - vk_hr]]);   // zkosení 45°
+    translate([-vk_hr, vk_top]) square([2*vk_hr, vk_hl]);
 }
-// spodní blok lišty (přes celou šířku komory, tedy i v rovině ramen)
-module blok2d(s) translate([y_bar0, bar_bot0 + s]) square([y_bar1 - y_bar0, h_blok]);
-// podložka a matice na dně komory (otáčí se s tyčí)
-module matice_dno2d() translate([y_rod - podl_d/2, st - eps]) square([podl_d, z_nyl - st]);
+module drzak2d() translate([st - eps, drz_z0]) square([drz_y1 - st + eps, drz_z2 - drz_z0]);
+module lista2d(s) translate([y_bar0, bar_bot0 + s]) difference() {
+    square([y_bar1 - y_bar0, bar_top0 - bar_bot0]);
+    translate([-1, -1]) square([kz_y0 - y_bar0 + 1, lista_vybrani + 1]);
+}
 
 for (k = [0:kroky]) {
     phi = -phic*(1 - k/kroky);
@@ -43,19 +47,18 @@ for (k = [0:kroky]) {
             translate([y_ax, zl(i)])   rotate(phi) lamela_profil();
             translate([y_ax, zl(i+1)]) rotate(phi) lamela_profil();
         }
-        intersection() { ramena2d(phi); steny_B(); }
+        intersection() { ramena2d(phi); union() { steny_B(); vacka2d(); drzak2d(); } }
+        intersection() { ramena2d(phi); cepy2d(s); }
         for (i = [0:N-2]) intersection() {
             translate([y_ax, zl(i)])   rotate(phi) rameno_profil();
             translate([y_ax, zl(i+1)]) rotate(phi) rameno_profil();
         }
-        // čepy musí zůstat v drážkách lišty
-        intersection() { cepy2d(phi); lista_cepy2d(s); }
-        // ramena ani čepy nesmí narazit na spodní blok lišty
-        intersection() { union() { ramena2d(phi); cepy2d(phi); } blok2d(s); }
-        // lišta v komoře: nesmí do stěn, do horního dorazu ani do matice na dně
+        // lišta v komoře: stěny, horní doraz, vačka, držák čepu vačky
         intersection() {
-            translate([y_bar0, bar_bot0 + s]) square([y_bar1 - y_bar0, bar_top0 - bar_bot0]);
-            union() { steny_B(); matice_dno2d(); translate([-big/2, bar_top0 + s_max + 0.1 + eps]) square([big, big]); }
+            lista2d(s);
+            union() { steny_B(); vacka2d(); drzak2d(); translate([-big/2, bar_top0 + s_max + 0.1 + eps]) square([big, big]); }
         }
+        // čep musí zůstat v rovné části vidlice (ne v rozšířeném ústí)
+        if (e/cos(phi + alpha) > L_arm - usti_l - 0.3) square(5);
     }
 }

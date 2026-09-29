@@ -2,19 +2,18 @@
 
 Plastová větrací mřížka **180 × 250 mm** s nastavitelnou žaluzií, podobná
 typu *Dalap GP 180×250 s mechanicky ovládanou žaluzií*. Rozdíl je v ovládání:
-místo páčky na mřížce **visí ze spodku rámu otočná tyč s kličkou** (jako
-u střešních oken), takže mřížku ve výšce ovládne i menší člověk ze země.
+místo páčky na mřížce **visí ze spodku rámu otočná tištěná tyč s rukojetí**,
+takže mřížku ve výšce ovládne i menší člověk ze země.
 Tyč je při pohledu zepředu **vlevo**. Na pravou stranu ji přepne parametr
 `ovladani = "vpravo"`.
 
-- **točením kličky** se lamely plynule otevírají a zavírají, z úplně
-  zavřeno do úplně otevřeno je to asi **8,5 otáčky**
-- tyč se jen otáčí, nahoru ani dolů se nehýbe, klička zůstává pořád ve
-  stejné výšce
-- šroub je **samosvorný**: lamely drží v jakékoli poloze a nic je
-  nestáhne dolů
-- v krajních polohách klička **cvaká naprázdno** (prokluzovací spojka),
-  takže se mechanismus nedá přetáhnout
+- rukojetí se otáčí o **půl otáčky**, tři polohy jsou po čtvrtotáčkách:
+  **0° zavřeno, 90° napůl, 180° otevřeno**; šipka na rukojeti ukazuje, kde
+  mřížka je
+- v každé poloze je **zastavovací ploška**, lamely tam drží samy a nic je
+  nestáhne dolů; konce drážky jsou pevné dorazy
+- tyč se jen otáčí, nahoru ani dolů se nehýbe
+- všechny díly mechanismu včetně tyče se **tisknou**, nic se nekupuje
 - vzadu je **pevný rošt** a za ním **síťka proti hmyzu**, kupovaná nebo tištěná
 - mřížka má dvě části: **montážní deska** zůstává na zdi, **přední kryt**
   s lamelami se sundá po pootočení 4 tištěných zámků, třeba kvůli výměně síťky
@@ -30,26 +29,25 @@ Model je parametrický (OpenSCAD) a všechny díly se tisknou **bez podpěr**.
 ![mechanismus zezadu](obrazky/mechanismus.png)
 
 1. Deset vodorovných lamel se otáčí na čepech v rámu.
-2. Na konci u táhla má každá lamela **rameno s čepem**. Rameno je schované
-   v boční komoře rámu, zepředu ho není vidět.
-3. V komoře jezdí svislá **ovládací lišta** (oranžová). Má deset
-   vodorovných drážek otevřených dozadu, v každé klouže čep jedné lamely.
-4. Lišta se pohybuje jen nahoru a dolů, **zdvih je 8,5 mm**. Lamely se
-   přitom otočí o 82° z vodorovné polohy do téměř svislé a zavřené lamely
-   se překrývají.
-5. Ve spodním bloku lišty je **matice M6**. Prochází jí krátký kus
-   **závitové tyče M6**, který vede dnem rámu ven. Tyč se v rámu jen
-   otáčí: nad dnem i pod ním ji drží matice s podložkou. Když se tyč
-   otočí, lišta se posune nahoru nebo dolů, **jedna otáčka = 1 mm**.
-6. Pod dnem je na krátkém kusu **spojovací matice** a do ní se zespodu
-   našroubuje dlouhá závitová tyč s **kličkou**. Dlouhá tyč se dá
-   odšroubovat, třeba když se sundává přední kryt.
-7. Závit M6 je samosvorný, takže lamely drží v každé poloze bez jakékoli
-   západky a vlastní váha tyče na lištu vůbec nepůsobí.
-8. Krajní polohy mají pevné dorazy v rámu: dole dosedne spodní blok lišty
-   na dva výstupky v komoře, nahoře narazí lišta na doraz. Aby šroub
-   dorazy nepřetížil, drží klička matice na konci tyče jen pružnými prsty.
-   Když se klička točí dál, prsty přeskočí a klička cvaká naprázdno.
+2. Na konci u táhla má každá lamela **vidlicové rameno** s rozšířeným ústím.
+   Rameno je schované v boční komoře rámu, zepředu ho není vidět.
+3. V komoře jezdí svislá **ovládací lišta** (oranžová). Její čepy zapadají
+   do vidlic všech lamel najednou.
+4. Lišta se pohybuje jen nahoru a dolů, **zdvih je 13 mm**. Lamely se přitom
+   otočí o 82° z vodorovné polohy do téměř svislé a zavřené lamely se
+   překrývají.
+5. Pod lištou stojí na dně komory **vačka**: tištěný válec Ø 12 mm se
+   **šroubovitou drážkou tvaru V**. V drážce jezdí **kuželový výstupek**
+   na spodku lišty. Když se vačka otočí, drážka lištu zvedne nebo spustí.
+6. Drážka má tři vodorovné **zastavovací plošky**: v poloze 0° (zavřeno),
+   90° (napůl) a 180° (otevřeno). Na ploškách lišta drží sama, mezi nimi
+   jsou šroubovité náběhy. Konce drážky jsou pevné dorazy, takže se vačka
+   točí jen o půl otáčky.
+7. Vačka má dole čep, který prochází drážkou ve dně rámu, a nahoře čep
+   v držáku na čele komory. Váha tyče visí na vačce, ne na liště.
+8. Do čepu vačky se zespodu zacvakne **tištěná šestihranná tyč** (8 mm přes
+   plošky). Tyč je složená z dílů, které se spojují tištěnými **spojkami**,
+   dole je **rukojeť** se šipkou.
 
 Rozložená sestava:
 
@@ -67,8 +65,8 @@ Rozložená sestava:
 | rošt v montážní desce | 152 × 202 mm, oka cca 22 × 22 mm, žebra 1,6 mm |
 | síťka proti hmyzu | přes celý otvor v límci, ustřihnout na **159 × 211 mm** |
 | lamely | 10 ks, rozteč 20 mm, šířka 25 mm |
-| zdvih lišty | 8,5 mm = asi 8,5 otáčky kličky |
-| osa závitové tyče | vlevo, 10 mm od levého okraje a 30 mm od zdi |
+| zdvih lišty | 13 mm, polohy 0° / 90° / 180° |
+| osa tyče | vlevo, 10 mm od levého okraje a 30,5 mm od zdi |
 | vruty do zdi | 4× Fischer DuoPower 8 × 65 S jen skrz montážní desku, rozteč 100 mm vodorovně a 234 mm svisle, osa 8 mm od horní/dolní hrany (13 mm od otvoru ve zdi) |
 | přední kryt k montážní desce | 4 otočné zámky na čtvrt otáčky: šroubovitý náběh, půlkruhová aretace, dorazy; rozteč 50 mm |
 
@@ -86,64 +84,64 @@ Hotová STL jsou ve složce [`stl/`](stl). Jsou už natočená do tiskové poloh
 | Montážní deska s límcem a roštem | `zadni_deska.stl` | 1 | deskou dolů; pro kupovanou síťku |
 | *nebo* montážní deska s tištěnou síťkou | `zadni_deska_se_sitkou.stl` | 1 | místo předchozí; deskou dolů, viz [Síťka proti hmyzu](#síťka-proti-hmyzu) |
 | Lamela | `lamela.stl` | **10** | rovnou stranou dolů, rameno nahoru |
-| Ovládací lišta | `lista.stl` | 1 | naležato drážkami nahoru, délka 208 mm |
+| Ovládací lišta | `lista.stl` | 1 | naležato, čepy nahoru |
+| Vačka | `vacka.stl` | 1 | nastojato, čepem dolů; 4 perimetry, výplň 100 % |
 | Pojistný hřebínek u táhla | `pojistka_u_tahla.stl` | 1 | naležato |
 | Pojistný hřebínek protější (se žebry) | `pojistka_protejsi.stl` | 1 | naležato, žebry nahoru |
-| Klička s prokluzovací spojkou | `klika.stl` | 1 | dnem dolů, prsty a knoflík nahoru |
+| Díl tyče (šestihran 8 mm, 230 mm) | `tyc.stl` | podle výšky (viz níže) | naležato na plošce; 4 perimetry |
+| Spojka dílů tyče | `spojka.stl` | o 1 méně než dílů tyče | nastojato |
+| Rukojeť se šipkou | `rukojet.stl` | 1 | zásuvkou nahoru |
 | Vodítko tyče na zeď | `voditko.stl` | 0–2 | volitelné, když se tyč při točení moc houpe |
 | Otočný klíč zámku | `klic.stl` | **4** | nastojato na rovné straně příčky, hlavou nahoru, bez podpěr; 4 perimetry, výplň 100 % |
 
 **Materiál:** PETG (do interiéru) nebo ASA (na přímé slunce, originál je
-také z ASA). PLA nedoporučuji, protože pružné díly (prsty kličky, hřebínky)
+také z ASA). PLA nedoporučuji, protože pružné díly (hroty tyče, hřebínky)
 z PLA časem povolí nebo prasknou.
 **Nastavení:** vrstva 0,2 mm, 3 perimetry, výplň 20 %, **bez podpěr**.
-Lištu a kličku tiskněte se 4 perimetry.
+Lištu tiskněte se 4 perimetry, vačku a díly tyče se 4 perimetry a 100 %
+výplní (přenášejí otáčení).
 
 ## Co koupit
 
 | Položka | Ks | Kde koupit (příklady) |
 |---|---|---|
 | Hmoždinka **Fischer DuoPower 8 × 65 S** (balení obsahuje zápustné vruty **5 × 80**) | 4 | [KUTIL.cz](https://www.kutil.cz/spojovaci-material-a-kotevni-technika/kotevni-technika/vseobecne-hmozdinky/hmozdinka-duopower-fischer-8x65-1/), [srovnání cen na Heureka](https://www.heureka.cz/?h%5Bfraze%5D=hmo%C5%BEdinka+duopower+fischer+8x65), [technický list Fischer](https://www.fischer-cz.cz/cs-cz/products/bezne-hmozdinky/plastove-hmozdinky/duopower/538256-duopower-8x65-s) |
-| **Závitová tyč M6 × 1 m**, DIN 975 (pozink nebo nerez); z ní se uřízne krátký kus 38 mm do rámu a zbytek je táhlo ke kličce | 1 (2, pokud má být táhlo delší než 95 cm) | [KUTIL.cz – závitové tyče Zn DIN 975](https://www.kutil.cz/spojovaci-material-a-kotevni-technika/srouby/zavitove-tyce/zavitova-tyc-zn-1m-din-975/), [KUTIL.cz – nerez A2 M6](https://www.kutil.cz/spojovaci-material-a-kotevni-technika/srouby/zavitove-tyce/zavitova-tyc-nerez-a2-1m-din-975-m6/), [Zboží.cz – M6 1 m](https://www.zbozi.cz/vyrobek/zavitova-tyc-m6-1m-din975-tp-4-8/) |
-| **Matice M6**, DIN 934 (1 do lišty, 2 do kličky, 1 kontramatice pod spojovací maticí) | 4 | [NonstopStavebniny – DIN 934 M6](https://www.nonstopstavebniny.cz/sestihranna-matice-din-934--m6-pozink/), [Prumex – DIN 934 M6](http://www.spojovaci-material.net/sp/matice/sestihranne/presne-din-934/ocel-tridy-8/pozink/matice-din-934-m6-08-pozink-6755.html) |
-| **Samojistná matice M6**, DIN 985 (1 nad dno rámu, 1 pod kličku) | 2 | [Prumex – DIN 985 M6](https://www.prumex.cz/matice-samojistna-din-985-m6-08-pozink/), [ProPrumysl – DIN 985 M6](https://www.proprumysl.cz/matice-samojistna-din-985-m6-08-pozink/) |
-| **Podložka M6**, DIN 125 (nad dno a pod dno rámu) | 2 | [Wintech – DIN 125 M6](https://www.wintech.cz/podlozka-din-125-a-m6-6-4-zb_z9212/), [Provleky – DIN 125 M6](https://www.provleky.cz/katalog/podlozky-pod-skrutky-a-matice/produkt/podlozka-m6--6-4--zb-din-125-a) |
-| **Spojovací (prodlužovací) matice M6 × 18**, DIN 6334 (pod dnem rámu; druhá, pokud se spojují dvě dlouhé tyče) | 1 (2) | [Wintech – DIN 6334 M6 × 18](https://www.wintech.cz/matice-prodluzovaci-din-6334-m6-x-18-zb_z6259/), [Atlas – DIN 6334 M6](https://www.atlashop.cz/matice-prodluzovaci-sestihranna-din-6334-m6), [BOUKAL – DIN 6334 M6](https://www.boukal.cz/spojovaci-matice-m6-format-7439080010-din-6334/55965/produkt) |
 | Síť proti hmyzu, sklolaminátová, metráž (stačí kus 16 × 22 cm) | 1 | [UNI HOBBY – metráž šedá](https://unihobby.cz/sit-proti-hmyzu-sklovlaknita-metraz-seda), [BAUHAUS – sítě proti hmyzu](https://www.bauhaus.cz/site-proti-hmyzu-245270), [OBI – sítě proti hmyzu](https://www.obi.cz/ochrana-proti-hmyzu/ochranne-site-proti-hmyzu/c/2200), [Onpira – metráž](https://www.onpira.cz/zbozi/site-proti-hmyzu-skelne-vlakno/) |
 | Vodítko (volitelné): 2 vruty 3,5 × 30 mm a hmoždinky 5 mm | 2 | [Heureka – hmoždinka 5 mm s vrutem](https://www.heureka.cz/?h%5Bfraze%5D=hmo%C5%BEdinka+5+mm+s+vrutem) |
 
-Z nářadí stačí pilka na kov (zkrácení tyče) a klíč 10 mm.
+Mechanismus i tyč jsou celé tištěné, na ovládání se nic nekupuje.
 
-### Délka závitové tyče
+### Délka tyče
 
-- **Krátký kus v rámu: 38 mm** (35–41 mm stačí). Konce zabruste, aby šly
-  matice snadno našroubovat.
-- **Dlouhá tyč ke kličce:**
+Tyč se skládá z dílů `tyc.stl` (každý 230 mm, parametr `tyc_dil`), mezi nimi
+jsou spojky a dole rukojeť:
 
 ```
-délka ≈ (výška spodní hrany mřížky) − (výška, kde má být klička) − 5 mm
+vzdálenost od spodku mřížky ke spodku rukojeti ≈ počet dílů × 233 mm + 17 mm
 ```
 
-Příklad: mřížka má spodek ve 240 cm a klička má být ve 150 cm, tedy tyč
-asi 89,5 cm. Klička se nahoru ani dolů nehýbe. Na delší tyč spojte dva
-kusy druhou spojovací maticí a zajistěte je kontramaticemi.
+Příklad: mřížka má spodek ve 240 cm, rukojeť má být kolem 150 cm, tedy
+90 cm: **4 díly** (949 mm, rukojeť ve 145 cm) a 3 spojky. Na přesnou délku
+změňte `tyc_dil` (třeba 4 díly po 215 mm) a díly přegenerujte.
 
 ## Sestavení předního krytu
 
 1. **Očistěte díly.** Lamela se musí v drážkách „U“ rámu otáčet volně. Když
-   drhne, přejeďte čepy smirkem. Čepy na ramenech musí volně klouzat
-   v drážkách lišty.
+   drhne, přejeďte čepy smirkem. Vačka se musí volně otáčet v drážce ve dně
+   i v držáku.
 2. Rám položte **lícem dolů** na stůl. Komora mechanismu je teď při pohledu
    zezadu **vpravo**.
-3. **Připravte lištu:** do šestihranného lůžka ve spodním bloku lišty
-   zasuňte zezadu **matici M6**. Lištu vložte do komory drážkami k lamelám
-   a spodním blokem dolů (ke dnu rámu). Lišta se zatím volně posouvá.
-4. **Vkládejte lamely** jednu po druhé, zezadu, ramenem do komory. Každou
-   natočte tak, aby čep na rameni byl proti drážce v liště, a spusťte ji
-   dolů. Osa zapadne do drážky „U“ a **čep stejným pohybem vjede do drážky
-   lišty** (drážky mají na konci rozšířený náběh). První lamela nastaví
-   lištu, další vkládejte pod stejným úhlem.
-5. **Zatlačte oba pojistné hřebínky** do vybrání na horní hraně přepážek,
+3. **Vložte vačku:** zezadu ji zasuňte čepem do drážky ve dně komory
+   a horním čepem do zářezu v držáku na čele komory. Natočte ji do polohy
+   **90°** (napůl): prostřední ploška drážky míří dozadu.
+4. **Vložte lamely** jednu po druhé zezadu, čepem do drážek „U“. Každou
+   natočte **napůl** (asi 41° od vodorovné), tak aby otevřená vidlice ramene
+   mířila **rovně dozadu**, tedy kolmo od stolu nahoru.
+5. **Zasuňte lištu** zezadu do komory, čepy k lamelám, kuželovým
+   výstupkem dolů k vačce. Čepy vjedou do vidlic všech lamel najednou
+   (ústí vidlic jsou rozšířená, takže lamely nemusí být natočené přesně)
+   a výstupek zapadne do prostřední plošky drážky vačky.
+6. **Zatlačte oba pojistné hřebínky** do vybrání na horní hraně přepážek,
    až **cvaknou**. Jejich prsty zajistí čepy lamel v drážkách. Každý prst je
    rozdělený na dvě pružné poloviny s výstupky, které zapadnou do drážek ve
    stěnách krytu, takže hřebínek drží i v sundaném krytu. Vytáhnout se dá
@@ -161,16 +159,9 @@ kusy druhou spojovací maticí a zajistěte je kontramaticemi.
 
    *Hřebínek (modrý) vytažený z krytu: každý prst je rozdělený na dvě pružné
    poloviny s výstupky, ve stěnách drážek „U“ v krytu jsou proti nim drážky.*
-6. **Vyzkoušejte chod:** prstem posuňte lištu nahoru a dolů. Lamely se musí
-   otáčet všechny současně a lehce.
-7. **Krátký kus závitové tyče (38 mm):** na horní konec našroubujte
-   **samojistnou matici tak, aby nad ní zbylo 17 mm tyče**, a pod ni
-   nasaďte podložku. Lištu posuňte nahoru, tyč prostrčte zevnitř komory
-   dnem rámu ven a dosedněte maticí s podložkou na dno. Zespodu nasaďte
-   druhou podložku a našroubujte **spojovací matici**, až se dotkne
-   podložky, pak ji povolte o čtvrt otáčky (tyč se musí volně otáčet, ale
-   nesmí mít vůli nahoru a dolů). Točením spojovací matice zašroubujte tyč
-   do matice v liště. Lamely se musí otáčet.
+7. **Vyzkoušejte chod:** otáčejte vačkou za čep, který vyčnívá zespodu
+   rámu. Na 0°, 90° a 180° musí lamely zůstat stát (zastavovací plošky),
+   mezi nimi se musí otáčet všechny současně a lehce.
 8. **Klíče zámků** (bez lepidla a bez šroubů) se zasouvají až při nasazení
    krytu na montážní desku, viz [Montáž na zeď](#montáž-na-zeď-fischer-duopower-8--65-s),
    krok 6.
@@ -254,16 +245,15 @@ jde do hmoždinky 72 mm (Fischer předepisuje aspoň 70 mm).
    i v desce, hlava zapadne do zápustného lůžka). Klíč přitlačte a otočte
    mincí nebo šroubovákem o **čtvrt otáčky**, až je zářez **svisle**
    a zámek cvakne.
-7. **Klička:** na spodní konec dlouhé tyče našroubujte **2 matice M6**
-   a pevně je stáhněte proti sobě, aby jejich spodek byl **26,5 mm od konce
-   tyče**. Kličku nasuňte zespodu prsty přes matice (jdou ztuha, prsty se
-   roztáhnou): matice musí sedět nahoře u konců prstů, jinak by byly prsty
-   moc tuhé. Kličku zajistěte zespodu **samojistnou maticí**, s malou vůlí,
-   aby se klička dala pootočit, když prsty přeskočí.
-8. **Táhlo:** na horní konec dlouhé tyče našroubujte kontramatici, tyč
-   zašroubujte zespodu do spojovací matice až na doraz o krátký kus a
-   kontramatici utáhněte proti spojovací matici.
-9. Pokud se tyč při točení houpe, přišroubujte doprostřed její délky
+7. **Tyč:** díly tyče zasuňte do spojek a dole do rukojeti, až **cvaknou**
+   (hroty jsou rozdělené a mají západky). Horní hrot zasuňte zespodu do
+   čepu vačky, až cvakne. Šestihran jde zasunout v šesti natočeních: když
+   jsou lamely zavřené (0°, vačka na dorazu), zasuňte rukojeť tak, aby
+   šipka mířila **dopředu od zdi**. Po čtvrt otáčce (šipka do strany) je
+   mřížka **napůl**, po půl otáčce (šipka **ke zdi**) **otevřená**. Opačným
+   směrem se rukojeť neotočí, drží ji doraz ve vačce. Pevným tahem jdou
+   hroty zase vytáhnout.
+8. Pokud se tyč při točení houpe, přišroubujte doprostřed její délky
    **vodítko**. Tyč se do něj dá zacvaknout i dodatečně.
 
 > ⚠️ **Vzdálenost od okraje otvoru ve zdi.** Otvor 208 mm je vysoký, nad ním
@@ -291,8 +281,7 @@ ji podepře a nepustí dovnitř ptáky. Před ní je 1,5 mm volného místa
 k lamelám.
 
 **Výměna nebo vyčištění síťky:** mincí otočte 4 klíče zářezem vodorovně,
-vytáhněte je, odšroubujte dlouhou tyč ze spojovací matice (povolte
-kontramatici) a přední kryt sundejte. Montážní deska zůstane na zdi a síťka je
+vytáhněte je, vytáhněte tyč z čepu vačky a přední kryt sundejte. Montážní deska zůstane na zdi a síťka je
 hned přístupná.
 
 **Kupovaná síťka:** ze sklolaminátové sítě proti hmyzu ustřihněte obdélník
@@ -332,9 +321,8 @@ novější). V panelu *Customizer* lze měnit hlavně:
 - `sitka`: `kupovana`, `tistena` nebo `zadna`; `sitka_tl`: hloubka lůžka
   pro kupovanou síťku; `rost_roztec`, `rost_zebro`: pevný rošt;
   `tistena_roztec`, `tistena_vlakno`: tištěná síťka
-- `klika_r`: poloměr kličky
-- `spojka_prst`: tloušťka pružných prstů v kličce (tlustší = prokluzuje až
-  při větší síle)
+- `tyc_s`, `tyc_dil`: šestihranná tyč (rozměr přes plošky, délka dílu)
+- `vacka_ploska`: šířka zastavovacích plošek vačky ve stupních
 - `dil`: co se vykreslí (sestava, řez, schéma, rozložený pohled nebo
   jednotlivé díly pro tisk)
 - `otevreni`: poloha žaluzie v náhledu (0 až 1)
@@ -351,17 +339,17 @@ parametrů.
 
 Skript nejdřív spustí `kontrola.scad`. Ta ve 41 polohách mezi zavřeno
 a otevřeno ověří, že lamely nenarážejí do sebe ani do rámu, ramena nenarážejí
-do komory ani do spodního bloku lišty, čepy zůstávají v drážkách lišty
-a lišta nenarazí na matici na dně. Teprve potom skript
+do komory ani do vačky a jejího držáku, čepy lišty zůstávají v rovné části
+vidlic a lišta nenarazí na vačku, držák ani doraz. Teprve potom skript
 vygeneruje STL, obrázky a animaci.
 
 ## Ladění
 
-- **Klička prokluzuje už při běžném točení:** zvětšete `spojka_prst`
-  (např. 2,8). **Klička neprokluzuje ani v dorazu:** zmenšete ho (např. 2,0).
-- **Lamely se točí ztuha:** zkontrolujte, že spojovací matice pod dnem
-  netlačí na podložku (povolte ji o čtvrt otáčky), a přejeďte čepy
-  a drážky lišty smirkem.
+- **Rukojeť jde ztuha:** přejeďte smirkem drážku vačky a kuželový
+  výstupek lišty, zkontrolujte, že se vačka volně točí v drážce ve dně
+  a v držáku.
+- **Hrot tyče drží v zásuvce málo nebo moc:** výšku západek mění `zub_v`
+  v sekci *Hidden*.
 - **Lamely drhnou:** zvětšete vůle, tedy `r_osa + 0.2` v drážkách „U“,
   nebo zabruste čepy.
 - **Zavřené lamely nedoléhají:** úhel `uhel_zavreni` lze zvednout až k mezi,
@@ -377,5 +365,5 @@ oxidem uhelnatým.
 
 ## Alternativy ovládání
 
-Kdyby tyč překážela, dá se dlouhá tyč odšroubovat a nosit zvlášť: na
-spojovací matici pod rámem stačí nasadit kličku jen při ovládání.
+Kdyby tyč překážela, dá se vytáhnout z čepu vačky a nosit zvlášť jako
+klíč: zasune se jen při ovládání.
