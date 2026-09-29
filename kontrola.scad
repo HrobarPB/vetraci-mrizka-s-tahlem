@@ -28,9 +28,8 @@ module steny_B() {
 // vačka a držák jejího horního čepu (pevné, v řezu komorou)
 module vacka2d() translate([vk_y, 0]) {      // kotouč dorazu (plný až do výšky stěny) a horní čep
     translate([-vk_r, st]) square([2*vk_r, vk_W - st]);
-    translate([-vk_hr, vk_W]) square([2*vk_hr, vk_hl]);
 }
-module drzak2d() translate([st - eps, drz_z0]) square([drz_y1 - st + eps, drz_z2 - drz_z0]);
+module drzak2d() square(0);   // držák čepu kotouče už není
 module lista2d(s) translate([y_bar0, bar_bot0 + s]) difference() {
     square([y_bar1 - y_bar0, bar_top0 - bar_bot0]);
     translate([-1, -1]) square([kz_y0 - y_bar0 + 1, lista_vybrani + 1]);

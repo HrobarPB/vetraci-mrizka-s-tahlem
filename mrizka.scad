@@ -167,25 +167,20 @@ y_pin  = y_ax + e;
 bar_top0 = zl(N-1) + 8;
 
 // --- vačka = otočný stupňový doraz (jako revolverový doraz horní frézky) ------
-// Kotouč na dně komory má nahoře po obvodu tři ploché stupně: 0° = zavřeno, 90° = napůl,
-// 180° = otevřeno, mezi nimi šikmé náběhy. Lišta na něm stojí svislou tyčkou s plochou
-// patkou (jako hloubková tyč frézky na stupni dorazu) a drží vlastní vahou. Za krajními
-// stupni je stěna vyšší než stupně, o kterou patka narazí (dorazy).
+// Plný kotouč na dně komory = rotační klín: nahoře má tři ploché stupně 0° = zavřeno,
+// 90° = napůl, 180° = otevřeno a mezi nimi šikmé náběhy. Lišta na něm stojí masivní nohou
+// s klínovou patkou (jako hloubková tyč frézky na stupni dorazu) a drží vlastní vahou.
+// Zbytek kotouče, kam noha nikdy nedojede, zůstává plný až do výšky vk_W: o něj noha za 0°
+// a za 180° narazí (dorazy). Kotouč drží čep v drážce ve dně a shora ho přitlačuje lišta.
 vk_r   = 7.5;                   // poloměr kotouče
 vk_x   = x_kom1 - 0.5 - vk_r;   // osa (kotouč sahá přes spodek přepážky pod průduch)
 vk_y   = st + 0.4 + vk_r;
-vk_czap = 2;                    // čep kotouče 2 mm pod dnem (zásuvka tyče)
-pk_r0  = 5.8;                   // patka lišty: vnitřní poloměr (od osy kotouče)
+vk_czap = 5;                    // čep kotouče pod dnem (celá zásuvka tyče je pod stupni)
+pk_r0  = 1.5;                   // noha lišty: vnitřní poloměr (od osy kotouče), sahá skoro ke středu
 pk_w   = 4.2;                   // tyčka lišty: šířka
 pk_tip = 2.2;                   // plocha patky, kterou tyčka stojí na stupni (dole zkosená 45°)
 vk_P0  = st + 1.5;              // stupeň "zavřeno" (nejnižší)
 vk_W   = vk_P0 + zdvih + 3;     // vršek stěny s dorazy a náboje
-vk_hr  = 3;                     // horní čep kotouče (Ø6), vede se v držáku na čele komory
-vk_hl  = 6;
-drz_z0 = vk_W + 0.5;            // držák horního čepu: spodek
-drz_z1 = vk_W + vk_hl + 0.5;    // strop zářezu (0,5 mm nad horním čepem)
-drz_z2 = drz_z1 + 2;            // vršek držáku
-drz_y1 = vk_y + 2;              // držák sahá za osu čepu (drží ho do stran)
 kz_y0  = vk_y + vk_r + 0.4;     // přední plocha zadní části lišty (za kotoučem)
 bar_bot0 = vk_P0 + s_max;       // spodek lišty = spodek patky, v poloze s = 0
 // tištěná šestihranná tyč: hrot s pojistkou, zásuvky ve vačce, spojce a rukojeti
@@ -260,7 +255,7 @@ assert(y_lug <= D + sd - 0.3, "Příčka klíče se nevejde do montážní desky
 assert(tistena_tl >= 0.4, "Tištěná síťka musí mít aspoň 0,4 mm (dva průjezdy).");
 assert(vk_x + vk_r <= x_kom1 - 0.3, "Kotouč dorazu se nevejde do komory.");
 assert(vk_W + 0.4 < tb - 0.8, "Kotouč dorazu by se protl s dnem průduchu.");
-assert(pk_r0 - 0.2 > tyc_ac/2 + zub_v + 0.3, "Patka lišty by stála nad zásuvkou tyče.");
+assert(-vk_czap + zas_h + 1.5 <= vk_P0 - 1, "Zásuvka tyče by se protla se stupni kotouče.");
 assert(vk_x + pk_r0 < x_bar1 - 1.5, "Patka lišty je moc tenká.");
 assert(bok_protejsi >= 2*st + 1, "Protější boční okraj musí mít aspoň 2 stěny + 1 mm.");
 assert(tb >= 14, str("Okraj nahoře/dole vychází jen ", tb, " mm - zvětšete výšku nebo uberte lamely."));
@@ -369,7 +364,7 @@ module lista(s = 0) {
     translate([vk_x + pk_r0, vk_y, bar_bot0 + s]) patka(x_bar1 - vk_x - pk_r0, lista_vybrani + 1);
 }
 // výška vybrání v liště: v poloze zavřeno musí být nad držákem čepu vačky
-lista_vybrani = drz_z2 + 0.5 - (bar_bot0 - s_max);
+lista_vybrani = vk_W + 0.5 - (bar_bot0 - s_max);
 
 // =====================================================================
 //  PŘEDNÍ RÁM
@@ -403,8 +398,6 @@ module ram_telo() {
             // pouzdra šroubů do zdi
             // pouzdra montážních šroubků zadní desky
             for (q = klic_pos) translate([q[0], 0, q[1]]) rotate([-90, 0, 0]) cylinder(d = kl_boss, h = D);   // sloupek zámku
-            // držák horního čepu vačky na čele komory
-            translate([vk_x - vk_hr - 1.6, st - eps, drz_z0]) cube([2*(vk_hr + 1.6), drz_y1 - st + eps, drz_z2 - drz_z0]);
             // horní doraz lišty (poloha "otevřeno")
             translate([x_bar0 - 0.3, 0, bar_top0 + s_max + 0.1]) cube([x_kom1 - x_bar0 + 0.3 + eps, D, H - st - (bar_top0 + s_max + 0.1) + eps]);
         }
@@ -447,11 +440,6 @@ module ram_telo() {
         }
         // výřez ve spodku přepážky a v rohu dna průduchu pro kotouč dorazu
         translate([vk_x - vk_r - 0.4, st - eps, st - eps]) cube([x_kom0 - (vk_x - vk_r - 0.4) + eps, vk_y + vk_r + 0.4 - st, vk_W + 0.4 - st + eps]);
-        // zářez pro horní čep vačky v držáku (otevřený dozadu a dolů, nahoře strop)
-        translate([0, 0, drz_z0 - 1]) hull() {
-            translate([vk_x, vk_y, 0]) cylinder(r = vk_hr + 0.3, h = drz_z1 - drz_z0 + 1);
-            translate([vk_x - vk_hr - 0.3, drz_y1 + 1, 0]) cube([2*(vk_hr + 0.3), eps, drz_z1 - drz_z0 + 1]);
-        }
     }
 }
 
@@ -642,7 +630,6 @@ module vacka() {
         union() {
             translate([0, 0, -vk_czap]) cylinder(r = vk_cep_r, h = vk_czap + st + eps);   // čep ve dně
             translate([0, 0, st]) cylinder(r = vk_r, h = vk_W - st, $fn = 96);            // kotouč
-            translate([0, 0, vk_W - eps]) cylinder(r = vk_hr, h = vk_hl + eps);           // horní čep
         }
         // stupně a náběhy = otisk patky lišty po celé dráze (s vůlí); kde patka nejezdí,
         // zůstane stěna do výšky vk_W, na kterou patka za 0° a za 180° narazí
@@ -652,7 +639,7 @@ module vacka() {
 }
 // patka lišty v souřadnicích kotouče při natočení fi (c = vůle; sahá nahoru nad kotouč)
 module patka_ve_vacce(fi, c = 0) rotate(-fi) translate([pk_r0 - c, 0, vk_P0 + vk_H(fi)])
-    patka(vk_r + 1 - pk_r0 + c, vk_W + vk_hl, c);
+    patka(vk_r + 1 - pk_r0 + c, vk_W, c);
 // tyčka s patkou: průřez pk_w, dole zkosená 45° na plochu pk_tip (osa x = radiálně)
 module patka(l, h, c = 0) hull() {
     translate([0, -pk_tip/2 - c, 0]) cube([l, pk_tip + 2*c, h]);
@@ -920,10 +907,8 @@ module schema(phi) {
     color("peru") vrstva(3.5) translate([vk_y, 0]) {
         translate([-vk_cep_r, -vk_czap]) square([2*vk_cep_r, vk_czap + st]);
         translate([-vk_r, st]) square([2*vk_r, vk_P0 + vk_H(vk_fi(s)) - st]);
-        translate([-vk_hr, st]) square([2*vk_hr, vk_W + vk_hl - st]);
     }
-    color("dimgray") vrstva(1) translate([st, drz_z0]) difference() { square([drz_y1 - st, drz_z2 - drz_z0]); translate([vk_y - vk_hr - 0.3 - st, -1]) square([10, drz_z1 - drz_z0 + 1]); }
-    color("darkorange") vrstva(5) translate([vk_y - pk_w/2, bar_bot0 + s]) square([pk_w, lista_vybrani]);   // tyčka s patkou
+    color("darkorange") vrstva(5) translate([vk_y - pk_w/2, bar_bot0 + s]) square([pk_w, lista_vybrani]);   // noha s patkou
     color("tan") vrstva(3.5) translate([vk_y - tyc_s/2, -90]) square([tyc_s, 90 - vk_czap]);
     // osy
     color("black") vrstva(6) for (i = [0:N-1]) translate([y_ax, zl(i)]) circle(r = 0.8);

@@ -36,19 +36,20 @@ Model je parametrický (OpenSCAD) a všechny díly se tisknou **bez podpěr**.
 4. Lišta se pohybuje jen nahoru a dolů, **zdvih je 13 mm**. Lamely se přitom
    otočí o 82° z vodorovné polohy do téměř svislé a zavřené lamely se
    překrývají.
-5. Pod lištou stojí na dně komory **otočný stupňový doraz** (vačka), stejný
-   princip jako revolverový hloubkový doraz horní frézky: kotouč Ø 15 mm
-   má nahoře po obvodu ploché stupně a lišta na něm stojí svislou tyčkou
-   s **plochou patkou** (jako hloubková tyč frézky). Když se kotouč
-   otočí, patka vyjede po náběhu na vyšší stupeň nebo sjede na nižší.
+5. Pod lištou stojí na dně komory **rotační klín** (vačka): plný kotouč
+   Ø 15 mm, stejný princip jako revolverový hloubkový doraz horní frézky.
+   Nahoře má vyříznuté ploché stupně a šikmé náběhy a lišta na něm stojí
+   **masivní nohou** (6 × 4 mm) s klínovou patkou. Když se kotouč otočí,
+   noha vyjede po náběhu na vyšší stupeň nebo sjede na nižší.
 6. Kotouč má tři vodorovné **stupně**: v poloze 0° (zavřeno), 90° (napůl)
    a 180° (otevřeno), mezi nimi jsou náběhy asi 40°. Lišta stojí na stupni
    vlastní vahou, takže v otevřené poloze stojí na nejvyšším stupni
    a nemá kam sjet. Když se rukojeť pustí mezi polohami, lišta po náběhu
-   sama sjede na nejbližší nižší stupeň. Za 0° a za 180° je stěna o 3 mm
-   vyšší než stupně, o kterou patka narazí (pevné dorazy).
-7. Kotouč má dole čep, který prochází drážkou ve dně rámu, a nahoře čep
-   v držáku na čele komory. Váha tyče visí na kotouči, ne na liště.
+   sama sjede na nejbližší nižší stupeň. Zbytek kotouče, kam noha nikdy
+   nedojede, je plný a o 3 mm vyšší než nejvyšší stupeň: o něj noha za 0°
+   a za 180° narazí (pevné dorazy).
+7. Kotouč má dole čep, který prochází drážkou ve dně rámu, shora ho
+   přitlačuje lišta. Váha tyče visí na kotouči, ne na liště.
 8. Do čepu kotouče se zespodu zacvakne **tištěná tyč**: kulatá Ø 8 mm,
    jen konce jsou šestihranné (8 mm přes plošky). Tyč je složená z dílů,
    které se spojují tištěnými **spojkami**, dole je **rukojeť**
@@ -133,19 +134,17 @@ změňte `tyc_dil` (třeba 4 díly po 215 mm) a díly přegenerujte.
 
 1. **Očistěte díly.** Lamela se musí v drážkách „U“ rámu otáčet volně. Když
    drhne, přejeďte čepy smirkem. Kotouč dorazu se musí volně otáčet
-   v drážce ve dně i v držáku.
+   v drážce ve dně.
 2. Rám položte **lícem dolů** na stůl. Komora mechanismu je teď při pohledu
    zezadu **vpravo**.
 3. **Vložte kotouč dorazu:** zezadu ho zasuňte čepem do drážky ve dně
-   komory (kotouč projde výřezem ve spodku přepážky) a horním čepem do
-   zářezu v držáku na čele komory. Natočte ho do polohy **90°** (napůl):
-   prostřední stupeň je na straně u vnější stěny rámu.
+   komory (kotouč projde výřezem ve spodku přepážky). Natočte ho do polohy
+   **90°** (napůl): prostřední stupeň je na straně u vnější stěny rámu.
 4. **Vložte lamely** jednu po druhé zezadu, čepem do drážek „U“. Každou
    natočte **napůl** (asi 41° od vodorovné), tak aby otevřená vidlice ramene
    mířila **rovně dozadu**, tedy kolmo od stolu nahoru.
-5. **Zasuňte lištu** zezadu do komory, čepy k lamelám, tyčkou s patkou
-   dolů. Čepy vjedou do vidlic všech lamel najednou (ústí vidlic jsou
-   rozšířená, takže lamely nemusí být natočené přesně) a patka dosedne
+5. **Zasuňte lištu** zezadu do komory, čepy k lamelám, nohou dolů. Čepy vjedou do vidlic všech lamel najednou (ústí vidlic jsou
+   rozšířená, takže lamely nemusí být natočené přesně) a noha dosedne
    na prostřední stupeň kotouče.
 6. **Zatlačte oba pojistné hřebínky** do vybrání na horní hraně přepážek,
    až **cvaknou**. Jejich prsty zajistí čepy lamel v drážkách. Každý prst je
@@ -348,14 +347,14 @@ parametrů.
 
 Skript nejdřív spustí `kontrola.scad`. Ta ve 41 polohách mezi zavřeno
 a otevřeno ověří, že lamely nenarážejí do sebe ani do rámu, ramena nenarážejí
-do komory ani do kotouče dorazu a jeho držáku, čepy lišty zůstávají
-v rovné části vidlic a lišta nenarazí na kotouč, držák ani horní doraz. Teprve potom skript
+do komory ani do kotouče dorazu, čepy lišty zůstávají
+v rovné části vidlic a lišta nenarazí na kotouč ani horní doraz. Teprve potom skript
 vygeneruje STL, obrázky a animaci.
 
 ## Ladění
 
 - **Rukojeť jde ztuha:** přejeďte smirkem stupně a náběhy kotouče a patku
-  lišty, zkontrolujte, že se kotouč volně točí v drážce ve dně a v držáku.
+  lišty, zkontrolujte, že se kotouč volně točí v drážce ve dně.
 - **Lišta nesjíždí dolů na nižší stupeň:** lamely drhnou, uvolněte je
   (čepy v drážkách „U“, vidlice).
 - **Hrot tyče drží v zásuvce málo nebo moc:** výšku západek mění `zub_v`
