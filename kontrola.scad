@@ -26,11 +26,9 @@ module steny_B() {
 }
 
 // vačka a držák jejího horního čepu (pevné, v řezu komorou)
-module vacka2d() translate([vk_y, 0]) {
-    translate([-vk_lim_r, st]) square([2*vk_lim_r, vk_lim]);
-    translate([-vk_r, st]) square([2*vk_r, vk_top - st]);
-    translate([0, vk_top]) polygon([[-vk_r, 0], [vk_r, 0], [vk_hr, vk_r - vk_hr], [-vk_hr, vk_r - vk_hr]]);   // zkosení 45°
-    translate([-vk_hr, vk_top]) square([2*vk_hr, vk_hl]);
+module vacka2d() translate([vk_y, 0]) {      // kotouč dorazu (plný až do výšky stěny) a horní čep
+    translate([-vk_r, st]) square([2*vk_r, vk_W - st]);
+    translate([-vk_hr, vk_W]) square([2*vk_hr, vk_hl]);
 }
 module drzak2d() translate([st - eps, drz_z0]) square([drz_y1 - st + eps, drz_z2 - drz_z0]);
 module lista2d(s) translate([y_bar0, bar_bot0 + s]) difference() {
