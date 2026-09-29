@@ -18,7 +18,7 @@
 
 /* [Zobrazení] */
 // Co vykreslit (díly "..." jsou už natočené pro tisk)
-dil = "sestava"; // [sestava, rez, schema, mechanismus, rozlozeno, ram, zadni_deska, lamela, lista, pojistka_u_tahla, pojistka_protejsi, vacka, tyc, spojka, rukojet, voditko, klic, detail_uchyceni, zamek_rez, hrebinek_detail, vymena_sitky]
+dil = "sestava"; // [sestava, rez, schema, mechanismus, rozlozeno, ram, zadni_deska, lamela, lista, pojistka_u_tahla, pojistka_protejsi, vacka, pist, kolik, tyc, spojka, rukojet, voditko, klic, detail_uchyceni, zamek_rez, hrebinek_detail, vymena_sitky]
 // Poloha žaluzie: 0 = zavřeno, 1 = otevřeno
 otevreni = 1; // [0:0.05:1]
 // Na které straně (při pohledu zepředu na mřížku na zdi) je táhlo
@@ -87,8 +87,8 @@ tistena_tl = 0.8;
 tyc_s = 8;
 // Délka jednoho dílu tyče [mm] (kolik se vejde na tiskovou podložku)
 tyc_dil = 230;
-// Šířka zastavovacích plošek vačky (na každou stranu od 0°, 90° a 180°) [°]
-vacka_ploska = 12;
+// Ploché úseky drážky vačky na každou stranu od 0°, 90° a 180° [°]
+vacka_ploska = 6;
 
 /* [Montážní deska na zeď – Fischer DuoPower 8 x 65 S (vrut 5 x 80 zápustný)] */
 // Zadní (montážní) deska zůstává na zdi; přední kryt s lamelami se k ní přišroubuje zepředu.
@@ -166,24 +166,34 @@ y_bar0 = st + 0.4;  y_bar1 = D - 0.6;     // vzadu místo pro síťku přes komo
 y_pin  = y_ax + e;
 bar_top0 = zl(N-1) + 8;
 
-// --- vačka = otočný stupňový doraz (jako revolverový doraz horní frézky) ------
-// Plný kotouč na dně komory = rotační klín: nahoře má tři ploché stupně 0° = zavřeno,
-// 90° = napůl, 180° = otevřeno a mezi nimi šikmé náběhy. Lišta na něm stojí masivní nohou
-// s klínovou patkou (jako hloubková tyč frézky na stupni dorazu) a drží vlastní vahou.
-// Zbytek kotouče, kam noha nikdy nedojede, zůstává plný až do výšky vk_W: o něj noha za 0°
-// a za 180° narazí (dorazy). Kotouč drží čep v drážce ve dně a shora ho přitlačuje lišta.
-vk_r   = 7.5;                   // poloměr kotouče
-vk_x   = x_kom1 - 0.5 - vk_r;   // osa (kotouč sahá přes spodek přepážky pod průduch)
-vk_y   = st + 0.4 + vk_r;
-vk_czap = 5;                    // čep kotouče pod dnem (celá zásuvka tyče je pod stupni)
-pk_r0  = 1.5;                   // noha lišty: vnitřní poloměr (od osy kotouče), sahá skoro ke středu
-pk_w   = 4.2;                   // tyčka lišty: šířka
-pk_tip = 2.2;                   // plocha patky, kterou tyčka stojí na stupni (dole zkosená 45°)
-vk_P0  = st + 1.5;              // stupeň "zavřeno" (nejnižší)
-vk_W   = vk_P0 + zdvih + 3;     // vršek stěny s dorazy a náboje
-kz_y0  = vk_y + vk_r + 0.4;     // přední plocha zadní části lišty (za kotoučem)
-bar_bot0 = vk_P0 + s_max;       // spodek lišty = spodek patky, v poloze s = 0
-// tištěná šestihranná tyč: hrot s pojistkou, zásuvky ve vačce, spojce a rukojeti
+// --- válcová vačka (jako posuv čočky v objektivu / bajonet) -----------------------
+// Tyč zespodu otáčí pouzdrem (vacka). V pouzdře jezdí neotočný píst s příčným kolíkem; oba konce
+// kolíku vedou dvě protilehlé šroubové drážky pouzdra, takže pouzdro píst zvedá i stahuje.
+// Píst je nahoře spojený s lištou rybinou (lišta ho drží proti otočení a píst ji táhne oběma směry).
+// Drážky mají ploché úseky v 0°/90°/180° a končí pevnými dorazy. Polohy navíc cvaknou: píst má
+// dva pružné jazýčky, které zapadnou do zářezů v dutině pouzdra (pružná západka).
+vk_r    = 6.3;                   // vnější poloměr pouzdra
+vk_ri   = 4.15;                  // poloměr dutiny pouzdra
+vk_x    = x_kom1 - 0.2 - vk_r;   // osa
+vk_y    = st + 0.4 + vk_r;
+vk_czap = 6;                     // čep pouzdra pod dnem rámu (je v něm celá zásuvka tyče)
+vk_krk  = 1.2;                   // krček nad čepem (kužel 45°) v zúžené horní části drážky ve dně
+vk_krk_r = 4;                    // poloměr krčku dole
+vk_dno  = 1.0;                   // dno pouzdra
+vk_P0   = st + 1.5;              // spodek zadní části lišty v poloze zavřeno
+pi_r    = vk_ri - 0.25;          // poloměr pístu
+pi_b    = st + vk_dno + 0.3;     // spodek pístu v poloze zavřeno
+ko_d    = 2.6;                   // průměr kolíku
+dr_d    = ko_d + 0.3;            // šířka drážky
+zp0     = pi_b + 1.2 + ko_d/2;   // výška kolíku v poloze zavřeno
+vk_T    = zp0 + zdvih + dr_d/2 + 0.15 + 1.2;   // vršek pouzdra (strop drážky zkosený, seříznutý o 0,15 nad kruh)
+pi_T    = vk_T + 0.5;            // vršek pístu v poloze zavřeno = strop vybrání lišty
+ko_l    = 2*(vk_r - 0.2);        // délka kolíku (konce nevyčnívají z pouzdra)
+za_hl   = 0.6;                   // hloubka zářezu západky v dutině pouzdra
+ja_l    = 11;                    // délka pružného jazýčku pístu (od spodku pístu)
+ry_x    = 1.25;                  // posun rybiny ke středu lišty (osa lišty je dál od ramen)
+kz_y0   = vk_y + vk_r + 0.4;     // přední plocha zadní části lišty (za pouzdrem)
+bar_bot0 = vk_P0 + s_max;// tištěná šestihranná tyč: hrot s pojistkou, zásuvky ve vačce, spojce a rukojeti
 tyc_ac   = tyc_s/cos(30);       // přes rohy
 hrot_l   = 6.5;                 // délka hrotu v zásuvce
 zas_s    = tyc_s + 0.3;         // šestihran zásuvky
@@ -192,9 +202,10 @@ zub_h    = 1.5;                 // západka na konci hrotu
 zub_v    = 0.5;                 // o kolik západka přečnívá roh šestihranu
 vk_cep_r = zas_s/cos(30)/2 + 1.3;   // poloměr čepu kotouče ve dně (se zásuvkou)
 tyc_d    = tyc_s;               // průměr kulaté části tyče (dole ploška se zkosením 45° pro tisk)
-// poloha vačky podle polohy lišty
+// zdvih pístu (a lišty) při natočení pouzdra fi (0 = zavřeno, 90 = napůl, 180 = otevřeno)
 function vk_H(fi) = let(d = vacka_ploska, r = 90 - 2*d, h = zdvih/2)
     fi <= d ? 0 : fi < 90 - d ? h*(fi - d)/r : fi <= 90 + d ? h : fi < 180 - d ? h + h*(fi - 90 - d)/r : zdvih;
+// natočení pouzdra podle polohy lišty
 function vk_fi(s) = let(f = (s + s_max)/zdvih, d = vacka_ploska, r = 90 - 2*d)
     f <= 0.001 ? 0 : f < 0.499 ? d + r*f*2 : f <= 0.501 ? 90 : f < 0.999 ? 90 + d + r*(f - 0.5)*2 : 180;
 
@@ -253,10 +264,10 @@ assert(2*(kl_ll + kl_vule) < kl_hlava, "Hlava klíče musí zakrýt štěrbinu p
 assert(abs(roztec_sroubu - roztec_klicu)/2 >= pr_x + hlava_sroubu/2 + 1, "Vruty do zdi a zámky jsou moc blízko u sebe.");
 assert(y_lug <= D + sd - 0.3, "Příčka klíče se nevejde do montážní desky - zvětšete tl_desky.");
 assert(tistena_tl >= 0.4, "Tištěná síťka musí mít aspoň 0,4 mm (dva průjezdy).");
-assert(vk_x + vk_r <= x_kom1 - 0.3, "Kotouč dorazu se nevejde do komory.");
-assert(vk_W + 0.4 < tb - 0.8, "Kotouč dorazu by se protl s dnem průduchu.");
-assert(-vk_czap + zas_h + 1.5 <= vk_P0 - 1, "Zásuvka tyče by se protla se stupni kotouče.");
-assert(vk_x + pk_r0 < x_bar1 - 1.5, "Patka lišty je moc tenká.");
+assert(vk_x + vk_r <= x_kom1 - 0.2 && vk_x - vk_r >= x_kom0 + 0.4, "Pouzdro vačky se nevejde do komory.");
+assert(-vk_czap + zas_h + 0.9 <= st - vk_krk, "Zásuvka tyče by se protla s krčkem pouzdra.");
+assert(vk_x - pi_r >= x_arm1 + 0.1, "Píst by narážel do ramen lamel.");
+assert(vk_ri - za_hl >= 0 && vk_r - vk_ri - za_hl >= 1.2, "Stěna pouzdra u zářezu je moc tenká.");
 assert(bok_protejsi >= 2*st + 1, "Protější boční okraj musí mít aspoň 2 stěny + 1 mm.");
 assert(tb >= 14, str("Okraj nahoře/dole vychází jen ", tb, " mm - zvětšete výšku nebo uberte lamely."));
 assert(p*cos(phic) > t + 0.2, "Lamely by do sebe v zavřené poloze narážely - zmenšete uhel_zavreni.");
@@ -357,14 +368,14 @@ module lista(s = 0) {
                 translate([0, 0, L_pin - 0.5]) cylinder(r1 = r_cep, r2 = r_cep - 0.5, h = 0.5);
             }
         }
-        // vybrání pro kotouč dorazu a jeho držák (vpředu dole); lišta se zasouvá zezadu
+        // vybrání pro pouzdro vačky (vpředu dole); strop vybrání leží na pístu, lišta se zasouvá zezadu
         translate([x_bar0 - 1, y_bar0 - 1, bar_bot0 - 1]) cube([x_bar1 - x_bar0 + 2, kz_y0 - y_bar0 + 1, 1 + lista_vybrani]);
+        // drážka pro rybinu pístu, otevřená dopředu (lišta se nasune na píst zezadu)
+        translate([vk_x, vk_y + 3.5 + 0.3, pi_T + s_max]) rotate([90, 0, 0]) linear_extrude(vk_y + 3.8 - y_bar0 + 1) rybina_profil(0.2);
     }
-    // svislá tyčka s plochou patkou, která stojí na stupni kotouče
-    translate([vk_x + pk_r0, vk_y, bar_bot0 + s]) patka(x_bar1 - vk_x - pk_r0, lista_vybrani + 1);
 }
-// výška vybrání v liště: v poloze zavřeno musí být nad držákem čepu vačky
-lista_vybrani = vk_W + 0.5 - (bar_bot0 - s_max);
+// výška vybrání v liště: strop vybrání = vršek pístu
+lista_vybrani = pi_T - vk_P0;
 
 // =====================================================================
 //  PŘEDNÍ RÁM
@@ -433,13 +444,16 @@ module ram_telo() {
                 offset(r = kl_vule) klic_silueta();                                           // vodorovná štěrbina, stejně jako v montážní desce
             }
         }
-        // drážka ve dně pro čep vačky, otevřená dozadu (vačka se zasune zezadu)
+        // drážka ve dně pro čep pouzdra, otevřená dozadu (pouzdro se zasune zezadu); nahoře zúžená
+        // na krček s kuželem 45°, takže pouzdro leží na dně a čep pod zúžením ho drží dole
         translate([0, 0, -1]) hull() {
-            translate([vk_x, vk_y, 0]) cylinder(r = vk_cep_r + 0.25, h = st + 1 + eps);
-            translate([vk_x - vk_cep_r - 0.25, D + 1, 0]) cube([2*(vk_cep_r + 0.25), eps, st + 1 + eps]);
+            translate([vk_x, vk_y, 0]) cylinder(r = vk_cep_r + 0.25, h = st - vk_krk + 1);
+            translate([vk_x - vk_cep_r - 0.25, D + 1, 0]) cube([2*(vk_cep_r + 0.25), eps, st - vk_krk + 1]);
         }
-        // výřez ve spodku přepážky a v rohu dna průduchu pro kotouč dorazu
-        translate([vk_x - vk_r - 0.4, st - eps, st - eps]) cube([x_kom0 - (vk_x - vk_r - 0.4) + eps, vk_y + vk_r + 0.4 - st, vk_W + 0.4 - st + eps]);
+        translate([0, 0, st - vk_krk - eps]) hull() {
+            translate([vk_x, vk_y, 0]) cylinder(r1 = vk_krk_r + 0.25, r2 = vk_krk_r + vk_krk + 0.25, h = vk_krk + 2*eps);
+            translate([vk_x, D + 1, 0]) cylinder(r1 = vk_krk_r + 0.25, r2 = vk_krk_r + vk_krk + 0.25, h = vk_krk + 2*eps);
+        }
     }
 }
 
@@ -621,31 +635,65 @@ module rukojet() {
         translate([24, 0, h - 5]) linear_extrude(2) polygon([[-5, -2.2], [4, 0], [-5, 2.2]]);
     }
 }
-// ---- vačka (otočný stupňový doraz) ---------------------------------------
-// osa v počátku, z = absolutní výška v rámu; natočení fi (0 = zavřeno, 90 = napůl, 180 = otevřeno);
-// patka lišty stojí na straně +x, takže pod ní je bod kotouče pod úhlem -fi
-module vacka() {
-    krok = 2;
-    difference() {
-        union() {
-            translate([0, 0, -vk_czap]) cylinder(r = vk_cep_r, h = vk_czap + st + eps);   // čep ve dně
-            translate([0, 0, st]) cylinder(r = vk_r, h = vk_W - st, $fn = 96);            // kotouč
+// ---- válcová vačka: pouzdro, píst, kolík ----------------------------------------
+// kolík (průměr d, radiálně od r0 do r1) ve směru psi v souřadnicích pouzdra natočeného o fi
+// (strop drážky zkosený 45° se seříznutou špičkou, aby se pouzdro tisklo bez podpěr)
+module kolik_v_pouzdru(psi, fi, d, r0, r1) rotate(psi - fi) translate([0, 0, zp0 + vk_H(fi)])
+    rotate([0, 90, 0]) translate([0, 0, r0]) linear_extrude(r1 - r0) intersection() {
+        hull() { circle(d = d, $fn = 20); translate([-d/2*sqrt(2), 0]) circle(d = 0.05); }
+        translate([-d/2 - 0.15, -d]) square([2*d, 2*d]);
+    }
+// zářez západky (osa x = radiálně ven od stěny dutiny), V-profil se zkosenými stropy
+module zarez() hull() {
+    translate([-0.5, -1.4, -1.6]) cube([0.5, 2.8, 3.2]);
+    translate([za_hl, -0.2, -0.6]) cube([0.01, 0.4, 1.2]);
+}
+// otočné pouzdro: osa v počátku, z = absolutní výška v rámu
+module vacka() difference() {
+    union() {
+        translate([0, 0, -vk_czap]) cylinder(r = vk_cep_r, h = vk_czap + st - vk_krk);                // čep pod dnem
+        translate([0, 0, st - vk_krk - eps]) cylinder(r1 = vk_krk_r, r2 = vk_krk_r + vk_krk, h = vk_krk + 2*eps);   // krček
+        translate([0, 0, st]) cylinder(r = vk_r, h = vk_T - st, $fn = 96);
+    }
+    translate([0, 0, st + vk_dno]) cylinder(r = vk_ri, h = vk_T, $fn = 64);
+    // dvě šroubové drážky = stopa obou konců kolíku (kolík ve směru ±y)
+    for (psi = [90, 270]) for (f = [0 : 3 : 177]) hull() for (g = [f, f + 3]) kolik_v_pouzdru(psi, g, dr_d, vk_ri - 1, vk_r + 1);
+    // zářezy západky v dutině: jazýčky pístu jsou ve směru ±x, zapadnou v 0°, 90° a 180°
+    for (psi = [0, 180]) for (f = [0, 90, 180]) rotate(psi - f) translate([vk_ri, 0, zp0 + vk_H(f)]) zarez();
+    translate([0, 0, -vk_czap]) zasuvka_tyce();
+}
+// rybina na vršku pístu (průřez x-z, x od osy), protažená ve směru y
+module rybina_profil(c = 0) offset(delta = c) translate([ry_x, 0])
+    polygon([[-1.75, -1], [1.75, -1], [1.75, 1], [3, 2.25], [3, 3.2], [-3, 3.2], [-3, 2.25], [-1.75, 1]]);
+// neotočný píst v poloze zavřeno: kolík ve směru y, pružné jazýčky ve směru ±x, nahoře rybina
+module pist() difference() {
+    union() {
+        translate([0, 0, pi_b]) cylinder(r = pi_r, h = pi_T - pi_b, $fn = 64);
+        translate([0, 3.5, pi_T]) rotate([90, 0, 0]) linear_extrude(7) intersection() {
+            rybina_profil(); translate([-10, 0]) square([20, 10]);
         }
-        // stupně a náběhy = otisk patky lišty po celé dráze (s vůlí); kde patka nejezdí,
-        // zůstane stěna do výšky vk_W, na kterou patka za 0° a za 180° narazí
-        for (fi = [0 : krok : 180 - krok]) hull() for (f = [fi, fi + krok]) patka_ve_vacce(f, 0.2);
-        translate([0, 0, -vk_czap]) zasuvka_tyce();
+        // nosy jazýčků
+        for (sx = [-1, 1]) mirror([sx < 0 ? 1 : 0, 0, 0]) hull() {
+            translate([pi_r - 0.9, -1.2, zp0 - 2]) cube([0.6, 2.4, 4]);          // boky nosu strmé (tisk)
+            translate([vk_ri + za_hl - 0.15, -0.15, zp0 - 0.4]) cube([0.01, 0.3, 0.8]);
+        }
+    }
+    // otvor pro kolík (kapka špičkou nahoru, tiskne se bez podpěr; kolík v něm drží natěsno)
+    translate([0, 0, zp0]) rotate([90, 0, 0]) translate([0, 0, -pi_r - 1]) linear_extrude(2*pi_r + 2)
+        hull() { circle(d = ko_d - 0.05, $fn = 24); translate([0, ko_d/2*sqrt(2)]) circle(d = 0.1); }
+    // pružné jazýčky: kapsa za jazýčkem a boční štěrbiny, dole otevřené
+    for (sx = [-1, 1]) mirror([sx < 0 ? 1 : 0, 0, 0]) translate([0, 0, pi_b - 1]) {
+        translate([1.9, -2, 0]) cube([0.8, 4, ja_l + 1]);
+        for (sy = [-1, 1]) translate([1.9, sy*1.75 - 0.25, 0]) cube([3, 0.5, ja_l + 1]);
     }
 }
-// patka lišty v souřadnicích kotouče při natočení fi (c = vůle; sahá nahoru nad kotouč)
-module patka_ve_vacce(fi, c = 0) rotate(-fi) translate([pk_r0 - c, 0, vk_P0 + vk_H(fi)])
-    patka(vk_r + 1 - pk_r0 + c, vk_W, c);
-// tyčka s patkou: průřez pk_w, dole zkosená 45° na plochu pk_tip (osa x = radiálně)
-module patka(l, h, c = 0) hull() {
-    translate([0, -pk_tip/2 - c, 0]) cube([l, pk_tip + 2*c, h]);
-    translate([0, -pk_w/2 - c, (pk_w - pk_tip)/2]) cube([l, pk_w + 2*c, h - (pk_w - pk_tip)/2]);
-}
+// kolík (osa z, tiskne se nastojato)
+module kolik() cylinder(d = ko_d, h = ko_l, $fn = 24);
 module vacka_na_miste(s) translate([vk_x, vk_y, 0]) rotate(vk_fi(s)) vacka();
+module pist_na_miste(s) translate([vk_x, vk_y, vk_H(vk_fi(s))]) {
+    pist();
+    color("silver") translate([0, ko_l/2, zp0]) rotate([90, 0, 0]) kolik();
+}
 
 // vodítko tyčky na zeď (tyčku lze zacvaknout i dodatečně)
 module voditko() {
@@ -774,6 +822,7 @@ module sestava(phi, explode = 0, rez = false, tyc = true) strana() {
     color("lightgray") translate([0, explode, 0]) orez(rez) for (i = [0:N-1]) lamela_na_miste(i, phi);
     color("darkorange") translate([explode*0.4, 0, 0]) orez(rez) lista(s);
     color("peru") translate([explode*0.4, 0, -explode]) orez(rez) vacka_na_miste(s);
+    color("sienna") translate([explode*0.4, 0, explode*0.3]) orez(rez) pist_na_miste(s);
     color("goldenrod") for (q = klic_pos) translate([0, -explode*1.5, 0]) klic_na_miste(q, explode == 0);
     if (tyc && nahled_delka_tycky > 0) tycka(s);
 }
@@ -787,7 +836,9 @@ module k_tisku(co) {
     if (co == "pojistka_u_tahla") rotate([0, 90, 0]) translate([-(st - 0.2) - 0.1, 0, 0]) pojistka(0);
     if (co == "pojistka_protejsi") zrcadlo_tisk() rotate([0, 90, 0]) translate([-(x_cav0 - st) - (st - 0.2) - 0.1, 0, 0]) pojistka(x_cav0 - st, true);   // žebry nahoru
     if (co == "rukojet")     rukojet();
-    if (co == "vacka")       translate([0, 0, vk_czap]) vacka();                   // nastojato, čepem dolů
+    if (co == "vacka")       zrcadlo_tisk() translate([0, 0, vk_czap]) vacka();                        // čepem dolů
+    if (co == "pist")        zrcadlo_tisk() translate([0, 0, -pi_b]) pist();                            // nastojato, rybinou nahoru
+    if (co == "kolik")       kolik();                                                                  // nastojato
     if (co == "tyc")         translate([0, 0, tyc_s/2]) rotate([0, 90, 0]) rotate(0) tyc_cela();   // naležato na plošce
     if (co == "voditko")     voditko();
     if (co == "spojka")      spojka();
@@ -802,6 +853,8 @@ if (dil == "mechanismus") strana() {   // bez zadní desky, pohled zezadu
     color("white") ram();
     color("lightgray") for (i = [0:N-1]) lamela_na_miste(i, phi_open);
     color("darkorange") lista(s);
+    color("peru") vacka_na_miste(s);
+    color("sienna") pist_na_miste(s);
 }
 if (dil == "schema") schema(phi_open);
 if (dil == "vymena_sitky") strana() {   // montážní deska zůstává na zdi, přední kryt je sundaný
@@ -903,15 +956,21 @@ module schema(phi) {
         translate([-1, -1]) square([kz_y0 - y_bar0 + 1, lista_vybrani + 1]);
     }
     color("darkorange") vrstva(5) for (i = [0:N-1]) translate([y_pin, zl(i) + s]) circle(r = r_cep);
-    // tyčka
-    color("peru") vrstva(3.5) translate([vk_y, 0]) {
-        translate([-vk_cep_r, -vk_czap]) square([2*vk_cep_r, vk_czap + st]);
-        translate([-vk_r, st]) square([2*vk_r, vk_P0 + vk_H(vk_fi(s)) - st]);
+    // vačka: pouzdro a píst s kolíkem, v řezu osou
+    color("peru") vrstva(3.5) translate([vk_y, 0]) difference() {
+        union() {
+            translate([-vk_cep_r, -vk_czap]) square([2*vk_cep_r, vk_czap + st]);
+            translate([-vk_r, st]) square([2*vk_r, vk_T - st]);
+        }
+        translate([-vk_ri, st + vk_dno]) square([2*vk_ri, vk_T]);
     }
-    color("darkorange") vrstva(5) translate([vk_y - pk_w/2, bar_bot0 + s]) square([pk_w, lista_vybrani]);   // noha s patkou
+    color("sienna") vrstva(3.6) translate([vk_y, s + s_max]) {
+        translate([-pi_r, pi_b]) square([2*pi_r, pi_T - pi_b]);
+        translate([-vk_r + 0.2, zp0 - ko_d/2]) square([2*vk_r - 0.4, ko_d]);
+    }
     color("tan") vrstva(3.5) translate([vk_y - tyc_s/2, -90]) square([tyc_s, 90 - vk_czap]);
     // osy
     color("black") vrstva(6) for (i = [0:N-1]) translate([y_ax, zl(i)]) circle(r = 0.8);
 }
 if (dil == "ram" || dil == "zadni_deska" || dil == "lamela" || dil == "lista" || dil == "pojistka_u_tahla" || dil == "pojistka_protejsi"
-    || dil == "rukojet" || dil == "voditko" || dil == "spojka" || dil == "klic" || dil == "vacka" || dil == "tyc") k_tisku(dil);
+    || dil == "rukojet" || dil == "voditko" || dil == "spojka" || dil == "klic" || dil == "vacka" || dil == "pist" || dil == "kolik" || dil == "tyc") k_tisku(dil);

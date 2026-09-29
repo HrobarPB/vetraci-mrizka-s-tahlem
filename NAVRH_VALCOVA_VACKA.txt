@@ -1,0 +1,45 @@
+VĚTRACÍ MŘÍŽKA S TÁHLEM - verze "válcová vačka" (zkušební návrh, 29. 9. 2026)
+============================================================================
+
+Ovládání: tyč zespodu otáčí pouzdrem (vacka.stl). V pouzdře jezdí píst s kolíkem,
+oba konce kolíku vedou dvě šroubové drážky, takže pouzdro píst i lištu zvedá i stahuje.
+Polohy rukojeti: 0° zavřeno, 90° napůl, 180° otevřeno. V každé poloze cvakne pružná
+západka (jazýčky pístu zapadnou do zářezů v pouzdře). Na koncích drážek jsou dorazy.
+Varianta: táhlo VLEVO (při pohledu zepředu na mřížku na zdi).
+
+DÍLY K TISKU (složka stl)
+-------------------------
+ram.stl                    1x   lícem dolů, podložka aspoň 180 x 250 mm
+zadni_deska.stl            1x   deskou dolů (pro kupovanou síťku)
+  nebo zadni_deska_se_sitkou.stl 1x  místo předchozí, s tištěnou síťkou
+lamela.stl                10x   rovnou stranou dolů, rameno nahoru
+lista.stl                  1x   naležato, čepy nahoru
+vacka.stl                  1x   otočné pouzdro; čepem dolů, 4 perimetry, výplň 100 %
+pist.stl                   1x   nastojato, rybinou nahoru; nejlépe PETG (pružné jazýčky)
+kolik.stl                  1x   nastojato (průměr 2,6 x 12,2 mm)
+pojistka_u_tahla.stl       1x   naležato
+pojistka_protejsi.stl      1x   naležato, žebry nahoru
+tyc.stl              podle výšky  naležato na plošce, 4 perimetry (díl 230 mm)
+spojka.stl       o 1 méně než tyčí  nastojato
+rukojet.stl                1x   zásuvkou nahoru
+voditko.stl              0-2x   volitelné
+klic.stl                   4x   nastojato na rovné straně příčky, 4 perimetry, výplň 100 %
+
+NAKUPOVANÉ DÍLY (beze změny)
+----------------------------
+Hmoždinka Fischer DuoPower 8 x 65 S s vruty 5 x 80, 4 ks
+  https://www.kutil.cz/spojovaci-material-a-kotevni-technika/kotevni-technika/vseobecne-hmozdinky/hmozdinka-duopower-fischer-8x65-1/
+Síť proti hmyzu, sklolaminátová, kus 16 x 22 cm (jen pro zadni_deska.stl)
+  https://unihobby.cz/sit-proti-hmyzu-sklovlaknita-metraz-seda
+Vodítko (volitelné): 2 vruty 3,5 x 30 mm a hmoždinky 5 mm
+  https://www.heureka.cz/?h%5Bfraze%5D=hmo%C5%BEdinka+5+mm+s+vrutem
+
+SESTAVENÍ MECHANISMU
+--------------------
+1. Píst zasuňte do pouzdra a kolík natlačte skrz drážku do otvoru v pístu.
+2. Pouzdro s pístem zasuňte zezadu do drážky ve dně krytu.
+3. Vložte lamely (natočené napůl) a pouzdro natočte na 90°.
+4. Lištu nasuňte zezadu, rybina najede na píst.
+5. Nasaďte pojistné hřebínky, vyzkoušejte chod (0/90/180 musí cvaknout) a nasaďte kryt na montážní desku klíči.
+
+Pozor: vacka.stl z dřívějších verzí (věž, klíny) k této verzi nepasuje.

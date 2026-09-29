@@ -25,11 +25,13 @@ module steny_B() {
     translate([-big/2, H - st + eps]) square([big, big]);
 }
 
-// vačka a držák jejího horního čepu (pevné, v řezu komorou)
-module vacka2d() translate([vk_y, 0]) {      // kotouč dorazu (plný až do výšky stěny) a horní čep
-    translate([-vk_r, st]) square([2*vk_r, vk_W - st]);
+// vačka (pouzdro a píst) v pásu, kde se pohybují ramena lamel (skutečný 3D tvar promítnutý do řezu y-z)
+module klin_pas2d(s) projection() multmatrix([[0, 1, 0, 0], [0, 0, 1, 0], [1, 0, 0, 0]]) intersection() {
+    union() { vacka_na_miste(s); pist_na_miste(s); }
+    translate([x_arm0 - 0.3, -1, -1]) cube([t_arm + 0.6, D + 2, H]);
 }
-module drzak2d() square(0);   // držák čepu kotouče už není
+// vačka v řezu lištou: lišta leží na pístu (obálka o 0,01 mm nižší = dotyk)
+module klin2d(s) translate([vk_y, 0]) translate([-vk_r, st]) square([2*vk_r, pi_T + s + s_max - st - 0.01]);
 module lista2d(s) translate([y_bar0, bar_bot0 + s]) difference() {
     square([y_bar1 - y_bar0, bar_top0 - bar_bot0]);
     translate([-1, -1]) square([kz_y0 - y_bar0 + 1, lista_vybrani + 1]);
@@ -44,16 +46,16 @@ for (k = [0:kroky]) {
             translate([y_ax, zl(i)])   rotate(phi) lamela_profil();
             translate([y_ax, zl(i+1)]) rotate(phi) lamela_profil();
         }
-        intersection() { ramena2d(phi); union() { steny_B(); vacka2d(); drzak2d(); } }
+        intersection() { ramena2d(phi); union() { steny_B(); klin_pas2d(s); } }
         intersection() { ramena2d(phi); cepy2d(s); }
         for (i = [0:N-2]) intersection() {
             translate([y_ax, zl(i)])   rotate(phi) rameno_profil();
             translate([y_ax, zl(i+1)]) rotate(phi) rameno_profil();
         }
-        // lišta v komoře: stěny, horní doraz, vačka, držák čepu vačky
+        // lišta v komoře: stěny, horní doraz, vačka
         intersection() {
             lista2d(s);
-            union() { steny_B(); vacka2d(); drzak2d(); translate([-big/2, bar_top0 + s_max + 0.1 + eps]) square([big, big]); }
+            union() { steny_B(); klin2d(s); translate([-big/2, bar_top0 + s_max + 0.1 + eps]) square([big, big]); }
         }
         // čep musí zůstat v rovné části vidlice (ne v rozšířeném ústí)
         if (e/cos(phi + alpha) > L_arm - usti_l - 0.3) square(5);
